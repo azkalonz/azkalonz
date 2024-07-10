@@ -1,6 +1,6 @@
 
 ## 👋 Hi there! 
-I'm a seasoned web developer with a strong focus on front-end development using **ReactJS** ⚛️ and back-end development with **Laravel** ⚙️. My expertise extends to system automations and integrations, leveraging tools and technologies like Serverless functions, Zoho Deluge, Zoho Creator, Zoho Flow, Zapier, Make, and REST APIs 🚀.
+I'm a seasoned full stack developer with a strong focus on front-end development using **ReactJS** ⚛️ and back-end development with **Laravel** ⚙️. My expertise extends to system automations and integrations, leveraging tools and technologies like serverless functions, Zoho Deluge, Zoho Creator, Zoho Flow, Zapier, Make, and REST APIs 🚀.
 
 💼 I'm adept at handling web development, system integration, automation, and migration projects. I specialize in CRM management, particularly with Zoho applications such as Zoho Books, Inventory, and CRM.
 
