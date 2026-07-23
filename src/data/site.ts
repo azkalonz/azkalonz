@@ -1,7 +1,7 @@
 export const site = {
   name: "Mark Judaya",
   title: "IT Solutions Developer",
-  url: "https://markjudaya.com",
+  url: "https://builtbymark.dev",
   email: "markjosephjudaya@gmail.com",
   bookingUrl: "https://calendar.app.google/MtqQgN54P647GRcx7",
   socials: {
