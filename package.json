@@ -21,14 +21,17 @@
     "react-dom": "^19.2.0",
     "react-helmet-async": "^2.0.5",
     "react-markdown": "^9.1.0",
-    "react-router-dom": "^6.20.0"
+    "react-router-dom": "^6.20.0",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@gltf-transform/cli": "^4.4.1",
     "@tailwindcss/typography": "^0.5.9",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.185.1",
     "@vitejs/plugin-react": "^5.1.1",
     "autoprefixer": "^10.4.14",
     "babel-plugin-react-compiler": "^1.0.0",

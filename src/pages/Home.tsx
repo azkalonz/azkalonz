@@ -125,7 +125,7 @@ const Home = () => (
             </div>
             <div className="matrix-portrait__footer" aria-hidden="true">
               <span>PARTICLE FIELD: ACTIVE</span>
-              <span>MOVE CURSOR TO INTERACT</span>
+              <span>HOVER OR CLICK TO INTERACT</span>
             </div>
           </div>
 
