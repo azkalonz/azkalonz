@@ -595,7 +595,22 @@ img {
   height: 100%;
   contain: layout paint size;
   cursor: crosshair;
+  outline: none;
+  touch-action: pan-y;
   user-select: none;
+}
+
+.halftone-portrait--subject-hovered,
+.halftone-portrait--selected {
+  cursor: pointer;
+}
+
+.halftone-portrait:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--matrix-green);
+}
+
+.halftone-portrait--selected:focus-visible {
+  box-shadow: none;
 }
 
 .halftone-portrait__canvas {
@@ -611,6 +626,53 @@ img {
   height: 100%;
   color: inherit;
   object-fit: contain;
+}
+
+.halftone-portrait__about-link {
+  position: absolute;
+  z-index: 8;
+  top: 66%;
+  left: 50%;
+  display: flex;
+  min-width: 8.75rem;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid var(--matrix-green);
+  background: rgba(6, 16, 12, 0.92);
+  box-shadow:
+    0 0 0 1px rgba(99, 255, 155, 0.08),
+    0 0 28px rgba(99, 255, 155, 0.18);
+  color: var(--matrix-green-soft);
+  padding: 0.65rem 0.8rem;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  opacity: 0;
+  pointer-events: none;
+  text-transform: uppercase;
+  transform: translate(-50%, 0.65rem);
+  transition:
+    opacity 220ms ease-out,
+    transform 220ms ease-out;
+}
+
+.halftone-portrait__about-link:focus-visible {
+  outline: 2px solid var(--matrix-green);
+  outline-offset: 3px;
+}
+
+.halftone-portrait--selected .halftone-portrait__about-link {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .halftone-portrait__about-link {
+    transition: none;
+  }
 }
 
 .hero-halftone__coordinates {
@@ -3071,7 +3133,14 @@ img {
 
 .matrix-portrait {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.matrix-portrait::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
   border: 1px solid var(--matrix-line-bright);
   background: var(--matrix-panel);
   box-shadow:
@@ -3085,6 +3154,7 @@ img {
     calc(100% - 1rem) 100%,
     0 100%
   );
+  content: "";
 }
 
 .matrix-portrait__header,
@@ -3101,7 +3171,24 @@ img {
 }
 
 .matrix-portrait__header {
-  border-bottom: 1px solid var(--matrix-line);
+  position: relative;
+  pointer-events: none;
+}
+
+.matrix-portrait__header::after {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: var(--matrix-line);
+  content: "";
+}
+
+.matrix-portrait__header span {
+  position: relative;
+  z-index: 5;
 }
 
 .matrix-portrait__header span:last-child {
@@ -3119,7 +3206,9 @@ img {
 
 .matrix-portrait__screen {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  border-right: 1px solid var(--matrix-line-bright);
+  border-left: 1px solid var(--matrix-line-bright);
   aspect-ratio: 1;
   background:
     radial-gradient(circle at 50% 45%, rgba(24, 81, 49, 0.28), transparent 55%),
@@ -3128,9 +3217,8 @@ img {
 
 .matrix-portrait__screen::before {
   position: absolute;
-  z-index: 3;
+  z-index: 1;
   inset: 0;
-  border: 1px solid rgba(99, 255, 155, 0.08);
   background-image:
     linear-gradient(rgba(99, 255, 155, 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(99, 255, 155, 0.035) 1px, transparent 1px);
@@ -3141,7 +3229,11 @@ img {
 
 .matrix-portrait__screen .halftone-portrait {
   position: absolute;
-  inset: 0;
+  z-index: 2;
+  top: 0rem;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
 .matrix-portrait__reticle {
@@ -3155,6 +3247,12 @@ img {
   border-radius: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
+  transition: opacity 180ms ease-out;
+}
+
+.matrix-portrait__screen:has(.halftone-portrait--selected)
+  .matrix-portrait__reticle {
+  opacity: 0;
 }
 
 .matrix-portrait__reticle::before,
