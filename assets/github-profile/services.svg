@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
+  <title id="title">What Mark Judaya builds</title>
+  <desc id="desc">Four services: application development, systems integration, technical consulting, and ongoing improvements.</desc>
+  <defs>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#63ff9b" stroke-opacity=".06"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="320" rx="16" fill="#050806"/>
+  <rect width="1200" height="320" rx="16" fill="url(#grid)"/>
+  <rect x=".5" y=".5" width="1199" height="319" rx="15.5" fill="none" stroke="#1d3a2c"/>
+  <g font-family="'JetBrains Mono','SFMono-Regular',Consolas,monospace">
+    <text x="38" y="48" fill="#63ff9b" font-size="13" letter-spacing="2.2">[ INPUT / SERVICES ]</text>
+    <text x="38" y="82" fill="#edf8f0" font-size="25" font-weight="700">WHAT I BUILD</text>
+    <g transform="translate(38 112)">
+      <g>
+        <rect width="267" height="168" fill="#08110d" stroke="#3d7455"/>
+        <text x="18" y="30" fill="#63ff9b" font-size="12">01</text>
+        <text x="18" y="62" fill="#edf8f0" font-size="17" font-weight="700">APPLICATIONS</text>
+        <text x="18" y="94" fill="#a9c2b1" font-size="12">Internal tools, portals,</text>
+        <text x="18" y="116" fill="#a9c2b1" font-size="12">dashboards, APIs, and</text>
+        <text x="18" y="138" fill="#a9c2b1" font-size="12">responsive products.</text>
+      </g>
+      <g transform="translate(285)">
+        <rect width="267" height="168" fill="#08110d" stroke="#3d7455"/>
+        <text x="18" y="30" fill="#63e6ff" font-size="12">02</text>
+        <text x="18" y="62" fill="#edf8f0" font-size="17" font-weight="700">INTEGRATIONS</text>
+        <text x="18" y="94" fill="#a9c2b1" font-size="12">APIs, automation, data</text>
+        <text x="18" y="116" fill="#a9c2b1" font-size="12">migration, CRMs, ERPs,</text>
+        <text x="18" y="138" fill="#a9c2b1" font-size="12">and marketplaces.</text>
+      </g>
+      <g transform="translate(570)">
+        <rect width="267" height="168" fill="#08110d" stroke="#3d7455"/>
+        <text x="18" y="30" fill="#ffc857" font-size="12">03</text>
+        <text x="18" y="62" fill="#edf8f0" font-size="17" font-weight="700">CONSULTING</text>
+        <text x="18" y="94" fill="#a9c2b1" font-size="12">Discovery, requirements,</text>
+        <text x="18" y="116" fill="#a9c2b1" font-size="12">workflow audits, and</text>
+        <text x="18" y="138" fill="#a9c2b1" font-size="12">technical direction.</text>
+      </g>
+      <g transform="translate(855)">
+        <rect width="267" height="168" fill="#08110d" stroke="#3d7455"/>
+        <text x="18" y="30" fill="#63ff9b" font-size="12">04</text>
+        <text x="18" y="62" fill="#edf8f0" font-size="17" font-weight="700">IMPROVEMENTS</text>
+        <text x="18" y="94" fill="#a9c2b1" font-size="12">Troubleshooting, features,</text>
+        <text x="18" y="116" fill="#a9c2b1" font-size="12">maintenance, performance,</text>
+        <text x="18" y="138" fill="#a9c2b1" font-size="12">and release support.</text>
+      </g>
+    </g>
+  </g>
+</svg>

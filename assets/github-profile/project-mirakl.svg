@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="580" height="250" viewBox="0 0 580 250" role="img" aria-labelledby="title desc">
+  <title id="title">Mirakl Marketplace Integration</title>
+  <desc id="desc">An automated order workflow connecting Mirakl, Zoho Inventory, Zoho Desk, Deluge, REST APIs, and n8n.</desc>
+  <rect width="580" height="250" rx="14" fill="#08110d"/>
+  <rect x=".5" y=".5" width="579" height="249" rx="13.5" fill="none" stroke="#3d7455"/>
+  <path d="M0 48H580" stroke="#1d3a2c"/>
+  <g font-family="'JetBrains Mono','SFMono-Regular',Consolas,monospace">
+    <text x="22" y="30" fill="#ffc857" font-size="11" letter-spacing="1.8">CASE_03 // AUTOMATION</text>
+    <text x="22" y="85" fill="#edf8f0" font-size="22" font-weight="700">MIRAKL MARKETPLACE</text>
+    <text x="22" y="118" fill="#a9c2b1" font-size="12">Order ingestion, acceptance, shipment updates,</text>
+    <text x="22" y="139" fill="#a9c2b1" font-size="12">documents, and incident tracking—connected.</text>
+    <text x="22" y="184" fill="#86a893" font-size="10">ZOHO INVENTORY · ZOHO DESK · REST API · N8N</text>
+    <text x="22" y="222" fill="#63ff9b" font-size="11">OPEN CASE STUDY  →</text>
+  </g>
+</svg>

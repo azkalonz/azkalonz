@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">Mark Judaya technical toolkit</title>
+  <desc id="desc">Technologies across front end, back end, integrations, business platforms, and technical delivery.</desc>
+  <defs>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#63ff9b" stroke-opacity=".055"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="360" rx="16" fill="#050806"/>
+  <rect width="1200" height="360" rx="16" fill="url(#grid)"/>
+  <rect x=".5" y=".5" width="1199" height="359" rx="15.5" fill="none" stroke="#1d3a2c"/>
+  <g font-family="'JetBrains Mono','SFMono-Regular',Consolas,monospace">
+    <text x="38" y="47" fill="#63ff9b" font-size="13" letter-spacing="2.2">[ SYSTEM / TOOLKIT ]</text>
+    <text x="38" y="80" fill="#edf8f0" font-size="25" font-weight="700">TECHNICAL TOOLKIT</text>
+    <g transform="translate(38 110)">
+      <g>
+        <rect width="544" height="92" fill="#08110d" stroke="#3d7455"/>
+        <text x="18" y="30" fill="#63ff9b" font-size="12" letter-spacing="1.5">FRONT_END</text>
+        <text x="18" y="62" fill="#edf8f0" font-size="14">React · TypeScript · Inertia · Tailwind CSS</text>
+      </g>
+      <g transform="translate(562)">
+        <rect width="562" height="92" fill="#08110d" stroke="#3d7455"/>
+        <text x="18" y="30" fill="#63e6ff" font-size="12" letter-spacing="1.5">BACK_END + DATA</text>
+        <text x="18" y="62" fill="#edf8f0" font-size="14">Laravel · PHP · Node.js · PostgreSQL · Redis</text>
+      </g>
+      <g transform="translate(0 110)">
+        <rect width="544" height="92" fill="#08110d" stroke="#3d7455"/>
+        <text x="18" y="30" fill="#ffc857" font-size="12" letter-spacing="1.5">AUTOMATION + INTEGRATION</text>
+        <text x="18" y="62" fill="#edf8f0" font-size="14">REST APIs · Webhooks · n8n · CSV pipelines</text>
+      </g>
+      <g transform="translate(562 110)">
+        <rect width="562" height="92" fill="#08110d" stroke="#3d7455"/>
+        <text x="18" y="30" fill="#63ff9b" font-size="12" letter-spacing="1.5">BUSINESS_PLATFORMS</text>
+        <text x="18" y="62" fill="#edf8f0" font-size="14">Zoho · Salesforce · Mirakl · ERP workflows</text>
+      </g>
+    </g>
+    <text x="38" y="338" fill="#86a893" font-size="11" letter-spacing="1.2">PROCESS MAPPING · SOLUTION ARCHITECTURE · API PLANNING · TECHNICAL DOCUMENTATION</text>
+  </g>
+</svg>

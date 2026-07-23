@@ -18,7 +18,7 @@ import { projects } from "../src/data/projects.ts";
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(currentDirectory, "..");
 const distDirectory = path.resolve(projectRoot, "dist");
-const siteUrl = "https://markjudaya.com";
+const siteUrl = "https://builtbymark.dev";
 
 type PageEntry = {
   routePath: string;
