@@ -1,86 +1,222 @@
-import React from "react";
 import { Link } from "react-router-dom";
+import HalftonePortrait from "../components/HalftonePortrait";
+import Icon from "../components/Icon";
 import Seo from "../components/Seo";
 import projects from "../data/projects";
-import FeaturedProjectCard from "../components/FeaturedProjectCard";
+import { services, site } from "../data/site";
 
-const featuredProjects = projects.filter((project) => project.featured);
+const recentProjects = projects
+  .filter((project) => project.featured)
+  .slice(0, 3);
 
-const Home: React.FC = () => {
-  return (
-    <>
-      <Seo
-        title="Mark Judaya – Full Stack Developer & CRM Automation Specialist"
-        description="Full stack developer specializing in CRM systems, automations, and modern web applications. View projects and get in touch."
-        ogTitle="Mark Judaya – Full Stack Developer"
-        ogDescription="I build modern web apps, CRM automations, and integrations that scale."
-      />
-      <section className="relative py-16">
-        <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-          <div className="hero-grid" />
+const Home = () => (
+  <>
+    <Seo
+      title="IT solutions for growing businesses"
+      description="Custom applications, automation, integrations, and ongoing technical support from full-stack systems developer Mark Judaya."
+      canonical="/"
+      structuredData={[
+        {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: site.name,
+          url: site.url,
+          image: `${site.url}/avatar.webp`,
+          jobTitle: "IT Solutions Developer",
+          sameAs: [
+            site.socials.linkedin,
+            site.socials.github,
+            site.socials.fiverr,
+          ],
+          knowsAbout: [
+            "Web application development",
+            "Systems integration",
+            "Business automation",
+            "Zoho",
+            "Technical consulting",
+          ],
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "ProfessionalService",
+          name: "Mark Judaya IT Solutions",
+          url: site.url,
+          email: site.email,
+          areaServed: "Worldwide",
+          serviceType: services.map((service) => service.title),
+        },
+      ]}
+    />
+
+    <div className="matrix-home">
+      <section className="matrix-hero" aria-labelledby="home-title">
+        <div className="matrix-hero__grid" aria-hidden="true" />
+        <div className="matrix-hero__status" aria-hidden="true">
+          <span>SYS.01</span>
+          <span className="matrix-status-signal">ONLINE</span>
+          <span>PHILIPPINES / REMOTE</span>
         </div>
-        <div className="relative min-h-[70vh] flex items-center justify-center text-center px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex justify-center">
-              <img
-                src="/avatar.png"
-                alt="Mark Judaya"
-                className="h-20 w-20 sm:h-24 sm:w-24 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm object-cover sm:mb-0 mb-4"
-                loading="eager"
-              />
-            </div>
-            <p className="block sm:hidden text-sm uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">
-              Mark Judaya
-            </p>
-            <h1 className="mt-4 text-4xl sm:text-6xl font-semibold text-slate-900 dark:text-slate-100">
-              Turning complex workflows into simple, automated systems.
-            </h1>
-            <div className="mt-4 flex items-center justify-center gap-2">
-              <span className="text-lg sm:text-xl font-medium bg-gradient-to-r from-teal-600 via-cyan-500 to-sky-500 bg-clip-text text-transparent">
-                CRM & Automation Specialist
-              </span>
-              <span className="sparkle text-amber-400">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
-                  <path d="M12 2 14.5 8.5 21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5L12 2z" />
-                </svg>
-              </span>
-            </div>
 
-            <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              I help teams ship polished web apps and automate CRM workflows that scale — integrations, pipelines, and
-              reliable systems.
-            </p>
+        <div className="matrix-hero__copy">
+          <p className="matrix-kicker">
+            <span aria-hidden="true">&gt;_</span> Mark Judaya // Systems
+            Developer
+          </p>
+          <h1 id="home-title" className="matrix-title">
+            I build systems that{" "}
+            <span className="matrix-title__glitch" data-text="automate">
+              automate
+            </span>{" "}
+            the work.
+          </h1>
+          <p className="matrix-lead">
+            Custom applications, business automation, and integrations
+            engineered to turn repetitive operations into reliable connected
+            workflows.
+          </p>
 
-            <div className="mt-8 flex items-center justify-center gap-4">
-              <Link
-                to="/projects"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-md bg-teal-600 text-white hover:bg-teal-700 transition-shadow shadow-sm"
-              >
-                View Projects
-              </Link>
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-md border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-              >
-                Contact Me
-              </Link>
-            </div>
+          <div className="matrix-actions">
+            <Link
+              to="/contact"
+              className="matrix-button matrix-button--primary"
+            >
+              <span>Start a project</span>
+              <Icon name="arrow-up-right" />
+            </Link>
+            <a href="#recent-work" className="matrix-button">
+              <span>Recent work</span>
+              <Icon name="arrow-right" className="matrix-icon--down" />
+            </a>
+          </div>
+
+          <div className="matrix-pipeline" aria-label="Delivery workflow">
+            <span>
+              <i aria-hidden="true" />
+              Input
+            </span>
+            <b aria-hidden="true">············</b>
+            <span>
+              <i aria-hidden="true" />
+              Automate
+            </span>
+            <b aria-hidden="true">············</b>
+            <span>
+              <i aria-hidden="true" />
+              Output
+            </span>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <div className="mt-12">
-            <h3 className="text-lg font-medium">Featured work</h3>
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {featuredProjects.map((project) => (
-                <FeaturedProjectCard key={project.id} project={project} />
-              ))}
+        <div className="matrix-hero__visual">
+          <div className="matrix-portrait">
+            <div className="matrix-portrait__header">
+              <span>PORTRAIT_STREAM.dat</span>
+              <span>LIVE</span>
+            </div>
+            <div className="matrix-portrait__screen">
+              <HalftonePortrait />
+              <div className="matrix-portrait__reticle" aria-hidden="true" />
+              <span className="matrix-portrait__axis matrix-portrait__axis--x">
+                X.1209842
+              </span>
+              <span className="matrix-portrait__axis matrix-portrait__axis--y">
+                Y.145995
+              </span>
+            </div>
+            <div className="matrix-portrait__footer" aria-hidden="true">
+              <span>PARTICLE FIELD: ACTIVE</span>
+              <span>MOVE CURSOR TO INTERACT</span>
             </div>
           </div>
+
+          <div className="matrix-automation" aria-hidden="true">
+            <span>BUILD</span>
+            <i />
+            <span>CONNECT</span>
+            <i />
+            <span>SUPPORT</span>
+          </div>
+        </div>
+
+        <div className="matrix-command" aria-hidden="true">
+          <span>mark@systems:~$</span> orchestrate --reliable --maintainable
+          <i />
         </div>
       </section>
-    </>
-  );
-};
+
+      <section
+        id="recent-work"
+        className="matrix-work"
+        aria-labelledby="recent-work-title"
+      >
+        <div className="matrix-section-heading">
+          <div>
+            <p>[ OUTPUT / RECENT ]</p>
+            <h2 id="recent-work-title">Recent work</h2>
+          </div>
+          <Link to="/projects" className="matrix-archive-link">
+            View archive <Icon name="arrow-right" />
+          </Link>
+        </div>
+
+        <div className="matrix-project-grid">
+          {recentProjects.map((project, index) => (
+            <Link
+              key={project.id}
+              to={`/projects/${project.id}`}
+              className={`matrix-project ${index === 0 ? "matrix-project--feature" : ""}`}
+              aria-label={`Read the ${project.title} case study`}
+            >
+              <div className="matrix-project__topline">
+                <span>CASE_{String(index + 1).padStart(2, "0")}</span>
+                <span>{project.projectType}</span>
+              </div>
+
+              {project.featuredPhoto ? (
+                <div className="matrix-project__media">
+                  <img
+                    src={project.featuredPhoto}
+                    alt=""
+                    loading="lazy"
+                    width="1800"
+                    height="1352"
+                  />
+                  <span aria-hidden="true">VISUAL_FEED // 01</span>
+                </div>
+              ) : (
+                <div className="matrix-project__signal" aria-hidden="true">
+                  <span>{project.tags[0]}</span>
+                  <i />
+                  <b>
+                    {project.title
+                      .split(" ")
+                      .slice(0, 2)
+                      .map((word) => word[0])
+                      .join("")}
+                  </b>
+                </div>
+              )}
+
+              <div className="matrix-project__body">
+                <h3>{project.title}</h3>
+                <p>{project.description}</p>
+                <div className="matrix-project__stack" aria-label="Technology">
+                  {project.stack.slice(0, 3).map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="matrix-project__footer">
+                <span>Open case study</span>
+                <Icon name="arrow-up-right" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+    </div>
+  </>
+);
 
 export default Home;

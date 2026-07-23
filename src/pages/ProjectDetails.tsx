@@ -1,245 +1,258 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import ReactMarkdown from 'react-markdown'
-import Seo from '../components/Seo'
-import projects from '../data/projects'
+import { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
+import ContactCta from "../components/ContactCta";
+import Icon from "../components/Icon";
+import ProjectShowcaseCarousel from "../components/ProjectShowcaseCarousel";
+import Seo from "../components/Seo";
+import projects from "../data/projects";
+import { services, site } from "../data/site";
 
-const ProjectDetails: React.FC = () => {
-    const { id } = useParams<{ id: string }>()
-    const project = useMemo(() => projects.find((item) => item.id === id), [id])
-    const [showBanner, setShowBanner] = useState(true)
-    const [inlineVisible, setInlineVisible] = useState(false)
-    const inlineBannerRef = useRef<HTMLDivElement | null>(null)
-	const tagSummary = project?.tags.join(' / ')
-    const [details, setDetails] = useState(() => {
-        if (!id) return ''
-        const preloaded = (globalThis as any).__PROJECT_DETAILS__ as Record<string, string> | undefined
-        return preloaded?.[id] ?? ''
-    })
+type PreloadedProjectDetails = typeof globalThis & {
+  __PROJECT_DETAILS__?: Record<string, string>;
+};
 
-    useEffect(() => {
-        if (!id || details) return
-        const controller = new AbortController()
-
-        fetch(`/project-details/${id}.md`, { signal: controller.signal })
-            .then((response) => (response.ok ? response.text() : ''))
-            .then((text) => {
-                if (text) setDetails(text)
-            })
-            .catch(() => undefined)
-
-        return () => controller.abort()
-    }, [id, details])
-
-    useEffect(() => {
-        if (!project?.fiverrUrl) return
-        let lastScrollY = window.scrollY
-
-        const onScroll = () => {
-            const currentY = window.scrollY
-            const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
-            const progress = currentY / maxScroll
-            const isScrollingDown = currentY > lastScrollY
-
-            if (isScrollingDown) {
-                setShowBanner(false)
-            } else if (progress >= 0.5) {
-                setShowBanner(true)
-            }
-
-            lastScrollY = currentY
-        }
-
-        window.addEventListener('scroll', onScroll, { passive: true })
-        return () => window.removeEventListener('scroll', onScroll)
-    }, [project?.fiverrUrl])
-
-    useEffect(() => {
-        if (!project?.fiverrUrl || !inlineBannerRef.current) return
-        const target = inlineBannerRef.current
-        const observer = new IntersectionObserver(
-            ([entry]) => setInlineVisible(entry.isIntersecting),
-            { threshold: 0.2 }
-        )
-        observer.observe(target)
-        return () => observer.disconnect()
-    }, [project?.fiverrUrl])
-
-    if (!project) {
-        return (
-            <>
-                <Seo
-                    title="Project Not Found"
-                    description="The requested project could not be found."
-                    ogTitle="Project Not Found"
-                    ogDescription="The requested project could not be found."
-                />
-                <section className="max-w-3xl">
-                    <h1 className="text-3xl font-semibold">Project not found</h1>
-                    <p className="mt-3 text-slate-600 dark:text-slate-300">The project you are looking for does not exist.</p>
-                    <Link to="/projects" className="mt-6 inline-flex items-center px-4 py-2 rounded-md bg-teal-600 text-white hover:bg-teal-700 transition">
-                        Back to projects
-                    </Link>
-                </section>
-            </>
-        )
-    }
-
+const ProjectDetails = () => {
+  const { id } = useParams<{ id: string }>();
+  const project = useMemo(() => projects.find((item) => item.id === id), [id]);
+  const [details, setDetails] = useState(() => {
+    if (!id) return "";
     return (
-        <>
-            <Seo
-                title={project.title}
-                description={project.description}
-                ogTitle={project.title}
-                ogDescription={project.description}
-                ogType="article"
-                canonical={`/projects/${project.id}`}
+      (globalThis as PreloadedProjectDetails).__PROJECT_DETAILS__?.[id] ?? ""
+    );
+  });
+
+  useEffect(() => {
+    if (!id || details) return;
+    const controller = new AbortController();
+
+    fetch(`/project-details/${id}.md`, { signal: controller.signal })
+      .then((response) => (response.ok ? response.text() : ""))
+      .then((content) => setDetails(content))
+      .catch(() => undefined);
+
+    return () => controller.abort();
+  }, [id, details]);
+
+  if (!project) {
+    return (
+      <>
+        <Seo
+          title="Project not found"
+          description="The requested project could not be found."
+          noIndex
+        />
+        <section className="not-found section-shell">
+          <p className="eyebrow">404</p>
+          <h1>That case study is not here.</h1>
+          <p>The link may be outdated, or the project may have moved.</p>
+          <Link to="/projects" className="button button--primary">
+            View selected work
+          </Link>
+        </section>
+      </>
+    );
+  }
+
+  const relatedService = services.find((service) =>
+    service.relatedProjectIds.includes(project.id),
+  );
+
+  return (
+    <>
+      <Seo
+        title={project.title}
+        description={project.description}
+        ogType="article"
+        canonical={`/projects/${project.id}`}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "CreativeWork",
+          name: project.title,
+          description: project.description,
+          creator: { "@type": "Person", name: site.name, url: site.url },
+          url: `${site.url}/projects/${project.id}`,
+        }}
+      />
+
+      <article className="case-study">
+        <header className="case-hero section-shell">
+          <Link to="/projects" className="back-link">
+            <Icon name="arrow-right" /> Back to selected work
+          </Link>
+          <div className="case-hero__grid">
+            <div>
+              <div className="project-card__meta">
+                <span>{project.projectType}</span>
+                <span aria-hidden="true">•</span>
+                <span>{project.services[0]}</span>
+              </div>
+              <h1>{project.title}</h1>
+              <p className="case-hero__lead">{project.description}</p>
+              <div className="hero__actions">
+                {project.links?.live && (
+                  <a
+                    href={project.links.live}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="button button--primary"
+                  >
+                    Open project overview{" "}
+                    <Icon name="arrow-up-right" className="button__icon" />
+                  </a>
+                )}
+                {project.links?.repo && (
+                  <a
+                    href={project.links.repo}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="button button--secondary"
+                  >
+                    View repository{" "}
+                    <Icon name="arrow-up-right" className="button__icon" />
+                  </a>
+                )}
+              </div>
+            </div>
+            <dl className="case-facts">
+              <div>
+                <dt>My role</dt>
+                <dd>{project.role}</dd>
+              </div>
+              <div>
+                <dt>Timeline</dt>
+                <dd>
+                  {project.dateStarted} — {project.dateFinished}
+                </dd>
+              </div>
+              <div>
+                <dt>Services</dt>
+                <dd>{project.services.join(", ")}</dd>
+              </div>
+            </dl>
+          </div>
+        </header>
+
+        {project.featuredPhoto && !project.showcase && (
+          <figure className="case-media section-shell">
+            <img
+              src={project.featuredPhoto}
+              alt={
+                project.featuredPhotoAlt ??
+                `Featured interface from ${project.title}`
+              }
+              width="1280"
+              height="720"
             />
-            <section className="max-w-4xl">
-                <div className="flex items-center justify-between gap-4 flex-wrap">
-                    <Link to="/projects" className="text-sm text-slate-600 dark:text-slate-300 hover:text-teal-600 transition">
-                        Back to projects
-                    </Link>
-                </div>
+            {project.featuredPhotoCaption && (
+              <figcaption>
+                <span aria-hidden="true">SCREEN_00</span>
+                {project.featuredPhotoCaption}
+              </figcaption>
+            )}
+          </figure>
+        )}
 
-                <h1 className="mt-4 text-3xl sm:text-4xl font-semibold text-slate-900 dark:text-slate-100">{project.title}</h1>
-                <div className="text-sm text-slate-500 dark:text-slate-400">{tagSummary}</div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                    {project.featured && (
-                        <span className="text-xs px-2 py-1 rounded-full bg-teal-600/10 text-teal-700 dark:bg-teal-500/15 dark:text-teal-200">
-                            Featured
-                        </span>
-                    )}
-                </div>
-                <p className="mt-3 text-slate-600 dark:text-slate-300">{project.description}</p>
+        <section
+          className="case-summary section-shell"
+          aria-label="Case study summary"
+        >
+          <div>
+            <span>Context</span>
+            <p>{project.context}</p>
+          </div>
+          <div>
+            <span>Problem</span>
+            <p>{project.problem}</p>
+          </div>
+          <div>
+            <span>Outcome</span>
+            <p>{project.outcome}</p>
+          </div>
+        </section>
 
-                {project.featuredPhoto && <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900">
-                    <img src={project.featuredPhoto} alt={`${project.title} featured`} className="w-full h-64 object-cover object-center" />
-                </div>}
+        {project.showcase && (
+          <section
+            className="case-showcase section-shell"
+            aria-labelledby="product-showcase-title"
+          >
+            <header className="case-showcase__heading">
+              <div>
+                <p className="eyebrow">Product tour</p>
+                <h2 id="product-showcase-title">
+                  One workflow, from source data to channel-ready output.
+                </h2>
+              </div>
+              <p>
+                The interface keeps catalogue governance, operational status,
+                and system structure visible without separating them from the
+                work they control.
+              </p>
+            </header>
 
-                <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4">
-                        <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Timeline</h2>
-                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Started: {project.dateStarted}</p>
-                        <p className="text-sm text-slate-600 dark:text-slate-300">Finished: {project.dateFinished}</p>
-                    </div>
-                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4">
-                        <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Tech Stack</h2>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                            {project.stack.map((stack) => (
-                                <span key={stack} className="text-xs px-2 py-1 rounded-full bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-200">
-                                    {stack}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+            <ProjectShowcaseCarousel screens={project.showcase} />
+          </section>
+        )}
 
-                {project.links && (
-                    <div className="mt-6 flex flex-wrap gap-3">
-                        {project.links.live && (
-                            <a href={project.links.live} target="_blank" rel="noreferrer" className="inline-flex items-center px-4 py-2 rounded-md bg-teal-600 text-white hover:bg-teal-700 transition">
-                                Live demo
-                            </a>
-                        )}
-                        {project.links.repo && (
-                            <a href={project.links.repo} target="_blank" rel="noreferrer" className="inline-flex items-center px-4 py-2 rounded-md border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                                View code
-                            </a>
-                        )}
-                    </div>
-                )}
+        <div className="case-body section-shell">
+          <aside className="case-sidebar">
+            <div>
+              <span>Technology</span>
+              <ul>
+                {project.stack.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+            {relatedService && (
+              <div>
+                <span>Related service</span>
+                <Link to={`/services#${relatedService.id}`}>
+                  {relatedService.title}
+                  <Icon name="arrow-right" />
+                </Link>
+              </div>
+            )}
+          </aside>
 
-                {details && (
-                    <article className="prose prose-slate dark:prose-invert mt-8 max-w-none">
-                        <ReactMarkdown>{details}</ReactMarkdown>
-                    </article>
-                )}
-
-                {project.fiverrUrl && details && (
-                    <div ref={inlineBannerRef} className="mt-8">
-                        <a
-                            href={project.fiverrUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-5 py-4 text-left text-slate-900 shadow-sm transition hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
-                        >
-                            <div className="flex items-center gap-3">
-                                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-600/10 text-teal-600 dark:bg-teal-500/15 dark:text-teal-300 flex-shrink-0">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="h-5 w-5"
-                                    >
-                                        <path d="M4 7h16" />
-                                        <path d="M4 12h16" />
-                                        <path d="M4 17h10" />
-                                    </svg>
-                                </span>
-                                <div>
-                                    <p className="text-sm font-semibold">Hire me on Fiverr</p>
-                                    <p className="text-sm text-slate-600 dark:text-slate-300">
-                                        {project.fiverrMessage || 'Get this kind of build for your CRM or automation stack.'}
-                                    </p>
-                                </div>
-                            </div>
-                            <span className="text-sm font-medium text-teal-600 dark:text-teal-300 whitespace-nowrap">View gig</span>
-                        </a>
-                    </div>
-                )}
-
-
-                {!details && (
-                    <p className="mt-8 text-sm text-slate-500 dark:text-slate-400"></p>
-                )}
-            </section>
+          <div className="case-content">
+            {details ? (
+              <ReactMarkdown>{details}</ReactMarkdown>
+            ) : (
+              <div className="case-loading" role="status">
+                Loading case study details…
+              </div>
+            )}
 
             {project.fiverrUrl && (
-                <div
-                    className={`fixed inset-x-0 bottom-4 z-40 px-4 transition-all duration-300 ${showBanner && !inlineVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0 pointer-events-none'
-                        }`}
-                >
-                    <a
-                        href={project.fiverrUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mx-auto flex max-w-3xl items-center justify-between gap-4 rounded-xl border border-emerald-700 bg-emerald-700 px-5 py-4 text-left text-white shadow-lg transition hover:shadow-xl"
-                    >
-                        <div className="flex items-center gap-3">
-                            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15  flex-shrink-0">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="h-5 w-5"
-                                >
-                                    <path d="M4 7h16" />
-                                    <path d="M4 12h16" />
-                                    <path d="M4 17h10" />
-                                </svg>
-                            </span>
-                            <div>
-                                <p className="text-sm font-semibold">Hire me on Fiverr</p>
-                                <p className="text-sm text-white/80">
-                                    {project.fiverrMessage || 'Get this kind of build for your CRM or automation stack.'}
-                                </p>
-                            </div>
-                        </div>
-                        <span className="text-sm font-medium whitespace-nowrap">View gig</span>
-                    </a>
+              <div className="case-contact-card">
+                <div>
+                  <span>Need a similar integration?</span>
+                  <p>{project.fiverrMessage}</p>
                 </div>
+                <a
+                  href={project.fiverrUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-link"
+                >
+                  View this service on Fiverr <Icon name="arrow-up-right" />
+                </a>
+              </div>
             )}
-        </>
-    )
-}
+          </div>
+        </div>
+      </article>
 
-export default ProjectDetails
+      <div className="section-shell page-section page-section--cta">
+        <ContactCta
+          eyebrow="Discuss a related project"
+          title="Need to solve a similar workflow or system problem?"
+          copy="Share the current process, the tools involved, and what needs to improve. I’ll help you identify a practical next step."
+        />
+      </div>
+    </>
+  );
+};
+
+export default ProjectDetails;

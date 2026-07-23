@@ -1,56 +1,74 @@
-import React, { Suspense, lazy } from 'react'
+import { site } from "../data/site";
+import { Helmet } from "../lib/helmet";
+
+type StructuredData = Record<string, unknown>;
 
 interface SeoProps {
-    title: string
-    description: string
-    ogTitle?: string
-    ogDescription?: string
-    ogType?: string
-    canonical?: string
+  title: string;
+  description: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogType?: string;
+  canonical?: string;
+  noIndex?: boolean;
+  structuredData?: StructuredData | StructuredData[];
 }
 
-// Lazy load Helmet to avoid module resolution issues during prerender
-const HelmetComponent = lazy(async () => {
-    const { Helmet } = await import('react-helmet-async')
-    // Wrap Helmet to properly handle children
-    return {
-        default: (props: any) => React.createElement(Helmet, null, props.children)
-    }
-})
+const Seo = ({
+  title,
+  description,
+  ogTitle,
+  ogDescription,
+  ogType = "website",
+  canonical = "/",
+  noIndex = false,
+  structuredData,
+}: SeoProps) => {
+  const fullTitle = title === site.name ? title : `${title} | ${site.name}`;
+  const canonicalUrl = canonical.startsWith("http")
+    ? canonical
+    : new URL(canonical, site.url).toString();
+  const socialImage = `${site.url}/social-card.svg`;
 
-const SeoContent: React.FC<SeoProps> = ({
-    title,
-    description,
-    ogTitle,
-    ogDescription,
-    ogType = 'website',
-    canonical,
-}) => {
-    const siteName = 'Mark Judaya'
-    const fullTitle = `${title} – ${siteName}`
+  return (
+    <Helmet>
+      <title>{fullTitle}</title>
+      <meta name="description" content={description} />
+      {noIndex && <meta name="robots" content="noindex, follow" />}
+      <link rel="canonical" href={canonicalUrl} />
 
-    return (
-        <Suspense fallback={null}>
-            <HelmetComponent>
-                <title>{fullTitle}</title>
-                <meta name="description" content={description} />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta property="og:title" content={ogTitle || fullTitle} />
+      <meta property="og:description" content={ogDescription || description} />
+      <meta property="og:type" content={ogType} />
+      <meta property="og:site_name" content={site.name} />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:image" content={socialImage} />
+      <meta
+        property="og:image:alt"
+        content="Mark Judaya — IT solutions for growing businesses"
+      />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={ogTitle || fullTitle} />
+      <meta name="twitter:description" content={ogDescription || description} />
+      <meta name="twitter:image" content={socialImage} />
+      <meta
+        name="theme-color"
+        content="#f6f5f1"
+        media="(prefers-color-scheme: light)"
+      />
+      <meta
+        name="theme-color"
+        content="#101514"
+        media="(prefers-color-scheme: dark)"
+      />
 
-                {/* Open Graph Tags */}
-                <meta property="og:title" content={ogTitle || title} />
-                <meta property="og:description" content={ogDescription || description} />
-                <meta property="og:type" content={ogType} />
-                <meta property="og:site_name" content={siteName} />
+      {structuredData && (
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      )}
+    </Helmet>
+  );
+};
 
-                {/* Canonical */}
-                {canonical && <link rel="canonical" href={canonical} />}
-
-                {/* Additional useful metas */}
-                <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-                <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
-            </HelmetComponent>
-        </Suspense>
-    )
-}
-
-export default SeoContent
+export default Seo;

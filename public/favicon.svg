@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="128" height="128" fill="url(#grad)" rx="24"/>
-  <text x="64" y="85" font-size="72" font-weight="bold" fill="white" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">M</text>
+  <rect width="128" height="128" rx="64" fill="#10241f"/>
+  <circle cx="64" cy="64" r="49" fill="none" stroke="#7fc4b3" stroke-width="2"/>
+  <text x="64" y="77" text-anchor="middle" fill="#f6f5f1" font-family="Georgia, serif" font-size="40" letter-spacing="-2">MJ</text>
 </svg>

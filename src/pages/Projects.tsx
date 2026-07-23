@@ -1,56 +1,96 @@
-import React, { useMemo, useState } from 'react'
-import projects from '../data/projects'
-import ProjectCard from '../components/ProjectCard'
-import Seo from '../components/Seo'
+import { Link } from "react-router-dom";
+import ContactCta from "../components/ContactCta";
+import Icon from "../components/Icon";
+import ProjectCard from "../components/ProjectCard";
+import Seo from "../components/Seo";
+import projects from "../data/projects";
 
-const Projects: React.FC = () => {
-    const [activeTag, setActiveTag] = useState('All')
-    const tags = useMemo(() => {
-        const unique = new Set<string>()
-        projects.forEach((project) => project.tags.forEach((tag) => unique.add(tag)))
-        return ['All', ...Array.from(unique).sort()]
-    }, [])
+const Projects = () => {
+  const [leadProject, ...otherProjects] = projects;
 
-    const filteredProjects = activeTag === 'All' ? projects : projects.filter((project) => project.tags.includes(activeTag))
+  return (
+    <>
+      <Seo
+        title="Selected work"
+        description="Case studies in custom application development, data migration, business automation, Zoho, API integration, and operational support."
+        canonical="/projects"
+      />
 
-    return (
-        <>
-            <Seo
-                title="Projects – Mark Judaya"
-                description="A collection of real-world projects focused on CRM systems, automation, and full-stack development. View my work in action."
-                ogTitle="Projects – Mark Judaya"
-                ogDescription="Real-world CRM, automation, and integration projects showcasing full-stack development."
-            />
-            <section>
-                <h1 className="text-3xl font-semibold">Projects</h1>
-                <p className="mt-3 text-slate-600 dark:text-slate-300">A selection of my recent work focused on CRM, automations and integrations.</p>
+      <header className="page-hero section-shell">
+        <p className="eyebrow">Selected work</p>
+        <h1>Practical systems, explained through the problems they solve.</h1>
+        <p>
+          These projects span application development, data operations,
+          integrations, and automation. Where client details are private, the
+          case study stays focused on the workflow, responsibility, and
+          technical approach.
+        </p>
+      </header>
 
-                <div className="mt-6 flex flex-wrap gap-2">
-                    {tags.map((tag) => {
-                        const isActive = tag === activeTag
-                        return (
-                            <button
-                                key={tag}
-                                onClick={() => setActiveTag(tag)}
-                                className={`px-3 py-1 rounded-full text-sm border transition ${isActive
-                                        ? 'bg-teal-600 text-white border-teal-600'
-                                        : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                                    }`}
-                            >
-                                {tag}
-                            </button>
-                        )
-                    })}
-                </div>
+      <section
+        className="work-index section-shell"
+        aria-labelledby="featured-case-study"
+      >
+        <article className="lead-case-study">
+          <Link
+            to={`/projects/${leadProject.id}`}
+            className="lead-case-study__media"
+          >
+            {leadProject.featuredPhoto && (
+              <img
+                src={leadProject.featuredPhoto}
+                alt={
+                  leadProject.featuredPhotoAlt ??
+                  `Featured interface from ${leadProject.title}`
+                }
+                width="1800"
+                height="1352"
+                fetchPriority="high"
+              />
+            )}
+          </Link>
+          <div className="lead-case-study__content">
+            <div className="project-card__meta">
+              <span>Featured case study</span>
+              <span aria-hidden="true">•</span>
+              <span>{leadProject.projectType}</span>
+            </div>
+            <h2 id="featured-case-study">
+              <Link to={`/projects/${leadProject.id}`}>
+                {leadProject.title}
+              </Link>
+            </h2>
+            <p>{leadProject.problem}</p>
+            <div className="case-outcome">
+              <span>Outcome</span>
+              <p>{leadProject.outcome}</p>
+            </div>
+            <Link
+              to={`/projects/${leadProject.id}`}
+              className="button button--primary"
+            >
+              Read the case study{" "}
+              <Icon name="arrow-right" className="button__icon" />
+            </Link>
+          </div>
+        </article>
 
-                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredProjects.map((p) => (
-                        <ProjectCard key={p.id} project={p} />
-                    ))}
-                </div>
-            </section>
-        </>
-    )
-}
+        <div className="work-grid">
+          {otherProjects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
+      </section>
 
-export default Projects
+      <div className="section-shell page-section page-section--cta">
+        <ContactCta
+          eyebrow="Your project"
+          title="Need a similar system—or something the existing tools cannot quite handle?"
+          copy="Describe the current workflow and the change you need. I’ll help you turn it into a clear technical next step."
+        />
+      </div>
+    </>
+  );
+};
+
+export default Projects;

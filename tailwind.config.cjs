@@ -1,14 +1,14 @@
-const typography = require('@tailwindcss/typography')
+const typography = require("@tailwindcss/typography");
 
 module.exports = {
-  darkMode: 'class',
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: "class",
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
         // subtle tweak for better contrast
-      }
-    }
+      },
+    },
   },
-  plugins: [typography]
-}
+  plugins: [typography],
+};
