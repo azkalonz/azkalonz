@@ -1,86 +1,342 @@
-import React from "react";
 import { Link } from "react-router-dom";
+import ContactCta from "../components/ContactCta";
+import HalftonePortrait from "../components/HalftonePortrait";
+import Icon from "../components/Icon";
+import ProjectCard from "../components/ProjectCard";
+import SectionHeading from "../components/SectionHeading";
 import Seo from "../components/Seo";
 import projects from "../data/projects";
-import FeaturedProjectCard from "../components/FeaturedProjectCard";
+import { capabilities, faqs, services, site } from "../data/site";
 
-const featuredProjects = projects.filter((project) => project.featured);
+const featuredProjects = projects
+  .filter((project) => project.featured)
+  .slice(0, 3);
 
-const Home: React.FC = () => {
-  return (
-    <>
-      <Seo
-        title="Mark Judaya – Full Stack Developer & CRM Automation Specialist"
-        description="Full stack developer specializing in CRM systems, automations, and modern web applications. View projects and get in touch."
-        ogTitle="Mark Judaya – Full Stack Developer"
-        ogDescription="I build modern web apps, CRM automations, and integrations that scale."
+const serviceIcons = ["code", "layers", "compass", "support"] as const;
+
+const Home = () => (
+  <>
+    <Seo
+      title="IT solutions for growing businesses"
+      description="Custom web and mobile applications, business systems, automation, integrations, technical consultation, and ongoing application support from Mark Judaya."
+      canonical="/"
+      structuredData={[
+        {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: site.name,
+          url: site.url,
+          image: `${site.url}/avatar.webp`,
+          jobTitle: "IT Solutions Developer",
+          sameAs: [
+            site.socials.linkedin,
+            site.socials.github,
+            site.socials.fiverr,
+          ],
+          knowsAbout: [
+            "Web application development",
+            "Systems integration",
+            "Business automation",
+            "Zoho",
+            "Technical consulting",
+          ],
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "ProfessionalService",
+          name: "Mark Judaya IT Solutions",
+          url: site.url,
+          email: site.email,
+          areaServed: "Worldwide",
+          serviceType: services.map((service) => service.title),
+        },
+      ]}
+    />
+
+    <section className="hero section-shell" aria-labelledby="home-title">
+      <div className="hero__copy">
+        <p className="eyebrow">Full-service IT solutions</p>
+        <h1 id="home-title">
+          I build, connect, and support the technology your business relies on.
+        </h1>
+        <p className="hero__lead">
+          Custom applications, business systems, automation, integrations,
+          technical consultation, and ongoing support—delivered with a practical
+          full-stack approach.
+        </p>
+        <div className="hero__actions">
+          <Link to="/contact" className="button button--primary">
+            Start a project <Icon name="arrow-right" className="button__icon" />
+          </Link>
+          <Link to="/projects" className="button button--secondary">
+            View selected work
+          </Link>
+        </div>
+        <p className="hero__note">
+          Direct collaboration from discovery through delivery and continued
+          improvement.
+        </p>
+      </div>
+
+      <div className="hero__visual">
+        <figure className="hero-halftone">
+          <div className="hero-halftone__canvas">
+            <HalftonePortrait />
+            <div className="hero-halftone__coordinates" aria-hidden="true">
+              <span>14.5995° N</span>
+              <span>120.9842° E</span>
+            </div>
+          </div>
+          <figcaption className="hero-halftone__caption">
+            <span>
+              <strong>Mark Judaya</strong>
+              Full-stack development & systems integration
+            </span>
+            <span className="hero-halftone__hint">
+              <i aria-hidden="true" />
+              Move through the dots
+            </span>
+          </figcaption>
+        </figure>
+        <div className="hero-system" aria-hidden="true">
+          <span>Build</span>
+          <i />
+          <span>Connect</span>
+          <i />
+          <span>Improve</span>
+          <i />
+          <span>Support</span>
+        </div>
+      </div>
+    </section>
+
+    <section className="proof-strip" aria-label="Core areas of expertise">
+      <div className="proof-strip__intro">
+        <span className="status-dot" />
+        Available for focused projects and ongoing work
+      </div>
+      <div className="proof-strip__items">
+        <span>Full-stack delivery</span>
+        <span>Business systems</span>
+        <span>Zoho & API integrations</span>
+        <span>Application support</span>
+      </div>
+    </section>
+
+    <section
+      className="page-section section-shell"
+      aria-labelledby="services-title"
+    >
+      <SectionHeading
+        eyebrow="Services"
+        title="Technical help shaped around the business problem."
+        description="I can take responsibility for a complete application, a difficult connection between systems, or a focused improvement to technology you already use."
+        action={
+          <Link to="/services" className="text-link">
+            Explore all services <Icon name="arrow-right" />
+          </Link>
+        }
       />
-      <section className="relative py-16">
-        <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-          <div className="hero-grid" />
-        </div>
-        <div className="relative min-h-[70vh] flex items-center justify-center text-center px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex justify-center">
-              <img
-                src="/avatar.png"
-                alt="Mark Judaya"
-                className="h-20 w-20 sm:h-24 sm:w-24 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm object-cover sm:mb-0 mb-4"
-                loading="eager"
-              />
+      <div className="service-grid">
+        {services.map((service, index) => (
+          <article className="service-card" key={service.id}>
+            <div className="service-card__top">
+              <span className="service-card__number">{service.number}</span>
+              <Icon name={serviceIcons[index]} className="service-card__icon" />
             </div>
-            <p className="block sm:hidden text-sm uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">
-              Mark Judaya
-            </p>
-            <h1 className="mt-4 text-4xl sm:text-6xl font-semibold text-slate-900 dark:text-slate-100">
-              Turning complex workflows into simple, automated systems.
-            </h1>
-            <div className="mt-4 flex items-center justify-center gap-2">
-              <span className="text-lg sm:text-xl font-medium bg-gradient-to-r from-teal-600 via-cyan-500 to-sky-500 bg-clip-text text-transparent">
-                CRM & Automation Specialist
-              </span>
-              <span className="sparkle text-amber-400">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
-                  <path d="M12 2 14.5 8.5 21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5L12 2z" />
-                </svg>
-              </span>
-            </div>
-
-            <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              I help teams ship polished web apps and automate CRM workflows that scale — integrations, pipelines, and
-              reliable systems.
-            </p>
-
-            <div className="mt-8 flex items-center justify-center gap-4">
-              <Link
-                to="/projects"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-md bg-teal-600 text-white hover:bg-teal-700 transition-shadow shadow-sm"
-              >
-                View Projects
-              </Link>
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-md border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-              >
-                Contact Me
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <div className="mt-12">
-            <h3 className="text-lg font-medium">Featured work</h3>
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {featuredProjects.map((project) => (
-                <FeaturedProjectCard key={project.id} project={project} />
+            <h3>{service.title}</h3>
+            <p>{service.summary}</p>
+            <ul>
+              {service.deliverables.slice(0, 3).map((item) => (
+                <li key={item}>{item}</li>
               ))}
-            </div>
-          </div>
+            </ul>
+            <Link to={`/services#${service.id}`} className="text-link">
+              View this service <Icon name="arrow-right" />
+            </Link>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section
+      className="page-section page-section--tinted"
+      aria-labelledby="work-title"
+    >
+      <div className="section-shell">
+        <SectionHeading
+          eyebrow="Selected work"
+          title="Evidence of systems made clearer, more connected, and easier to operate."
+          description="Each case study focuses on the operating problem, my role, the technical approach, and what changed."
+          action={
+            <Link to="/projects" className="text-link">
+              View all work <Icon name="arrow-right" />
+            </Link>
+          }
+        />
+        <div className="featured-work-grid">
+          {featuredProjects.map((project, index) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              layout={index === 0 ? "feature" : "card"}
+            />
+          ))}
         </div>
-      </section>
-    </>
-  );
-};
+      </div>
+    </section>
+
+    <section
+      className="page-section section-shell"
+      aria-labelledby="process-title"
+    >
+      <SectionHeading
+        eyebrow="How I work"
+        title="A clear path from an unclear problem to a useful system."
+        description="The process stays lightweight and adapts to the work, but the important decisions are made deliberately."
+      />
+      <ol className="process-list">
+        <li>
+          <span>01</span>
+          <div>
+            <h3>Discover</h3>
+            <p>
+              Understand the current workflow, users, constraints, and the
+              outcome that matters.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span>02</span>
+          <div>
+            <h3>Define</h3>
+            <p>
+              Clarify scope, system boundaries, data, risks, and the smallest
+              useful delivery plan.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span>03</span>
+          <div>
+            <h3>Build & connect</h3>
+            <p>
+              Implement the interface, application logic, and integrations with
+              review points along the way.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span>04</span>
+          <div>
+            <h3>Validate & support</h3>
+            <p>
+              Test the real workflow, document the solution, launch carefully,
+              and improve it after use.
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section
+      className="page-section page-section--dark"
+      aria-labelledby="why-title"
+    >
+      <div className="section-shell split-section">
+        <div>
+          <p className="eyebrow eyebrow--light">Why work with me</p>
+          <h2 id="why-title" className="section-title section-title--light">
+            One technical partner who can see the whole workflow.
+          </h2>
+          <p className="section-copy section-copy--light">
+            I work across product interfaces, application logic, data, and
+            integrations. That means fewer handoffs between the business problem
+            and the implementation details.
+          </p>
+          <Link to="/about" className="button button--outline-light">
+            How I approach the work
+          </Link>
+        </div>
+        <div className="principles-list">
+          {[
+            [
+              "Business-aware",
+              "The implementation starts with how the work actually happens, not with a preferred tool.",
+            ],
+            [
+              "Maintainable",
+              "Clear structure, validation, documentation, and sensible technical choices matter after launch.",
+            ],
+            [
+              "Direct",
+              "You work with the person planning and implementing the solution.",
+            ],
+            [
+              "Practical",
+              "Existing systems are improved or connected when that is more useful than rebuilding.",
+            ],
+          ].map(([title, copy]) => (
+            <div key={title}>
+              <Icon name="check" />
+              <p>
+                <strong>{title}</strong>
+                <span>{copy}</span>
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section
+      className="page-section section-shell"
+      aria-labelledby="capabilities-title"
+    >
+      <SectionHeading
+        eyebrow="Technical capabilities"
+        title="Technology is supporting evidence, not the sales pitch."
+        description="The stack changes with the problem. These are the tools and platforms represented in the work shown here."
+      />
+      <div className="capability-grid">
+        {capabilities.map((group) => (
+          <div className="capability-group" key={group.title}>
+            <h3>{group.title}</h3>
+            <ul>
+              {group.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section
+      className="page-section page-section--bordered section-shell"
+      aria-labelledby="faq-title"
+    >
+      <SectionHeading
+        eyebrow="Frequently asked questions"
+        title="Useful answers before we talk."
+      />
+      <div className="faq-list">
+        {faqs.map((item) => (
+          <details key={item.question}>
+            <summary>
+              {item.question}
+              <span aria-hidden="true">+</span>
+            </summary>
+            <p>{item.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <div className="section-shell page-section page-section--cta">
+      <ContactCta />
+    </div>
+  </>
+);
 
 export default Home;

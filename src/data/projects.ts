@@ -1,87 +1,129 @@
 export type Project = {
-	id: string
-	title: string
-	description: string
-	stack: string[]
-	tags: string[]
-	featured: boolean
-	featuredPhoto: string
-	dateStarted: string
-	dateFinished: string
-	fiverrUrl?: string
-	fiverrMessage?: string
-	thumbnail?: string
-	links?: {
-		repo?: string
-		live?: string
-	}
-}
-
-function makeThumb(title: string, a = '#6366f1', b = '#8b5cf6') {
-	const short = title.toUpperCase()
-	const svg = `
-	<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='800' viewBox='0 0 1200 800'>
-		<defs>
-			<linearGradient id='g' x1='0' x2='1'>
-				<stop stop-color='${a}' offset='0'/>
-				<stop stop-color='${b}' offset='1'/>
-			</linearGradient>
-		</defs>
-		<rect width='100%' height='100%' fill='url(#g)' />
-		<g fill='rgba(255,255,255,0.12)'>
-			<rect x='40' y='40' width='400' height='200' rx='12'/>
-			<rect x='480' y='200' width='600' height='120' rx='8'/>
-		</g>
-		<text x='60' y='190' font-family='Inter, Roboto, sans-serif' font-size='90' fill='white' fill-opacity='0.95' font-weight='700'>${short}</text>
-	</svg>`
-	return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
-}
+  id: string;
+  title: string;
+  description: string;
+  context: string;
+  problem: string;
+  outcome: string;
+  role: string;
+  services: string[];
+  stack: string[];
+  tags: string[];
+  featured: boolean;
+  featuredPhoto?: string;
+  dateStarted: string;
+  dateFinished: string;
+  projectType: "Private case study" | "Live product" | "Public repository";
+  fiverrUrl?: string;
+  fiverrMessage?: string;
+  links?: {
+    repo?: string;
+    live?: string;
+  };
+};
 
 export const projects: Project[] = [
-	{
-		id: "salesforce-to-zoho-crm-migration",
-		title: "Salesforce to Zoho CRM Migration",
-		description: "Led a large-scale CRM data migration from Salesforce to Zoho CRM, covering data export, cleaning, transformation, and field mapping. Ensured data integrity by preserving Salesforce record IDs and executed an initial import while Salesforce remained the active system.",
-		stack: ["Zoho CRM", "Salesforce", "Data Migration", "CSV", "Deluge"],
-		tags: ["CRM Migration", "Data Engineering", "Salesforce", "Zoho"],
-		featured: true,
-		featuredPhoto: "",
-		dateStarted: "October 2025",
-		dateFinished: "November 2025",
-		fiverrUrl: "https://www.fiverr.com/s/38QqKDr",
-		fiverrMessage: "Need a clean CRM migration plan? I can map, validate, and deploy it fast.",
-		thumbnail: makeThumb("CRM Data Migration", "#6366f1", "#4338ca"),
-	}
-	,
-	{
-		id: "zoho-inventory-erp-integration",
-		title: "Zoho Inventory ERP Integration",
-		description: "Built a custom integration to automatically push sales orders from Zoho Inventory to a third-party ERP system, eliminating manual data entry and improving order processing accuracy and speed.",
-		stack: ["Zoho Deluge", "n8n", "Postman"],
-		tags: ['CRM', 'Zoho', 'ERP', 'Automation'],
-		featured: false,
-		featuredPhoto: "",
-		dateStarted: "2023-05",
-		dateFinished: "2023-06",
-		fiverrUrl: "https://www.fiverr.com/s/wk6N268",
-		fiverrMessage: "Automate Zoho Inventory to ERP syncs with validation and retries built-in.",
-		thumbnail: ""
-	},
-	{
-		id: "mirakl-zoho-inventory-integration",
-		title: "Mirakl Marketplace Integration",
-		description: "Developed an automated integration to sync marketplace orders from Mirakl into Zoho Inventory, including order acceptance, shipment updates, document handling, and incident tracking via Zoho Desk.",
-		stack: ["Zoho Inventory", "Zoho Desk", "Deluge", "REST API", "n8n"],
-		tags: ["Marketplace", "Integration", "Automation", "Order Sync"],
-		featured: true,
-		featuredPhoto: "",
-		dateStarted: "2026-01",
-		dateFinished: "2026-02",
-		fiverrUrl: "https://www.fiverr.com/s/DBvEbxa",
-		fiverrMessage: "Start integrating your Mirakl Marketplace with Zoho Inventory.",
-		thumbnail: ""
-	}
-]
+  {
+    id: "urban-road-pim",
+    title: "Urban Road Product Information Management Platform",
+    description:
+      "A governed product information platform that turns supplier spreadsheets into a validated catalogue and channel-ready files.",
+    context:
+      "An internal product operations platform for an Australian wall-art business with catalogue data distributed across Shopify, Zoho, and marketplace partners.",
+    problem:
+      "New collections required repeated spreadsheet reshaping and data entry, making product launches difficult to audit and vulnerable to inconsistent information.",
+    outcome:
+      "Centralized catalogue governance, validation, review, and channel exports in one operational workflow that continues to evolve with the business.",
+    role: "Full-stack application development, workflow design, data modelling, and technical delivery",
+    services: [
+      "Application development",
+      "Technical consulting",
+      "Ongoing improvements",
+    ],
+    stack: [
+      "Laravel",
+      "React",
+      "TypeScript",
+      "PostgreSQL",
+      "Redis",
+      "Tailwind CSS",
+    ],
+    tags: ["PIM", "Full stack", "Data workflows"],
+    featured: true,
+    featuredPhoto: "/urban-road-pim-hero.webp",
+    dateStarted: "July 2026",
+    dateFinished: "Ongoing",
+    projectType: "Live product",
+    links: {
+      live: "https://ur-pim.tail042666.ts.net/",
+    },
+  },
+  {
+    id: "salesforce-to-zoho-crm-migration",
+    title: "Salesforce to Zoho CRM Migration",
+    description:
+      "A staged CRM migration covering export, cleaning, transformation, field mapping, validation, and continuity planning.",
+    context:
+      "Salesforce needed to remain active during the initial move to Zoho CRM so day-to-day operations could continue while the migrated data was validated.",
+    problem:
+      "More than 220,000 records across core CRM modules needed to move without losing relationships, traceability, or a path for later attachment migration.",
+    outcome:
+      "Transferred the required CRM data while preserving Salesforce record IDs, module relationships, and a structured foundation for the final transition.",
+    role: "Migration planning, data preparation, field mapping, import execution, and validation",
+    services: ["Automation & integration", "Technical consulting"],
+    stack: ["Zoho CRM", "Salesforce", "Data migration", "CSV", "Deluge"],
+    tags: ["CRM migration", "Data engineering", "Zoho"],
+    featured: true,
+    dateStarted: "October 2025",
+    dateFinished: "November 2025",
+    projectType: "Private case study",
+    fiverrUrl: "https://www.fiverr.com/s/38QqKDr",
+    fiverrMessage: "Discuss a structured CRM migration and validation plan.",
+  },
+  {
+    id: "mirakl-zoho-inventory-integration",
+    title: "Mirakl Marketplace Integration",
+    description:
+      "An automated order workflow connecting Mirakl, Zoho Inventory, and Zoho Desk across the marketplace order lifecycle.",
+    context:
+      "Marketplace orders, shipment updates, documents, and integration incidents needed to move between systems with less manual coordination.",
+    problem:
+      "Disconnected order handling created repeated work and limited visibility when a sync or operational edge case needed attention.",
+    outcome:
+      "Established a scheduled integration for order ingestion, acceptance, shipment updates, document handling, and centralized incident tracking.",
+    role: "Integration design, API implementation, workflow automation, and error-handling design",
+    services: ["Automation & integration", "Ongoing support"],
+    stack: ["Zoho Inventory", "Zoho Desk", "Deluge", "REST API", "n8n"],
+    tags: ["Marketplace", "Order sync", "Automation"],
+    featured: true,
+    dateStarted: "January 2026",
+    dateFinished: "February 2026",
+    projectType: "Private case study",
+    fiverrUrl: "https://www.fiverr.com/s/DBvEbxa",
+    fiverrMessage: "Discuss a Mirakl and Zoho Inventory integration.",
+  },
+  {
+    id: "zoho-inventory-erp-integration",
+    title: "Zoho Inventory ERP Integration",
+    description:
+      "A custom order integration from Zoho Inventory to a third-party ERP, including routing rules, production data, and invoice attachments.",
+    context:
+      "Sales, fulfilment, and production information had to reach a third-party ERP consistently despite limited API documentation.",
+    problem:
+      "Manual order handling introduced repeated entry and created a risk that shipping, production, add-on, or document details would be missed.",
+    outcome:
+      "Automated eligible order flow, packing, shipping details, production flags, add-ons, and invoice attachments between the two systems.",
+    role: "Workflow design, Deluge development, API testing, and integration delivery",
+    services: ["Automation & integration"],
+    stack: ["Zoho Deluge", "n8n", "Postman"],
+    tags: ["ERP", "Order automation", "Zoho"],
+    featured: false,
+    dateStarted: "May 2023",
+    dateFinished: "June 2023",
+    projectType: "Private case study",
+    fiverrUrl: "https://www.fiverr.com/s/wk6N268",
+    fiverrMessage: "Discuss a Zoho Inventory and ERP workflow.",
+  },
+];
 
-export default projects
-
+export default projects;

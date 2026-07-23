@@ -1,15 +1,16 @@
-import React from 'react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+import type { ReactNode } from "react";
+import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 
-const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	return (
-		<div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 ease-in-out antialiased">
-			<Navbar />
-			<main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">{children}</main>
-			<Footer />
-		</div>
-	)
-}
+const MainLayout = ({ children }: { children: ReactNode }) => (
+  <div className="site-shell">
+    <a className="skip-link" href="#main-content">
+      Skip to main content
+    </a>
+    <Navbar />
+    <main id="main-content">{children}</main>
+    <Footer />
+  </div>
+);
 
-export default MainLayout
+export default MainLayout;

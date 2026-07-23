@@ -1,64 +1,65 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Favicon Support -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="apple-touch-icon" href="/favicon.svg" />
-  <link rel="manifest" href="/manifest.json" />
-
-  <!-- SEO Meta Tags -->
-  <meta name="description"
-    content="Full stack developer specializing in CRM systems, automations, and modern web applications." />
-  <meta name="keywords"
-    content="full stack developer, CRM, Zoho, Salesforce, automation, integrations, web development" />
-  <meta name="author" content="Mark Judaya" />
-  <meta name="theme-color" content="#3b82f6" />
-  <meta name="color-scheme" content="light dark" />
-
-  <!-- Open Graph Tags -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Mark Judaya" />
-  <meta property="og:title" content="Mark Judaya – Full Stack Developer & CRM Automation Specialist" />
-  <meta property="og:description"
-    content="Full stack developer specializing in CRM systems, automations, and modern web applications." />
-  <meta property="og:url" content="https://markjudaya.com" />
-
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GE3XEC3BD0"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-GE3XEC3BD0');
-  </script>
-
-  <script>
-    // Prevent flash by setting theme class and background early
-    (function () {
-      try {
-        var theme = localStorage.getItem('theme');
-        if (theme === 'dark' || !theme) {
-          document.documentElement.classList.add('dark');
-          document.documentElement.style.backgroundColor = '#0f172a';
-        } else {
-          document.documentElement.style.backgroundColor = '#ffffff';
-        }
-      } catch (e) {
-        // noop
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta
+      name="description"
+      content="Custom applications, integrations, technical consultation, and ongoing application support for growing businesses."
+    />
+    <meta name="author" content="Mark Judaya" />
+    <meta name="theme-color" content="#f5f4ef" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mark Judaya" />
+    <meta
+      property="og:title"
+      content="IT solutions for growing businesses | Mark Judaya"
+    />
+    <meta
+      property="og:description"
+      content="Build, connect, improve, and support the technology behind your operations."
+    />
+    <meta property="og:url" content="https://markjudaya.com" />
+    <meta
+      property="og:image"
+      content="https://markjudaya.com/social-card.svg"
+    />
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-GE3XEC3BD0"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
       }
-    })();
-  </script>
-  <title>mark-judaya</title>
-</head>
-
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
-
+      gtag("js", new Date());
+      gtag("config", "G-GE3XEC3BD0");
+    </script>
+    <script>
+      (function () {
+        try {
+          var storedTheme = localStorage.getItem("theme");
+          var dark =
+            storedTheme === "dark" ||
+            (!storedTheme &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) document.documentElement.classList.add("dark");
+          document.documentElement.style.backgroundColor = dark
+            ? "#0e1513"
+            : "#f5f4ef";
+        } catch (error) {
+          document.documentElement.style.backgroundColor = "#f5f4ef";
+        }
+      })();
+    </script>
+    <title>IT solutions for growing businesses | Mark Judaya</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

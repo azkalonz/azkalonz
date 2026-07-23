@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Mark Judaya — IT Solutions Developer</title>
+  <desc id="description">Build, connect, improve, and support the technology behind growing businesses.</desc>
+  <rect width="1200" height="630" fill="#f5f4ef"/>
+  <path d="M0 518h1200" stroke="#d6d9d2"/>
+  <path d="M930 0v630" stroke="#d6d9d2"/>
+  <circle cx="1058" cy="126" r="74" fill="#10241f"/>
+  <circle cx="1058" cy="126" r="58" fill="none" stroke="#7fc4b3" stroke-width="2"/>
+  <text x="1058" y="142" text-anchor="middle" fill="#f6f5f1" font-family="Georgia, serif" font-size="42">MJ</text>
+  <text x="82" y="92" fill="#11695c" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="3">FULL-SERVICE IT SOLUTIONS</text>
+  <text x="82" y="204" fill="#16211e" font-family="Georgia, serif" font-size="72">Build. Connect.</text>
+  <text x="82" y="288" fill="#16211e" font-family="Georgia, serif" font-size="72">Improve. Support.</text>
+  <text x="82" y="385" fill="#5c6763" font-family="Arial, sans-serif" font-size="28">Custom applications, business systems, integrations,</text>
+  <text x="82" y="426" fill="#5c6763" font-family="Arial, sans-serif" font-size="28">technical consultation, and ongoing support.</text>
+  <text x="82" y="568" fill="#16211e" font-family="Arial, sans-serif" font-size="24" font-weight="700">Mark Judaya</text>
+  <text x="255" y="568" fill="#5c6763" font-family="Arial, sans-serif" font-size="24">IT Solutions Developer</text>
+</svg>

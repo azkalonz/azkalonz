@@ -1,250 +1,207 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import React from "react";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { createElement, type ComponentType } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { Route, Routes } from "react-router-dom";
 import { StaticRouter } from "react-router-dom/server";
-import { Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "../src/lib/helmet.ts";
+import MainLayout from "../src/layouts/MainLayout.tsx";
+import About from "../src/pages/About.tsx";
+import Contact from "../src/pages/Contact.tsx";
+import Home from "../src/pages/Home.tsx";
+import ProjectDetails from "../src/pages/ProjectDetails.tsx";
+import Projects from "../src/pages/Projects.tsx";
+import Services from "../src/pages/Services.tsx";
 import { projects } from "../src/data/projects.ts";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.resolve(__dirname, "..");
-const distDir = path.resolve(projectRoot, "dist");
-
-// Dynamic imports for pages and dependencies
-const importPages = async () => {
-  const { default: MainLayout } = await import("../src/layouts/MainLayout.tsx");
-  const { default: Home } = await import("../src/pages/Home.tsx");
-  const { default: About } = await import("../src/pages/About.tsx");
-  const { default: Projects } = await import("../src/pages/Projects.tsx");
-  const { default: ProjectDetails } = await import("../src/pages/ProjectDetails.tsx");
-  const { default: Contact } = await import("../src/pages/Contact.tsx");
-
-  return { MainLayout, Home, About, Projects, ProjectDetails, Contact };
-};
-
-const importHelmet = async () => {
-  const helmetModule = await import("react-helmet-async");
-  return {
-    HelmetProvider: helmetModule.HelmetProvider,
-  };
-};
+const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(currentDirectory, "..");
+const distDirectory = path.resolve(projectRoot, "dist");
+const siteUrl = "https://markjudaya.com";
 
 type PageEntry = {
   routePath: string;
   routePattern: string;
   filename: string;
-  componentKey: string;
+  component: ComponentType;
+  title: string;
+  description: string;
   projectId?: string;
 };
 
 const staticPages: PageEntry[] = [
-  { routePath: "/", routePattern: "/", filename: "index.html", componentKey: "Home" },
-  { routePath: "/about", routePattern: "/about", filename: "about/index.html", componentKey: "About" },
-  { routePath: "/projects", routePattern: "/projects", filename: "projects/index.html", componentKey: "Projects" },
-  { routePath: "/contact", routePattern: "/contact", filename: "contact/index.html", componentKey: "Contact" },
+  {
+    routePath: "/",
+    routePattern: "/",
+    filename: "index.html",
+    component: Home,
+    title: "IT solutions for growing businesses | Mark Judaya",
+    description:
+      "Custom applications, integrations, technical consultation, and ongoing application support for growing businesses.",
+  },
+  {
+    routePath: "/services",
+    routePattern: "/services",
+    filename: "services/index.html",
+    component: Services,
+    title: "IT services | Mark Judaya",
+    description:
+      "Application development, automation and integrations, technical consulting, and ongoing IT support for growing businesses.",
+  },
+  {
+    routePath: "/projects",
+    routePattern: "/projects",
+    filename: "projects/index.html",
+    component: Projects,
+    title: "Selected work | Mark Judaya",
+    description:
+      "Case studies in custom applications, data migration, business automation, Zoho, API integration, and operational support.",
+  },
+  {
+    routePath: "/about",
+    routePattern: "/about",
+    filename: "about/index.html",
+    component: About,
+    title: "About | Mark Judaya",
+    description:
+      "How Mark Judaya approaches custom applications, business systems, integrations, technical planning, and long-term support.",
+  },
+  {
+    routePath: "/contact",
+    routePattern: "/contact",
+    filename: "contact/index.html",
+    component: Contact,
+    title: "Contact | Mark Judaya",
+    description:
+      "Discuss an application, integration, automation, technical planning, or ongoing support need with Mark Judaya.",
+  },
 ];
 
 const projectPages: PageEntry[] = projects.map((project) => ({
   routePath: `/projects/${project.id}`,
   routePattern: "/projects/:id",
   filename: `projects/${project.id}/index.html`,
-  componentKey: "ProjectDetails",
+  component: ProjectDetails,
+  title: `${project.title} | Mark Judaya`,
+  description: project.description,
   projectId: project.id,
 }));
 
-const pageEntries = [...staticPages, ...projectPages];
-
-const cfEmailDecodeScript =
-  '<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>';
-const gtagScript = `    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GE3XEC3BD0"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-GE3XEC3BD0');
-    </script>`;
-
-const insertCfEmailDecodeScript = (scripts: string) => {
-  if (!scripts || scripts.includes("cloudflare-static/email-decode.min.js")) {
-    return scripts;
-  }
-
-  const themeScriptRegex = /<script\b[^>]*>[\s\S]*?localStorage\.getItem\(['"]theme['"]\)[\s\S]*?<\/script>/i;
-  const match = scripts.match(themeScriptRegex);
-
-  if (!match) {
-    return `${scripts}\n    ${cfEmailDecodeScript}`;
-  }
-
-  return scripts.replace(match[0], `${match[0]}\n    ${cfEmailDecodeScript}`);
-};
-
 const loadProjectDetails = () => {
-  const detailsDir = path.resolve(projectRoot, "public", "project-details");
-  if (!fs.existsSync(detailsDir)) return {};
-  const files = fs.readdirSync(detailsDir).filter((file) => file.endsWith(".md"));
-  return files.reduce<Record<string, string>>((acc, file) => {
-    const id = file.replace(".md", "");
-    const content = fs.readFileSync(path.resolve(detailsDir, file), "utf-8");
-    acc[id] = content;
-    return acc;
-  }, {});
+  const detailsDirectory = path.resolve(
+    projectRoot,
+    "public",
+    "project-details",
+  );
+  if (!fs.existsSync(detailsDirectory)) return {};
+
+  return fs
+    .readdirSync(detailsDirectory)
+    .filter((file) => file.endsWith(".md"))
+    .reduce<Record<string, string>>((details, file) => {
+      const id = file.replace(/\.md$/, "");
+      details[id] = fs.readFileSync(
+        path.resolve(detailsDirectory, file),
+        "utf8",
+      );
+      return details;
+    }, {});
 };
 
-// Main prerender function
-const prerender = async () => {
-  try {
-    // Import all modules
-    const pages = await importPages();
-    const helmet = await importHelmet();
+const escapeAttribute = (value: string) =>
+  value
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 
-    // Read main template HTML
-    const templatePath = path.resolve(distDir, "index.html");
-    let template = fs.readFileSync(templatePath, "utf-8");
+const setMeta = (
+  html: string,
+  attribute: "name" | "property",
+  key: string,
+  value: string,
+) => {
+  const pattern = new RegExp(`<meta\\s+${attribute}="${key}"[^>]*>`, "i");
+  const tag = `<meta ${attribute}="${key}" content="${escapeAttribute(value)}" />`;
+  return pattern.test(html)
+    ? html.replace(pattern, tag)
+    : html.replace("</head>", `  ${tag}\n</head>`);
+};
 
-    // Extract assets from template - match complete script tags
-    const scriptMatch = template.match(/<script\b[^>]*>[\s\S]*?<\/script>/gi) || [];
-    const scripts = scriptMatch.join("\n    ");
+const prerender = () => {
+  const templatePath = path.resolve(distDirectory, "index.html");
+  const template = fs.readFileSync(templatePath, "utf8");
+  const projectDetails = loadProjectDetails();
 
-    // Extract CSS links from template
-    const cssMatch = template.match(/<link[^>]*>/g) || [];
-    const cssLinks = cssMatch.join("\n    ");
-
-    // Generate static pages
-    const projectDetails = loadProjectDetails();
-
-    for (const entry of pageEntries) {
-      try {
-        const PageComponent = (pages as any)[entry.componentKey];
-        const helmetContext: { helmet?: any } = {};
-
-        // Render the full app structure with Routes and Helmet
-        const content = renderToStaticMarkup(
-          React.createElement(
-            helmet.HelmetProvider,
-            { context: helmetContext },
-            React.createElement(
-              StaticRouter,
-              { location: entry.routePath },
-              React.createElement(
-                pages.MainLayout,
+  for (const entry of [...staticPages, ...projectPages]) {
+    try {
+      const content = renderToStaticMarkup(
+        createElement(
+          HelmetProvider,
+          null,
+          createElement(
+            StaticRouter,
+            { location: entry.routePath },
+            createElement(
+              MainLayout,
+              null,
+              createElement(
+                Routes,
                 null,
-                React.createElement(
-                  Routes,
-                  null,
-                  React.createElement(Route, {
-                    key: entry.routePath,
-                    path: entry.routePattern,
-                    element: React.createElement(PageComponent),
-                  }),
-                ),
+                createElement(Route, {
+                  path: entry.routePattern,
+                  element: createElement(entry.component),
+                }),
               ),
             ),
           ),
+        ),
+      );
+
+      const depth = entry.filename.split("/").length - 1;
+      const relativeBase = depth > 0 ? "../".repeat(depth) : "./";
+      const canonicalUrl = `${siteUrl}${entry.routePath === "/" ? "/" : entry.routePath}`;
+      let html = template
+        .replace(/href="\.\//g, `href="${relativeBase}`)
+        .replace(/src="\.\//g, `src="${relativeBase}`)
+        .replace(
+          /<title>[^<]*<\/title>/i,
+          `<title>${escapeAttribute(entry.title)}</title>`,
+        )
+        .replace(/<div id="root"><\/div>/, `<div id="root">${content}</div>`);
+
+      html = setMeta(html, "name", "description", entry.description);
+      html = setMeta(html, "property", "og:title", entry.title);
+      html = setMeta(html, "property", "og:description", entry.description);
+      html = setMeta(html, "property", "og:url", canonicalUrl);
+      html = setMeta(html, "name", "twitter:card", "summary_large_image");
+      html = setMeta(html, "name", "twitter:title", entry.title);
+      html = setMeta(html, "name", "twitter:description", entry.description);
+      html = html.replace(
+        "</head>",
+        `  <link rel="canonical" href="${canonicalUrl}" />\n</head>`,
+      );
+
+      if (entry.projectId && projectDetails[entry.projectId]) {
+        const payload = JSON.stringify({
+          [entry.projectId]: projectDetails[entry.projectId],
+        }).replaceAll("<", "\\u003c");
+        html = html.replace(
+          "</body>",
+          `  <script>globalThis.__PROJECT_DETAILS__ = ${payload};</script>\n</body>`,
         );
-
-        // Extract Helmet data
-        const helmetData = helmetContext.helmet;
-
-        // Calculate depth for relative path adjustment
-        const depth = entry.filename.split("/").length - 1;
-        const relativeBase = depth > 0 ? "../".repeat(depth) : "./";
-
-        // Adjust CSS and script paths based on directory depth
-        // Replace ./ with the appropriate relative path
-        const adjustedCssLinks = cssLinks.replace(/href="\.\//g, `href="${relativeBase}`);
-        const adjustedScripts = scripts.replace(/src="\.\//g, `src="${relativeBase}`);
-
-        // Build the head content from Helmet
-        const helmtTitle = helmetData?.title.toComponent() || [];
-        const helmetMeta = helmetData?.meta.toComponent() || [];
-        const helmetLink = helmetData?.link.toComponent() || [];
-
-        // Convert Helmet components to string
-        let headContent = "";
-        if (Array.isArray(helmtTitle) && helmtTitle.length > 0) {
-          headContent += helmtTitle
-            .map((c: any) => {
-              if (c.props && "children" in c.props) {
-                return `<title>${c.props.children}</title>`;
-              }
-              return "";
-            })
-            .filter(Boolean)
-            .join("\n    ");
-        }
-
-        if (Array.isArray(helmetMeta)) {
-          headContent +=
-            "\n    " +
-            helmetMeta
-              .map((c: any) => {
-                const props = c.props || {};
-                const attrs = Object.entries(props)
-                  .filter(([k]) => !["key", "children"].includes(k))
-                  .map(([k, v]) => `${k}="${v}"`)
-                  .join(" ");
-                return `<meta ${attrs} />`;
-              })
-              .filter(Boolean)
-              .join("\n    ");
-        }
-
-        // Fallback to default meta if Helmet didn't provide sufficient data
-        if (!headContent.includes("<title>")) {
-          headContent = `<title>Mark Judaya</title>\n    `;
-        }
-
-        const detailsPayload = entry.projectId ? { [entry.projectId]: projectDetails[entry.projectId] } : null;
-        const detailsScript =
-          detailsPayload && detailsPayload[entry.projectId as string]
-            ? `\n    <script>window.__PROJECT_DETAILS__ = ${JSON.stringify(detailsPayload)};<\/script>`
-            : "";
-
-        const finalScripts =
-          entry.filename === "contact/index.html" ? insertCfEmailDecodeScript(adjustedScripts) : adjustedScripts;
-
-        const html = `<!doctype html>
-<html lang="en" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="${relativeBase}vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    ${headContent}
-    ${adjustedCssLinks}
-${gtagScript}
-  </head>
-  <body>
-    <div id="root">${content}</div>
-        ${detailsScript}
-        ${finalScripts}
-  </body>
-</html>`;
-
-        // Create directory if needed
-        const filePath = path.resolve(distDir, entry.filename);
-        const fileDir = path.dirname(filePath);
-        if (!fs.existsSync(fileDir)) {
-          fs.mkdirSync(fileDir, { recursive: true });
-        }
-
-        // Write HTML file
-        fs.writeFileSync(filePath, html);
-        console.log(`✓ Generated ${entry.filename}`);
-      } catch (err) {
-        console.error(`✗ Error generating ${entry.filename}:`, err);
       }
-    }
 
-    console.log("\n✓ Static site generation complete!");
-  } catch (err) {
-    console.error("✗ Prerender failed:", err);
-    process.exit(1);
+      const outputPath = path.resolve(distDirectory, entry.filename);
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+      fs.writeFileSync(outputPath, html);
+      console.log(`✓ Generated ${entry.filename}`);
+    } catch (error) {
+      console.error(`✗ Error generating ${entry.filename}:`, error);
+      process.exitCode = 1;
+    }
   }
 };
 
-// Run prerender
 prerender();

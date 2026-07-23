@@ -1,56 +1,172 @@
-import React from 'react'
-import Seo from '../components/Seo'
+import { Link } from "react-router-dom";
+import ContactCta from "../components/ContactCta";
+import Icon from "../components/Icon";
+import Seo from "../components/Seo";
+import { site } from "../data/site";
 
-const About: React.FC = () => {
-    return (
-        <>
-            <Seo
-                title="About – Mark Judaya"
-                description="Full-stack developer specializing in CRM systems, automation, and integrations. Learn about my experience, tools, and approach to building scalable solutions."
-                ogTitle="About Mark Judaya"
-                ogDescription="I specialize in CRM integrations and automation that remove manual work and surface actionable data."
-            />
-            <section className="prose prose-slate dark:prose-invert max-w-3xl">
-                <h1 className="text-3xl font-semibold">What I do</h1>
+const About = () => (
+  <>
+    <Seo
+      title="About"
+      description="Learn how Mark Judaya approaches custom applications, business systems, integrations, technical planning, and long-term application support."
+      canonical="/about"
+    />
 
-                <p className="mt-2 text-slate-700 dark:text-slate-300">
-                    I specialize in building resilient web applications and reliable CRM systems, with a focus on
-                    automations and integrations that remove manual work and surface actionable data.
-                </p>
+    <header className="about-hero section-shell">
+      <div className="about-hero__copy">
+        <p className="eyebrow">About</p>
+        <h1>
+          I work where business workflows and software implementation meet.
+        </h1>
+        <p className="about-hero__lead">
+          I’m Mark Judaya, a full-stack developer and systems specialist based
+          in the Philippines. I help businesses understand a technical problem,
+          shape a practical solution, build it, and keep it useful as the work
+          evolves.
+        </p>
+      </div>
+      <div className="about-hero__portrait">
+        <img src="/avatar.webp" alt="Mark Judaya" width="480" height="480" />
+        <div>
+          <strong>Mark Judaya</strong>
+          <span>
+            Full-stack development · Systems integration · Technical support
+          </span>
+        </div>
+      </div>
+    </header>
 
-                <h2 className="mt-6 text-xl font-medium">Who I work with</h2>
-                <p className="text-slate-600 dark:text-slate-400">Growth-stage SaaS and mid-market teams that need dependable automation and clean data flow between tools.</p>
+    <section
+      className="about-story section-shell"
+      aria-labelledby="approach-title"
+    >
+      <div className="about-story__label">
+        <span>01</span>
+        <p>What I bring</p>
+      </div>
+      <div className="about-story__content">
+        <h2 id="approach-title">
+          A broad technical view, with a practical centre.
+        </h2>
+        <div className="prose-columns">
+          <p>
+            My work covers front-end interfaces, back-end services, data models,
+            background jobs, APIs, automation, and business platforms. That
+            range is useful when a problem crosses system boundaries—as business
+            problems usually do.
+          </p>
+          <p>
+            Automation and Zoho remain important specialties, but they sit
+            inside a wider capability: building and improving the technology
+            behind day-to-day operations. Recent work includes a full product
+            information platform, large CRM data migration, marketplace order
+            automation, and ERP integration.
+          </p>
+        </div>
+      </div>
+    </section>
 
-                <h2 className="mt-6 text-xl font-medium">Problems I solve</h2>
-                <ul className="list-disc ml-5 mt-2 text-slate-600 dark:text-slate-400">
-                    <li>Unreliable CRM data and manual lead routing</li>
-                    <li>Slow, error-prone onboarding and revenue processes</li>
-                    <li>Fragile integrations that are hard to observe or retry</li>
-                </ul>
+    <section
+      className="about-story section-shell"
+      aria-labelledby="problem-solving-title"
+    >
+      <div className="about-story__label">
+        <span>02</span>
+        <p>How I think</p>
+      </div>
+      <div className="about-story__content">
+        <h2 id="problem-solving-title">
+          Understand the workflow before choosing the solution.
+        </h2>
+        <p className="about-story__lead">
+          I look for the decisions, handoffs, exceptions, and information that
+          make a process work. The technology should make those things clearer
+          and more reliable—not hide them behind unnecessary complexity.
+        </p>
+        <div className="value-grid">
+          <article>
+            <Icon name="compass" />
+            <h3>Clarify first</h3>
+            <p>
+              Make the goal, users, constraints, and edge cases explicit before
+              committing to a build.
+            </p>
+          </article>
+          <article>
+            <Icon name="layers" />
+            <h3>Design for operations</h3>
+            <p>
+              Account for validation, recovery, auditability, and the people
+              responsible for the system after launch.
+            </p>
+          </article>
+          <article>
+            <Icon name="code" />
+            <h3>Build for change</h3>
+            <p>
+              Use maintainable structure and documentation so the next
+              improvement does not require starting again.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-                <h2 className="mt-6 text-xl font-medium">How I deliver impact</h2>
-                <p className="text-slate-600 dark:text-slate-400">Through pragmatic engineering: clear data contracts, idempotent integrations, observability, and documentation so teams can move faster with confidence.</p>
+    <section
+      className="about-story section-shell"
+      aria-labelledby="collaboration-title"
+    >
+      <div className="about-story__label">
+        <span>03</span>
+        <p>Collaboration</p>
+      </div>
+      <div className="about-story__content about-story__content--split">
+        <div>
+          <h2 id="collaboration-title">
+            Direct, clear, and comfortable across technical levels.
+          </h2>
+          <p className="about-story__lead">
+            I can work with a business owner who needs the technical choices
+            explained plainly or alongside a product and development team that
+            wants implementation detail. Either way, I keep decisions visible
+            and avoid promising outcomes the system cannot guarantee.
+          </p>
+          <Link to="/contact" className="button button--primary">
+            Discuss working together{" "}
+            <Icon name="arrow-right" className="button__icon" />
+          </Link>
+        </div>
+        <aside className="profile-links" aria-label="Professional profiles">
+          <h3>Professional profiles</h3>
+          <a href={site.socials.linkedin} target="_blank" rel="noreferrer">
+            <span>
+              <Icon name="linkedin" />
+              LinkedIn
+            </span>
+            <Icon name="arrow-up-right" />
+          </a>
+          <a href={site.socials.github} target="_blank" rel="noreferrer">
+            <span>
+              <Icon name="github" />
+              GitHub
+            </span>
+            <Icon name="arrow-up-right" />
+          </a>
+          <a href={site.socials.fiverr} target="_blank" rel="noreferrer">
+            <span>
+              <Icon name="message" />
+              Fiverr
+            </span>
+            <Icon name="arrow-up-right" />
+          </a>
+        </aside>
+      </div>
+    </section>
 
-                <h2 className="mt-6 text-xl font-medium">Tools & strengths</h2>
-                <div className="mt-2 flex flex-wrap gap-2">
-                    <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-sm">React</span>
-                    <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-sm">TypeScript</span>
-                    <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-sm">Node</span>
-                    <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-sm">Zoho / Deluge</span>
-                    <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-sm">Salesforce</span>
-                    <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-sm">Serverless / AWS</span>
-                    <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-sm">Observability</span>
-                </div>
+    <div className="section-shell page-section page-section--cta">
+      <ContactCta />
+    </div>
+  </>
+);
 
-                <h2 className="mt-6 text-xl font-medium">Experience & outcomes</h2>
-                <p className="text-slate-600 dark:text-slate-400">5+ years delivering integrations and automation across SaaS and professional services — projects have reduced manual touch by {'>'}50% and accelerated lead-to-revenue timeframes.</p>
-
-                <div className="mt-8">
-                    <a href="/contact" className="inline-block px-5 py-3 rounded-md bg-teal-600 text-white hover:bg-teal-700 transition">Let's talk — Contact me</a>
-                </div>
-            </section>
-        </>
-    )
-}
-
-export default About
+export default About;
