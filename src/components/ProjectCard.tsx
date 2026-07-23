@@ -19,7 +19,10 @@ const ProjectCard = ({ project, layout = "card" }: ProjectCardProps) => (
       >
         <img
           src={project.featuredPhoto}
-          alt="Product information architecture for the Urban Road PIM platform"
+          alt={
+            project.featuredPhotoAlt ??
+            `Featured interface from ${project.title}`
+          }
           loading="lazy"
           width="1800"
           height="1352"

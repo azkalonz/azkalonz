@@ -11,6 +11,14 @@ export type Project = {
   tags: string[];
   featured: boolean;
   featuredPhoto?: string;
+  featuredPhotoAlt?: string;
+  featuredPhotoCaption?: string;
+  showcase?: {
+    src: string;
+    alt: string;
+    title: string;
+    description: string;
+  }[];
   dateStarted: string;
   dateFinished: string;
   projectType: "Private case study" | "Live product" | "Public repository";
@@ -50,13 +58,58 @@ export const projects: Project[] = [
     ],
     tags: ["PIM", "Full stack", "Data workflows"],
     featured: true,
-    featuredPhoto: "/urban-road-pim-hero.webp",
+    featuredPhoto: "/project-screens/urban-road-pim/product-overview.webp",
+    featuredPhotoAlt:
+      "Urban Road PIM product overview with the headline One catalogue. Every channel ready.",
+    featuredPhotoCaption:
+      "The public product overview introduces the governed catalogue and collection launch workspace.",
+    showcase: [
+      {
+        src: "/project-screens/urban-road-pim/product-overview.webp",
+        alt: "Urban Road PIM product overview with the headline One catalogue. Every channel ready.",
+        title: "Product overview",
+        description:
+          "The public-facing overview introduces the governed catalogue and collection launch workspace.",
+      },
+      {
+        src: "/project-screens/urban-road-pim/operations-dashboard.webp",
+        alt: "Urban Road PIM operations dashboard showing catalogue readiness and live product metrics",
+        title: "Operations at a glance",
+        description:
+          "A live dashboard brings catalogue health, workflow activity, and readiness checks into one operational view.",
+      },
+      {
+        src: "/project-screens/urban-road-pim/product-catalogue.webp",
+        alt: "Urban Road PIM product catalogue with governed product records and saved views",
+        title: "Governed catalogue",
+        description:
+          "Product records, variants, pricing, logistics, reference data, and eligibility stay connected around one source of truth.",
+      },
+      {
+        src: "/project-screens/urban-road-pim/channel-exports.webp",
+        alt: "Urban Road PIM channel exports showing Shopify, Zoho, and marketplace destinations",
+        title: "Channel-ready output",
+        description:
+          "Per-channel runs expose eligibility, mapping coverage, blockers, and the latest export state before files leave the system.",
+      },
+      {
+        src: "/project-screens/urban-road-pim/collection-import-complete.webp",
+        alt: "Completed Urban Road PIM collection import showing validation and generated product records",
+        title: "Controlled collection imports",
+        description:
+          "The six-step workflow maps and validates source data before promoting generated products and variants into the catalogue.",
+      },
+      {
+        src: "/project-screens/urban-road-pim/system-atlas.webp",
+        alt: "Urban Road PIM system atlas visualizing application routes, controllers, jobs, and services",
+        title: "System atlas",
+        description:
+          "An internal architecture map makes routes, domain relationships, background jobs, and system ownership easier to inspect.",
+      },
+    ],
     dateStarted: "July 2026",
     dateFinished: "Ongoing",
     projectType: "Live product",
-    links: {
-      live: "https://ur-pim.tail042666.ts.net/",
-    },
   },
   {
     id: "salesforce-to-zoho-crm-migration",

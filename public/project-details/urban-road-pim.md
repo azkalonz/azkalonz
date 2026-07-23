@@ -12,14 +12,16 @@ The goal is to keep marketplace-specific requirements from redefining the core c
 
 ## What I built
 
-- A six-step CSV import workflow with reusable mappings, transformations, dry-run validation, review, and controlled promotion into the catalogue.
-- Collection onboarding that generates the five standard wall-art product groups and their sellable variants from seed data.
-- A governed transformation engine supporting visual rules, shared conditions, JSON documents, and isolated PHP, Node.js, or Python scripts.
-- Catalogue management for connected product, variant, pricing, cost, logistics, content, asset, and eligibility records.
-- Custom batch exports and a channel export engine driven by 673 governed field mappings.
-- Eligibility checks, repeatable derivation rules, and sparse channel overrides so exports remain predictable and auditable.
-- Background job controls, operational monitoring, audit history, saved views, bulk actions, and granular role-based permissions.
-- Secure account access with verification, password confirmation, two-factor authentication, and passkeys.
+The platform is organized around eight connected capabilities:
+
+- **Collection imports** — A six-step CSV workflow with reusable mappings, transformations, dry-run validation, review, and controlled promotion into the catalogue.
+- **Product generation** — Collection onboarding generates the five standard wall-art product groups and their sellable variants from seed data.
+- **Transformation rules** — A governed engine supports visual rules, shared conditions, JSON documents, and isolated PHP, Node.js, or Python scripts.
+- **Catalogue governance** — Connected product, variant, pricing, cost, logistics, content, asset, and eligibility records share one source of truth.
+- **Channel delivery** — Custom batch exports and a channel export engine are driven by 673 governed field mappings.
+- **Eligibility controls** — Repeatable derivation rules and sparse channel overrides keep exports predictable and auditable.
+- **Operational tooling** — Background-job controls, monitoring, audit history, saved views, bulk actions, and granular role-based permissions support day-to-day work.
+- **Secure access** — Verification, password confirmation, two-factor authentication, and passkeys protect privileged workflows.
 
 ## Architecture and engineering
 

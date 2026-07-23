@@ -3,23 +3,35 @@ import { useEffect, useRef, useState } from "react";
 type DotField = {
   accentIndices: Uint16Array;
   amplitude: Float32Array;
+  offsetX: Float32Array;
+  offsetY: Float32Array;
   particleAge: Float32Array;
   particleAngle: Float32Array;
   particleCurve: Float32Array;
   particleDistance: Float32Array;
   particleDuration: Float32Array;
+  particleOffsetX: Float32Array;
+  particleOffsetY: Float32Array;
+  particleVelocityX: Float32Array;
+  particleVelocityY: Float32Array;
   phaseX: Float32Array;
   phaseY: Float32Array;
   radius: Float32Array;
   speed: Float32Array;
+  velocityX: Float32Array;
+  velocityY: Float32Array;
   x: Float32Array;
   y: Float32Array;
 };
 
 const VIEWBOX_SIZE = 900;
 const FRAME_INTERVAL = 1000 / 30;
-const INFLUENCE_RADIUS = 92;
-const MAX_DISPLACEMENT = 22;
+const INTERACTION_FRAME_INTERVAL = 1000 / 60;
+const INFLUENCE_RADIUS = 138;
+const REPEL_ACCELERATION = 2600;
+const SPRING_STRENGTH = 18;
+const VELOCITY_DAMPING = 5.2;
+const MAX_PHYSICS_DISPLACEMENT = 118;
 const DOT_COLOR = "#dcece7";
 
 const seededValue = (value: number) => {
@@ -71,15 +83,23 @@ const HalftonePortrait = () => {
         const dotField: DotField = {
           accentIndices: new Uint16Array(),
           amplitude: new Float32Array(count),
+          offsetX: new Float32Array(count),
+          offsetY: new Float32Array(count),
           particleAge: new Float32Array(),
           particleAngle: new Float32Array(),
           particleCurve: new Float32Array(),
           particleDistance: new Float32Array(),
           particleDuration: new Float32Array(),
+          particleOffsetX: new Float32Array(),
+          particleOffsetY: new Float32Array(),
+          particleVelocityX: new Float32Array(),
+          particleVelocityY: new Float32Array(),
           phaseX: new Float32Array(count),
           phaseY: new Float32Array(count),
           radius: new Float32Array(count),
           speed: new Float32Array(count),
+          velocityX: new Float32Array(count),
+          velocityY: new Float32Array(count),
           x: new Float32Array(count),
           y: new Float32Array(count),
         };
@@ -143,6 +163,10 @@ const HalftonePortrait = () => {
         dotField.particleCurve = new Float32Array(accentIndices.length);
         dotField.particleDistance = new Float32Array(accentIndices.length);
         dotField.particleDuration = new Float32Array(accentIndices.length);
+        dotField.particleOffsetX = new Float32Array(accentIndices.length);
+        dotField.particleOffsetY = new Float32Array(accentIndices.length);
+        dotField.particleVelocityX = new Float32Array(accentIndices.length);
+        dotField.particleVelocityY = new Float32Array(accentIndices.length);
 
         accentIndices.forEach((dotIndex, particleIndex) => {
           const seed = dotIndex + particleIndex * 0.731;
@@ -196,13 +220,18 @@ const HalftonePortrait = () => {
     let pointerY = VIEWBOX_SIZE / 2;
     let pointerTarget = 0;
     let pointerStrength = 0;
-    let scale = 1;
+    let physicsEnergy = 0;
+    let renderScale = 1;
+    let renderOffsetX = 0;
+    let renderOffsetY = 0;
     let pixelRatio = 1;
 
     const resizeCanvas = () => {
       const rect = portrait.getBoundingClientRect();
       pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
-      scale = rect.width / VIEWBOX_SIZE;
+      renderScale = Math.min(rect.width, rect.height) / VIEWBOX_SIZE;
+      renderOffsetX = (rect.width - VIEWBOX_SIZE * renderScale) / 2;
+      renderOffsetY = (rect.height - VIEWBOX_SIZE * renderScale) / 2;
       canvas.width = Math.max(1, Math.round(rect.width * pixelRatio));
       canvas.height = Math.max(1, Math.round(rect.height * pixelRatio));
     };
@@ -214,7 +243,13 @@ const HalftonePortrait = () => {
         return;
       }
 
-      if (!force && timestamp - lastFrame < FRAME_INTERVAL) {
+      const isInteractionActive =
+        pointerTarget > 0 || pointerStrength > 0.01 || physicsEnergy > 0.1;
+      const frameInterval = isInteractionActive
+        ? INTERACTION_FRAME_INTERVAL
+        : FRAME_INTERVAL;
+
+      if (!force && timestamp - lastFrame < frameInterval) {
         animationFrame = window.requestAnimationFrame(draw);
         return;
       }
@@ -223,11 +258,20 @@ const HalftonePortrait = () => {
         ? Math.min((timestamp - lastFrame) / 1000, 0.05)
         : 0;
       lastFrame = timestamp;
-      pointerStrength += (pointerTarget - pointerStrength) * 0.16;
+      const pointerResponse = frameDelta ? 1 - Math.exp(-18 * frameDelta) : 1;
+      pointerStrength += (pointerTarget - pointerStrength) * pointerResponse;
+      let nextPhysicsEnergy = 0;
 
       context.setTransform(1, 0, 0, 1, 0, 0);
       context.clearRect(0, 0, canvas.width, canvas.height);
-      context.setTransform(pixelRatio * scale, 0, 0, pixelRatio * scale, 0, 0);
+      context.setTransform(
+        pixelRatio * renderScale,
+        0,
+        0,
+        pixelRatio * renderScale,
+        pixelRatio * renderOffsetX,
+        pixelRatio * renderOffsetY,
+      );
       context.fillStyle = DOT_COLOR;
       context.beginPath();
 
@@ -256,20 +300,61 @@ const HalftonePortrait = () => {
           Math.cos(time * dots.speed[index] * 0.86 + dots.phaseY[index]) *
             drift;
 
-        if (cursorActive) {
-          const deltaX = x - pointerX;
-          const deltaY = y - pointerY;
-          const distanceSquared = deltaX * deltaX + deltaY * deltaY;
+        if (!reducedMotion.matches && frameDelta > 0) {
+          let offsetX = dots.offsetX[index];
+          let offsetY = dots.offsetY[index];
+          let velocityX = dots.velocityX[index];
+          let velocityY = dots.velocityY[index];
 
-          if (distanceSquared < influenceSquared) {
-            const distance = Math.max(Math.sqrt(distanceSquared), 0.1);
-            const force =
-              (1 - distance / INFLUENCE_RADIUS) ** 2 *
-              MAX_DISPLACEMENT *
-              pointerStrength;
-            x += (deltaX / distance) * force;
-            y += (deltaY / distance) * force;
+          if (cursorActive) {
+            const deltaX = x + offsetX - pointerX;
+            const deltaY = y + offsetY - pointerY;
+            const distanceSquared = deltaX * deltaX + deltaY * deltaY;
+
+            if (distanceSquared < influenceSquared) {
+              const distance = Math.max(Math.sqrt(distanceSquared), 0.1);
+              const falloff = 1 - distance / INFLUENCE_RADIUS;
+              const impulse =
+                REPEL_ACCELERATION *
+                falloff *
+                falloff *
+                pointerStrength *
+                frameDelta;
+              velocityX += (deltaX / distance) * impulse;
+              velocityY += (deltaY / distance) * impulse;
+            }
           }
+
+          velocityX -= offsetX * SPRING_STRENGTH * frameDelta;
+          velocityY -= offsetY * SPRING_STRENGTH * frameDelta;
+
+          const damping = Math.exp(-VELOCITY_DAMPING * frameDelta);
+          velocityX *= damping;
+          velocityY *= damping;
+          offsetX += velocityX * frameDelta;
+          offsetY += velocityY * frameDelta;
+
+          const displacement = Math.hypot(offsetX, offsetY);
+
+          if (displacement > MAX_PHYSICS_DISPLACEMENT) {
+            const limit = MAX_PHYSICS_DISPLACEMENT / displacement;
+            offsetX *= limit;
+            offsetY *= limit;
+            velocityX *= 0.68;
+            velocityY *= 0.68;
+          }
+
+          dots.offsetX[index] = offsetX;
+          dots.offsetY[index] = offsetY;
+          dots.velocityX[index] = velocityX;
+          dots.velocityY[index] = velocityY;
+          nextPhysicsEnergy = Math.max(
+            nextPhysicsEnergy,
+            (Math.abs(velocityX) + Math.abs(velocityY)) * 0.014,
+            (Math.abs(offsetX) + Math.abs(offsetY)) * 0.055,
+          );
+          x += offsetX;
+          y += offsetY;
         }
 
         const radiusVariation = dots.radius[index] < 1.7 ? 0.11 : 0.025;
@@ -310,6 +395,10 @@ const HalftonePortrait = () => {
                 Math.max(0, 1.5 - dots.radius[index]) * 14) *
               (1.12 -
                 getHeadAndNeckWeight(dots.x[index], dots.y[index]) * 0.55);
+            dots.particleOffsetX[accent] = 0;
+            dots.particleOffsetY[accent] = 0;
+            dots.particleVelocityX[accent] = 0;
+            dots.particleVelocityY[accent] = 0;
           }
 
           dots.particleAge[accent] = particleAge;
@@ -351,21 +440,65 @@ const HalftonePortrait = () => {
             Math.sin(angle) * distance +
             Math.sin(angle + Math.PI / 2) * curl;
 
-          if (cursorActive) {
-            const deltaX = x - pointerX;
-            const deltaY = y - pointerY;
-            const distanceSquared = deltaX * deltaX + deltaY * deltaY;
+          if (frameDelta > 0) {
+            let offsetX = dots.particleOffsetX[accent];
+            let offsetY = dots.particleOffsetY[accent];
+            let velocityX = dots.particleVelocityX[accent];
+            let velocityY = dots.particleVelocityY[accent];
 
-            if (distanceSquared < influenceSquared) {
-              const distance = Math.max(Math.sqrt(distanceSquared), 0.1);
-              const force =
-                (1 - distance / INFLUENCE_RADIUS) ** 2 *
-                MAX_DISPLACEMENT *
-                0.7 *
-                pointerStrength;
-              x += (deltaX / distance) * force;
-              y += (deltaY / distance) * force;
+            if (cursorActive) {
+              const deltaX = x + offsetX - pointerX;
+              const deltaY = y + offsetY - pointerY;
+              const distanceSquared = deltaX * deltaX + deltaY * deltaY;
+
+              if (distanceSquared < influenceSquared) {
+                const cursorDistance = Math.max(
+                  Math.sqrt(distanceSquared),
+                  0.1,
+                );
+                const falloff = 1 - cursorDistance / INFLUENCE_RADIUS;
+                const impulse =
+                  REPEL_ACCELERATION *
+                  0.82 *
+                  falloff *
+                  falloff *
+                  pointerStrength *
+                  frameDelta;
+                velocityX += (deltaX / cursorDistance) * impulse;
+                velocityY += (deltaY / cursorDistance) * impulse;
+              }
             }
+
+            velocityX -= offsetX * (SPRING_STRENGTH * 0.86) * frameDelta;
+            velocityY -= offsetY * (SPRING_STRENGTH * 0.86) * frameDelta;
+
+            const damping = Math.exp(-(VELOCITY_DAMPING * 0.9) * frameDelta);
+            velocityX *= damping;
+            velocityY *= damping;
+            offsetX += velocityX * frameDelta;
+            offsetY += velocityY * frameDelta;
+
+            const displacement = Math.hypot(offsetX, offsetY);
+
+            if (displacement > MAX_PHYSICS_DISPLACEMENT * 1.15) {
+              const limit = (MAX_PHYSICS_DISPLACEMENT * 1.15) / displacement;
+              offsetX *= limit;
+              offsetY *= limit;
+              velocityX *= 0.68;
+              velocityY *= 0.68;
+            }
+
+            dots.particleOffsetX[accent] = offsetX;
+            dots.particleOffsetY[accent] = offsetY;
+            dots.particleVelocityX[accent] = velocityX;
+            dots.particleVelocityY[accent] = velocityY;
+            nextPhysicsEnergy = Math.max(
+              nextPhysicsEnergy,
+              (Math.abs(velocityX) + Math.abs(velocityY)) * 0.014,
+              (Math.abs(offsetX) + Math.abs(offsetY)) * 0.055,
+            );
+            x += offsetX;
+            y += offsetY;
           }
 
           const radius =
@@ -380,6 +513,8 @@ const HalftonePortrait = () => {
         context.fill();
         context.restore();
       }
+
+      physicsEnergy = nextPhysicsEnergy;
 
       if (!reducedMotion.matches || pointerTarget || pointerStrength > 0.002) {
         animationFrame = window.requestAnimationFrame(draw);
@@ -400,9 +535,10 @@ const HalftonePortrait = () => {
       }
 
       const rect = portrait.getBoundingClientRect();
-      pointerX = ((event.clientX - rect.left) / rect.width) * VIEWBOX_SIZE;
-      pointerY = ((event.clientY - rect.top) / rect.height) * VIEWBOX_SIZE;
+      pointerX = (event.clientX - rect.left - renderOffsetX) / renderScale;
+      pointerY = (event.clientY - rect.top - renderOffsetY) / renderScale;
       pointerTarget = 1;
+      pointerStrength = Math.max(pointerStrength, 0.35);
       requestDraw(true);
     };
 
@@ -411,7 +547,20 @@ const HalftonePortrait = () => {
       requestDraw(true);
     };
 
-    const handleMotionPreference = () => requestDraw(true);
+    const handleMotionPreference = () => {
+      if (reducedMotion.matches) {
+        dots.offsetX.fill(0);
+        dots.offsetY.fill(0);
+        dots.velocityX.fill(0);
+        dots.velocityY.fill(0);
+        dots.particleOffsetX.fill(0);
+        dots.particleOffsetY.fill(0);
+        dots.particleVelocityX.fill(0);
+        dots.particleVelocityY.fill(0);
+      }
+
+      requestDraw(true);
+    };
 
     const resizeObserver = new ResizeObserver(() => {
       resizeCanvas();

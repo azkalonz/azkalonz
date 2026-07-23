@@ -39,7 +39,10 @@ const Projects = () => {
             {leadProject.featuredPhoto && (
               <img
                 src={leadProject.featuredPhoto}
-                alt="Product information architecture for the Urban Road PIM platform"
+                alt={
+                  leadProject.featuredPhotoAlt ??
+                  `Featured interface from ${leadProject.title}`
+                }
                 width="1800"
                 height="1352"
                 fetchPriority="high"

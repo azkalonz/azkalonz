@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import ContactCta from "../components/ContactCta";
 import Icon from "../components/Icon";
+import ProjectShowcaseCarousel from "../components/ProjectShowcaseCarousel";
 import Seo from "../components/Seo";
 import projects from "../data/projects";
 import { services, site } from "../data/site";
@@ -132,15 +133,24 @@ const ProjectDetails = () => {
           </div>
         </header>
 
-        {project.featuredPhoto && (
-          <div className="case-media section-shell">
+        {project.featuredPhoto && !project.showcase && (
+          <figure className="case-media section-shell">
             <img
               src={project.featuredPhoto}
-              alt="Product information architecture for the Urban Road PIM platform"
-              width="1800"
-              height="1352"
+              alt={
+                project.featuredPhotoAlt ??
+                `Featured interface from ${project.title}`
+              }
+              width="1280"
+              height="720"
             />
-          </div>
+            {project.featuredPhotoCaption && (
+              <figcaption>
+                <span aria-hidden="true">SCREEN_00</span>
+                {project.featuredPhotoCaption}
+              </figcaption>
+            )}
+          </figure>
         )}
 
         <section
@@ -160,6 +170,29 @@ const ProjectDetails = () => {
             <p>{project.outcome}</p>
           </div>
         </section>
+
+        {project.showcase && (
+          <section
+            className="case-showcase section-shell"
+            aria-labelledby="product-showcase-title"
+          >
+            <header className="case-showcase__heading">
+              <div>
+                <p className="eyebrow">Product tour</p>
+                <h2 id="product-showcase-title">
+                  One workflow, from source data to channel-ready output.
+                </h2>
+              </div>
+              <p>
+                The interface keeps catalogue governance, operational status,
+                and system structure visible without separating them from the
+                work they control.
+              </p>
+            </header>
+
+            <ProjectShowcaseCarousel screens={project.showcase} />
+          </section>
+        )}
 
         <div className="case-body section-shell">
           <aside className="case-sidebar">

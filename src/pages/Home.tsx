@@ -1,24 +1,19 @@
 import { Link } from "react-router-dom";
-import ContactCta from "../components/ContactCta";
 import HalftonePortrait from "../components/HalftonePortrait";
 import Icon from "../components/Icon";
-import ProjectCard from "../components/ProjectCard";
-import SectionHeading from "../components/SectionHeading";
 import Seo from "../components/Seo";
 import projects from "../data/projects";
-import { capabilities, faqs, services, site } from "../data/site";
+import { services, site } from "../data/site";
 
-const featuredProjects = projects
+const recentProjects = projects
   .filter((project) => project.featured)
   .slice(0, 3);
-
-const serviceIcons = ["code", "layers", "compass", "support"] as const;
 
 const Home = () => (
   <>
     <Seo
       title="IT solutions for growing businesses"
-      description="Custom web and mobile applications, business systems, automation, integrations, technical consultation, and ongoing application support from Mark Judaya."
+      description="Custom applications, automation, integrations, and ongoing technical support from full-stack systems developer Mark Judaya."
       canonical="/"
       structuredData={[
         {
@@ -53,288 +48,173 @@ const Home = () => (
       ]}
     />
 
-    <section className="hero section-shell" aria-labelledby="home-title">
-      <div className="hero__copy">
-        <p className="eyebrow">Full-service IT solutions</p>
-        <h1 id="home-title">
-          I build, connect, and support the technology your business relies on.
-        </h1>
-        <p className="hero__lead">
-          Custom applications, business systems, automation, integrations,
-          technical consultation, and ongoing support—delivered with a practical
-          full-stack approach.
-        </p>
-        <div className="hero__actions">
-          <Link to="/contact" className="button button--primary">
-            Start a project <Icon name="arrow-right" className="button__icon" />
-          </Link>
-          <Link to="/projects" className="button button--secondary">
-            View selected work
-          </Link>
+    <div className="matrix-home">
+      <section className="matrix-hero" aria-labelledby="home-title">
+        <div className="matrix-hero__grid" aria-hidden="true" />
+        <div className="matrix-hero__status" aria-hidden="true">
+          <span>SYS.01</span>
+          <span className="matrix-status-signal">ONLINE</span>
+          <span>PHILIPPINES / REMOTE</span>
         </div>
-        <p className="hero__note">
-          Direct collaboration from discovery through delivery and continued
-          improvement.
-        </p>
-      </div>
 
-      <div className="hero__visual">
-        <figure className="hero-halftone">
-          <div className="hero-halftone__canvas">
-            <HalftonePortrait />
-            <div className="hero-halftone__coordinates" aria-hidden="true">
-              <span>14.5995° N</span>
-              <span>120.9842° E</span>
-            </div>
-          </div>
-          <figcaption className="hero-halftone__caption">
-            <span>
-              <strong>Mark Judaya</strong>
-              Full-stack development & systems integration
-            </span>
-            <span className="hero-halftone__hint">
-              <i aria-hidden="true" />
-              Move through the dots
-            </span>
-          </figcaption>
-        </figure>
-        <div className="hero-system" aria-hidden="true">
-          <span>Build</span>
-          <i />
-          <span>Connect</span>
-          <i />
-          <span>Improve</span>
-          <i />
-          <span>Support</span>
-        </div>
-      </div>
-    </section>
-
-    <section className="proof-strip" aria-label="Core areas of expertise">
-      <div className="proof-strip__intro">
-        <span className="status-dot" />
-        Available for focused projects and ongoing work
-      </div>
-      <div className="proof-strip__items">
-        <span>Full-stack delivery</span>
-        <span>Business systems</span>
-        <span>Zoho & API integrations</span>
-        <span>Application support</span>
-      </div>
-    </section>
-
-    <section
-      className="page-section section-shell"
-      aria-labelledby="services-title"
-    >
-      <SectionHeading
-        eyebrow="Services"
-        title="Technical help shaped around the business problem."
-        description="I can take responsibility for a complete application, a difficult connection between systems, or a focused improvement to technology you already use."
-        action={
-          <Link to="/services" className="text-link">
-            Explore all services <Icon name="arrow-right" />
-          </Link>
-        }
-      />
-      <div className="service-grid">
-        {services.map((service, index) => (
-          <article className="service-card" key={service.id}>
-            <div className="service-card__top">
-              <span className="service-card__number">{service.number}</span>
-              <Icon name={serviceIcons[index]} className="service-card__icon" />
-            </div>
-            <h3>{service.title}</h3>
-            <p>{service.summary}</p>
-            <ul>
-              {service.deliverables.slice(0, 3).map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-            <Link to={`/services#${service.id}`} className="text-link">
-              View this service <Icon name="arrow-right" />
-            </Link>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <section
-      className="page-section page-section--tinted"
-      aria-labelledby="work-title"
-    >
-      <div className="section-shell">
-        <SectionHeading
-          eyebrow="Selected work"
-          title="Evidence of systems made clearer, more connected, and easier to operate."
-          description="Each case study focuses on the operating problem, my role, the technical approach, and what changed."
-          action={
-            <Link to="/projects" className="text-link">
-              View all work <Icon name="arrow-right" />
-            </Link>
-          }
-        />
-        <div className="featured-work-grid">
-          {featuredProjects.map((project, index) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              layout={index === 0 ? "feature" : "card"}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section
-      className="page-section section-shell"
-      aria-labelledby="process-title"
-    >
-      <SectionHeading
-        eyebrow="How I work"
-        title="A clear path from an unclear problem to a useful system."
-        description="The process stays lightweight and adapts to the work, but the important decisions are made deliberately."
-      />
-      <ol className="process-list">
-        <li>
-          <span>01</span>
-          <div>
-            <h3>Discover</h3>
-            <p>
-              Understand the current workflow, users, constraints, and the
-              outcome that matters.
-            </p>
-          </div>
-        </li>
-        <li>
-          <span>02</span>
-          <div>
-            <h3>Define</h3>
-            <p>
-              Clarify scope, system boundaries, data, risks, and the smallest
-              useful delivery plan.
-            </p>
-          </div>
-        </li>
-        <li>
-          <span>03</span>
-          <div>
-            <h3>Build & connect</h3>
-            <p>
-              Implement the interface, application logic, and integrations with
-              review points along the way.
-            </p>
-          </div>
-        </li>
-        <li>
-          <span>04</span>
-          <div>
-            <h3>Validate & support</h3>
-            <p>
-              Test the real workflow, document the solution, launch carefully,
-              and improve it after use.
-            </p>
-          </div>
-        </li>
-      </ol>
-    </section>
-
-    <section
-      className="page-section page-section--dark"
-      aria-labelledby="why-title"
-    >
-      <div className="section-shell split-section">
-        <div>
-          <p className="eyebrow eyebrow--light">Why work with me</p>
-          <h2 id="why-title" className="section-title section-title--light">
-            One technical partner who can see the whole workflow.
-          </h2>
-          <p className="section-copy section-copy--light">
-            I work across product interfaces, application logic, data, and
-            integrations. That means fewer handoffs between the business problem
-            and the implementation details.
+        <div className="matrix-hero__copy">
+          <p className="matrix-kicker">
+            <span aria-hidden="true">&gt;_</span> Mark Judaya // Systems
+            Developer
           </p>
-          <Link to="/about" className="button button--outline-light">
-            How I approach the work
+          <h1 id="home-title" className="matrix-title">
+            I build systems that{" "}
+            <span className="matrix-title__glitch" data-text="automate">
+              automate
+            </span>{" "}
+            the work.
+          </h1>
+          <p className="matrix-lead">
+            Custom applications, business automation, and integrations
+            engineered to turn repetitive operations into reliable connected
+            workflows.
+          </p>
+
+          <div className="matrix-actions">
+            <Link
+              to="/contact"
+              className="matrix-button matrix-button--primary"
+            >
+              <span>Start a project</span>
+              <Icon name="arrow-up-right" />
+            </Link>
+            <a href="#recent-work" className="matrix-button">
+              <span>Recent work</span>
+              <Icon name="arrow-right" className="matrix-icon--down" />
+            </a>
+          </div>
+
+          <div className="matrix-pipeline" aria-label="Delivery workflow">
+            <span>
+              <i aria-hidden="true" />
+              Input
+            </span>
+            <b aria-hidden="true">············</b>
+            <span>
+              <i aria-hidden="true" />
+              Automate
+            </span>
+            <b aria-hidden="true">············</b>
+            <span>
+              <i aria-hidden="true" />
+              Output
+            </span>
+          </div>
+        </div>
+
+        <div className="matrix-hero__visual">
+          <div className="matrix-portrait">
+            <div className="matrix-portrait__header">
+              <span>PORTRAIT_STREAM.dat</span>
+              <span>LIVE</span>
+            </div>
+            <div className="matrix-portrait__screen">
+              <HalftonePortrait />
+              <div className="matrix-portrait__reticle" aria-hidden="true" />
+              <span className="matrix-portrait__axis matrix-portrait__axis--x">
+                X.1209842
+              </span>
+              <span className="matrix-portrait__axis matrix-portrait__axis--y">
+                Y.145995
+              </span>
+            </div>
+            <div className="matrix-portrait__footer" aria-hidden="true">
+              <span>PARTICLE FIELD: ACTIVE</span>
+              <span>MOVE CURSOR TO INTERACT</span>
+            </div>
+          </div>
+
+          <div className="matrix-automation" aria-hidden="true">
+            <span>BUILD</span>
+            <i />
+            <span>CONNECT</span>
+            <i />
+            <span>SUPPORT</span>
+          </div>
+        </div>
+
+        <div className="matrix-command" aria-hidden="true">
+          <span>mark@systems:~$</span> orchestrate --reliable --maintainable
+          <i />
+        </div>
+      </section>
+
+      <section
+        id="recent-work"
+        className="matrix-work"
+        aria-labelledby="recent-work-title"
+      >
+        <div className="matrix-section-heading">
+          <div>
+            <p>[ OUTPUT / RECENT ]</p>
+            <h2 id="recent-work-title">Recent work</h2>
+          </div>
+          <Link to="/projects" className="matrix-archive-link">
+            View archive <Icon name="arrow-right" />
           </Link>
         </div>
-        <div className="principles-list">
-          {[
-            [
-              "Business-aware",
-              "The implementation starts with how the work actually happens, not with a preferred tool.",
-            ],
-            [
-              "Maintainable",
-              "Clear structure, validation, documentation, and sensible technical choices matter after launch.",
-            ],
-            [
-              "Direct",
-              "You work with the person planning and implementing the solution.",
-            ],
-            [
-              "Practical",
-              "Existing systems are improved or connected when that is more useful than rebuilding.",
-            ],
-          ].map(([title, copy]) => (
-            <div key={title}>
-              <Icon name="check" />
-              <p>
-                <strong>{title}</strong>
-                <span>{copy}</span>
-              </p>
-            </div>
+
+        <div className="matrix-project-grid">
+          {recentProjects.map((project, index) => (
+            <Link
+              key={project.id}
+              to={`/projects/${project.id}`}
+              className={`matrix-project ${index === 0 ? "matrix-project--feature" : ""}`}
+              aria-label={`Read the ${project.title} case study`}
+            >
+              <div className="matrix-project__topline">
+                <span>CASE_{String(index + 1).padStart(2, "0")}</span>
+                <span>{project.projectType}</span>
+              </div>
+
+              {project.featuredPhoto ? (
+                <div className="matrix-project__media">
+                  <img
+                    src={project.featuredPhoto}
+                    alt=""
+                    loading="lazy"
+                    width="1800"
+                    height="1352"
+                  />
+                  <span aria-hidden="true">VISUAL_FEED // 01</span>
+                </div>
+              ) : (
+                <div className="matrix-project__signal" aria-hidden="true">
+                  <span>{project.tags[0]}</span>
+                  <i />
+                  <b>
+                    {project.title
+                      .split(" ")
+                      .slice(0, 2)
+                      .map((word) => word[0])
+                      .join("")}
+                  </b>
+                </div>
+              )}
+
+              <div className="matrix-project__body">
+                <h3>{project.title}</h3>
+                <p>{project.description}</p>
+                <div className="matrix-project__stack" aria-label="Technology">
+                  {project.stack.slice(0, 3).map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="matrix-project__footer">
+                <span>Open case study</span>
+                <Icon name="arrow-up-right" />
+              </div>
+            </Link>
           ))}
         </div>
-      </div>
-    </section>
-
-    <section
-      className="page-section section-shell"
-      aria-labelledby="capabilities-title"
-    >
-      <SectionHeading
-        eyebrow="Technical capabilities"
-        title="Technology is supporting evidence, not the sales pitch."
-        description="The stack changes with the problem. These are the tools and platforms represented in the work shown here."
-      />
-      <div className="capability-grid">
-        {capabilities.map((group) => (
-          <div className="capability-group" key={group.title}>
-            <h3>{group.title}</h3>
-            <ul>
-              {group.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <section
-      className="page-section page-section--bordered section-shell"
-      aria-labelledby="faq-title"
-    >
-      <SectionHeading
-        eyebrow="Frequently asked questions"
-        title="Useful answers before we talk."
-      />
-      <div className="faq-list">
-        {faqs.map((item) => (
-          <details key={item.question}>
-            <summary>
-              {item.question}
-              <span aria-hidden="true">+</span>
-            </summary>
-            <p>{item.answer}</p>
-          </details>
-        ))}
-      </div>
-    </section>
-
-    <div className="section-shell page-section page-section--cta">
-      <ContactCta />
+      </section>
     </div>
   </>
 );
