@@ -9,8 +9,11 @@ const BASE_PARTICLE_COUNT = 50_000;
 const DETAIL_PARTICLE_COUNT = 52_000;
 const PARTICLE_COUNT = BASE_PARTICLE_COUNT + DETAIL_PARTICLE_COUNT;
 const EMITTER_COUNT = 1_400;
-const INTRO_HOLD_DURATION = 0.24;
-const INTRO_MORPH_DURATION = 1.46;
+const INTRO_HOLD_DURATION = 0.08;
+const INTRO_REVEAL_DURATION = 1.65;
+const INTRO_START_DEPTH = -1.4;
+const INTRO_START_ROTATION = Math.PI;
+const INTRO_START_SCALE = 0.82;
 const HOVER_EXIT_DELAY = 420;
 const SOLID_GLITCH_DURATION = 0.46;
 const SOLID_GLITCH_X = [0, -0.055, 0.032, -0.018, 0.046, -0.024, 0.012, 0];
@@ -65,52 +68,11 @@ const vertexShader = `
   varying float vRim;
   varying float vSideLight;
   varying float vTone;
+  varying float vIntroVisibility;
 
   void main() {
-    float sphereY = fract(
-      sin(dot(position, vec3(12.9898, 78.233, 37.719)) + aSeed * 41.37) *
-      43758.5453
-    ) * 2.0 - 1.0;
-    float sphereAngle = fract(
-      sin(dot(position, vec3(39.346, 11.135, 83.155)) + aSeed * 73.91) *
-      24634.6345
-    ) * 6.2831853;
-    float sphereRadius = sqrt(max(1.0 - sphereY * sphereY, 0.0));
-    vec3 sphereDirection = vec3(
-      cos(sphereAngle) * sphereRadius,
-      sphereY,
-      sin(sphereAngle) * sphereRadius
-    );
-    float introEase = 1.0 - pow(1.0 - uIntroProgress, 3.0);
-    float organicNoise =
-      sin(sphereAngle * 3.0 + sphereY * 4.2 + uTime * 1.7) * 0.1 +
-      sin(sphereAngle * 7.0 - sphereY * 2.8 - uTime * 1.15 + aSeed * 8.0) *
-      0.055;
-    float pulse =
-      1.0 +
-      sin(uTime * 3.8 + aSeed * 2.4) * 0.045 +
-      sin(uTime * 1.45 + sphereY * 5.0) * 0.035;
-    vec3 organicPosition =
-      sphereDirection *
-      vec3(0.7, 0.82, 0.64) *
-      (1.0 + organicNoise) *
-      pulse;
-    organicPosition += vec3(
-      sin(uTime * 1.2 + sphereY * 3.0),
-      cos(uTime * 1.05 + sphereAngle * 0.7),
-      sin(uTime * 1.35 + aSeed * 11.0)
-    ) * 0.035;
-    vec3 swirlDirection = normalize(
-      cross(sphereDirection, vec3(0.18, 1.0, 0.12))
-    );
-    float swirlEnvelope =
-      sin(uIntroProgress * 3.1415926) * (1.0 - uIntroProgress * 0.55);
-    vec3 positionAnimated =
-      mix(organicPosition, position, introEase) +
-      swirlDirection *
-      swirlEnvelope *
-      (0.08 + aSeed * 0.11) *
-      sin(aSeed * 23.0 + uTime * 1.6);
+    vec3 positionAnimated = position;
+    vIntroVisibility = smoothstep(0.04, 0.88, uIntroProgress);
     float wave =
       sin(uTime * (0.7 + aSeed * 0.65) + aSeed * 19.0 + position.y * 5.5) *
       (0.006 + aSeed * 0.012) *
@@ -246,6 +208,7 @@ const emitterVertexShader = `
   varying float vRim;
   varying float vSideLight;
   varying float vTone;
+  varying float vIntroVisibility;
 
   void main() {
     float life = fract(aSeed + uTime * (0.035 + aSpeed * 0.035) * uMotion);
@@ -269,50 +232,12 @@ const emitterVertexShader = `
       ) * 0.018 * remaining;
     emittedPosition = mix(position, emittedPosition, emissionStrength);
 
-    float sphereY = fract(
-      sin(dot(position, vec3(12.9898, 78.233, 37.719)) + aSeed * 41.37) *
-      43758.5453
-    ) * 2.0 - 1.0;
-    float sphereAngle = fract(
-      sin(dot(position, vec3(39.346, 11.135, 83.155)) + aSeed * 73.91) *
-      24634.6345
-    ) * 6.2831853;
-    float sphereRadius = sqrt(max(1.0 - sphereY * sphereY, 0.0));
-    vec3 sphereDirection = vec3(
-      cos(sphereAngle) * sphereRadius,
-      sphereY,
-      sin(sphereAngle) * sphereRadius
+    vec3 positionAnimated = mix(
+      position,
+      emittedPosition,
+      smoothstep(0.7, 1.0, uIntroProgress)
     );
-    float introEase = 1.0 - pow(1.0 - uIntroProgress, 3.0);
-    float organicNoise =
-      sin(sphereAngle * 3.0 + sphereY * 4.2 + uTime * 1.7) * 0.1 +
-      sin(sphereAngle * 7.0 - sphereY * 2.8 - uTime * 1.15 + aSeed * 8.0) *
-      0.055;
-    float pulse =
-      1.0 +
-      sin(uTime * 3.8 + aSeed * 2.4) * 0.045 +
-      sin(uTime * 1.45 + sphereY * 5.0) * 0.035;
-    vec3 organicPosition =
-      sphereDirection *
-      vec3(0.7, 0.82, 0.64) *
-      (1.0 + organicNoise) *
-      pulse;
-    organicPosition += vec3(
-      sin(uTime * 1.2 + sphereY * 3.0),
-      cos(uTime * 1.05 + sphereAngle * 0.7),
-      sin(uTime * 1.35 + aSeed * 11.0)
-    ) * 0.035;
-    vec3 swirlDirection = normalize(
-      cross(sphereDirection, vec3(0.18, 1.0, 0.12))
-    );
-    float swirlEnvelope =
-      sin(uIntroProgress * 3.1415926) * (1.0 - uIntroProgress * 0.55);
-    vec3 positionAnimated =
-      mix(organicPosition, emittedPosition, introEase) +
-      swirlDirection *
-      swirlEnvelope *
-      (0.08 + aSeed * 0.11) *
-      sin(aSeed * 23.0 + uTime * 1.6);
+    vIntroVisibility = smoothstep(0.16, 0.94, uIntroProgress);
 
     vec4 viewPosition = modelViewMatrix * vec4(positionAnimated, 1.0);
     vec4 clipPosition = projectionMatrix * viewPosition;
@@ -427,6 +352,7 @@ const fragmentShader = `
   varying float vRim;
   varying float vSideLight;
   varying float vTone;
+  varying float vIntroVisibility;
 
   void main() {
     vec2 center = gl_PointCoord - vec2(0.5);
@@ -478,6 +404,7 @@ const fragmentShader = `
       color,
       circle *
         vAlpha *
+        vIntroVisibility *
         mix(0.45, 1.0, vRearVisibility) *
         mix(1.0, 1.18, featureInk) *
         min(
@@ -754,6 +681,7 @@ const HalftonePortrait = () => {
     let animationFrame = 0;
     let animationStartTimestamp = 0;
     let introStartTimestamp = 0;
+    let isIntroSettled = false;
     let lastTimestamp = 0;
     let isVisible = true;
     let isSubjectHovering = false;
@@ -781,6 +709,7 @@ const HalftonePortrait = () => {
     const targetKeyLightDirection = KEY_LIGHT_DIRECTION.clone();
     const targetFillLightDirection = FILL_LIGHT_DIRECTION.clone();
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    isIntroSettled = reducedMotion.matches;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
     camera.position.set(0, 0.1, 5.8);
@@ -872,6 +801,10 @@ const HalftonePortrait = () => {
       portrait.closest<HTMLElement>(".matrix-portrait") ?? portrait;
 
     const setSubjectHover = (isHovered: boolean) => {
+      if (isHovered && !isIntroSettled) {
+        return;
+      }
+
       if (isHovered) {
         if (hoverExitTimer) {
           window.clearTimeout(hoverExitTimer);
@@ -1342,13 +1275,26 @@ const HalftonePortrait = () => {
       const introElapsed = introStartTimestamp
         ? (timestamp - introStartTimestamp) / 1000
         : 0;
-      commonUniforms.uIntroProgress.value = reducedMotion.matches
+      const introProgress = reducedMotion.matches
         ? 1
         : THREE.MathUtils.clamp(
-          (introElapsed - INTRO_HOLD_DURATION) / INTRO_MORPH_DURATION,
+          (introElapsed - INTRO_HOLD_DURATION) / INTRO_REVEAL_DURATION,
           0,
           1,
         );
+      const introEase =
+        introProgress * introProgress * (3 - 2 * introProgress);
+      commonUniforms.uIntroProgress.value = introProgress;
+      if (!isIntroSettled && introProgress >= 1) {
+        isIntroSettled = true;
+
+        if (
+          hoverTarget.matches(":hover") ||
+          hoverTarget.contains(document.activeElement)
+        ) {
+          setSubjectHover(true);
+        }
+      }
       const lightResponse = delta ? 1 - Math.exp(-10 * delta) : 1;
       const hoverResponse = reducedMotion.matches
         ? 1
@@ -1505,17 +1451,24 @@ const HalftonePortrait = () => {
         emitterCloud.visible = visibleSolidProgress < 0.98;
       }
 
+      let swivelRotation = 0;
       if (!reducedMotion.matches) {
         swivelElapsed += delta;
-        modelGroup.rotation.y =
-          INITIAL_ROTATION +
+        swivelRotation =
           Math.sin((swivelElapsed / ROTATION_DURATION) * Math.PI * 2) *
           ROTATION_SWAY;
       }
+      modelGroup.rotation.y =
+        INITIAL_ROTATION +
+        (1 - introEase) * INTRO_START_ROTATION +
+        swivelRotation * introEase;
       modelGroup.position.set(
         isSolidGlitching ? SOLID_GLITCH_X[glitchStep] : 0,
         isSolidGlitching ? SOLID_GLITCH_Y[glitchStep] : 0,
-        0,
+        THREE.MathUtils.lerp(INTRO_START_DEPTH, 0, introEase),
+      );
+      modelGroup.scale.setScalar(
+        THREE.MathUtils.lerp(INTRO_START_SCALE, 1, introEase),
       );
       modelGroup.rotation.z = isSolidGlitching
         ? SOLID_GLITCH_X[glitchStep] * -0.08
@@ -1656,7 +1609,7 @@ const HalftonePortrait = () => {
       touchStartX = Number.NaN;
       touchStartY = Number.NaN;
 
-      if (!isTap || isMobileLink) {
+      if (!isTap || isMobileLink || !isIntroSettled) {
         return;
       }
 
@@ -1685,7 +1638,10 @@ const HalftonePortrait = () => {
         : commonUniforms.uIntroProgress.value;
 
       if (reducedMotion.matches) {
+        isIntroSettled = true;
         modelGroup.rotation.y = INITIAL_ROTATION;
+      } else if (!introStartTimestamp) {
+        isIntroSettled = false;
       }
 
       requestAnimation();
