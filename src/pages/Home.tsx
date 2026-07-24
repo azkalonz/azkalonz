@@ -109,6 +109,11 @@ const Home = () => (
 
         <div className="matrix-hero__visual">
           <div className="matrix-portrait">
+            <Link
+              className="matrix-portrait__link-overlay"
+              to="/about"
+              aria-label="Learn more about Mark Judaya"
+            />
             <div className="matrix-portrait__header">
               <span>PORTRAIT_STREAM.dat</span>
               <span>LIVE</span>
@@ -122,10 +127,14 @@ const Home = () => (
               <span className="matrix-portrait__axis matrix-portrait__axis--y">
                 Y.145995
               </span>
+              <Link className="matrix-portrait__mobile-link" to="/about">
+                <span>About Me</span>
+                <Icon name="arrow-right" />
+              </Link>
             </div>
             <div className="matrix-portrait__footer" aria-hidden="true">
               <span>PARTICLE FIELD: ACTIVE</span>
-              <span>HOVER OR CLICK TO INTERACT</span>
+              <span>OPEN ABOUT PROFILE</span>
             </div>
           </div>
 
