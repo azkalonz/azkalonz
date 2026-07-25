@@ -3,26 +3,65 @@ import ContactCta from "../components/ContactCta";
 import Icon from "../components/Icon";
 import Seo from "../components/Seo";
 import projects from "../data/projects";
-import { services } from "../data/site";
+import { faqs, services, site } from "../data/site";
 
 const Services = () => (
   <>
     <Seo
-      title="IT services"
-      description="Application development, automation and integrations, technical consulting, and ongoing IT support for growing businesses."
+      title="Custom Software Development & Automation Services"
+      description="Custom web applications, business automation, Zoho and API integrations, technical consulting, and ongoing software support for growing teams."
       canonical="/services"
+      structuredData={[
+        {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Custom software development and automation services",
+          itemListElement: services.map((service, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            item: {
+              "@type": "Service",
+              name: service.title,
+              description: service.summary,
+              url: `${site.url}/services#${service.id}`,
+              provider: {
+                "@type": "Person",
+                "@id": `${site.url}/#mark-judaya`,
+                name: site.name,
+                url: site.url,
+              },
+              areaServed: "Worldwide",
+            },
+          })),
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Home",
+              item: `${site.url}/`,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Services",
+              item: `${site.url}/services`,
+            },
+          ],
+        },
+      ]}
     />
 
     <header className="page-hero section-shell">
       <p className="eyebrow">Services</p>
-      <h1>
-        Build what is missing. Connect what is fragmented. Improve what already
-        works.
-      </h1>
+      <h1>Custom software, automation, integrations, and technical support.</h1>
       <p>
-        I help growing businesses turn operational needs into dependable
-        applications, integrations, and improvement plans—without making the
-        technology harder to understand than it needs to be.
+        I help growing businesses turn operational needs into dependable web
+        applications, connected systems, and practical improvement plans—from
+        full-stack development through long-term support.
       </p>
       <div className="hero__actions">
         <Link to="/contact" className="button button--primary">
@@ -122,6 +161,31 @@ const Services = () => (
         );
       })}
     </div>
+
+    <section
+      className="section-shell page-section"
+      aria-labelledby="services-faq-title"
+    >
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">Frequently asked questions</p>
+          <h2 id="services-faq-title" className="section-title">
+            What to know before starting.
+          </h2>
+        </div>
+      </div>
+      <div className="faq-list">
+        {faqs.map((faq) => (
+          <details key={faq.question}>
+            <summary>
+              {faq.question}
+              <span aria-hidden="true">+</span>
+            </summary>
+            <p>{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
 
     <div className="section-shell page-section page-section--cta">
       <ContactCta

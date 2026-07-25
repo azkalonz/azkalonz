@@ -8,29 +8,29 @@
     <link rel="manifest" href="/manifest.json" />
     <meta
       name="description"
-      content="Custom applications, integrations, technical consultation, and ongoing application support for growing businesses."
+      content="Philippines-based full-stack developer building custom web applications, business automation, Zoho integrations, and reliable internal systems."
     />
     <meta name="author" content="Mark Judaya" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
     <meta name="theme-color" content="#f5f4ef" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Mark Judaya" />
     <meta
       property="og:title"
-      content="IT solutions for growing businesses | Mark Judaya"
+      content="Custom Software, Automation & Integrations | Mark Judaya"
     />
     <meta
       property="og:description"
-      content="Build, connect, improve, and support the technology behind your operations."
+      content="Custom web applications, business automation, Zoho integrations, and reliable internal systems for growing teams."
     />
     <meta property="og:url" content="https://builtbymark.dev" />
     <meta
       property="og:image"
       content="https://builtbymark.dev/social-card.svg"
     />
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-GE3XEC3BD0"
-    ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -38,6 +38,34 @@
       }
       gtag("js", new Date());
       gtag("config", "G-GE3XEC3BD0");
+
+      (function () {
+        var loaded = false;
+        var events = ["pointerdown", "keydown", "scroll"];
+        var loadAnalytics = function () {
+          if (loaded) return;
+          loaded = true;
+          events.forEach(function (eventName) {
+            window.removeEventListener(eventName, loadAnalytics);
+          });
+
+          var script = document.createElement("script");
+          script.async = true;
+          script.src =
+            "https://www.googletagmanager.com/gtag/js?id=G-GE3XEC3BD0";
+          document.head.appendChild(script);
+        };
+
+        events.forEach(function (eventName) {
+          window.addEventListener(eventName, loadAnalytics, {
+            once: true,
+            passive: true,
+          });
+        });
+        window.addEventListener("load", function () {
+          window.setTimeout(loadAnalytics, 4000);
+        });
+      })();
     </script>
     <script>
       (function () {
@@ -56,7 +84,7 @@
         }
       })();
     </script>
-    <title>IT solutions for growing businesses | Mark Judaya</title>
+    <title>Custom Software, Automation & Integrations | Mark Judaya</title>
   </head>
   <body>
     <div id="root"></div>

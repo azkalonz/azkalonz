@@ -30,51 +30,60 @@ type PageEntry = {
   projectId?: string;
 };
 
+type HelmetServerState = {
+  helmet?: {
+    title: { toString: () => string };
+    meta: { toString: () => string };
+    link: { toString: () => string };
+    script: { toString: () => string };
+  };
+};
+
 const staticPages: PageEntry[] = [
   {
     routePath: "/",
     routePattern: "/",
     filename: "index.html",
     component: Home,
-    title: "IT solutions for growing businesses | Mark Judaya",
+    title: "Custom Software, Automation & Integrations | Mark Judaya",
     description:
-      "Custom applications, integrations, technical consultation, and ongoing application support for growing businesses.",
+      "Philippines-based full-stack developer building custom web applications, business automation, Zoho integrations, and reliable internal systems.",
   },
   {
     routePath: "/services",
     routePattern: "/services",
     filename: "services/index.html",
     component: Services,
-    title: "IT services | Mark Judaya",
+    title: "Custom Software Development & Automation Services | Mark Judaya",
     description:
-      "Application development, automation and integrations, technical consulting, and ongoing IT support for growing businesses.",
+      "Custom web applications, business automation, Zoho and API integrations, technical consulting, and ongoing software support for growing teams.",
   },
   {
     routePath: "/projects",
     routePattern: "/projects",
     filename: "projects/index.html",
     component: Projects,
-    title: "Selected work | Mark Judaya",
+    title: "Custom Software & Integration Case Studies | Mark Judaya",
     description:
-      "Case studies in custom applications, data migration, business automation, Zoho, API integration, and operational support.",
+      "Custom software case studies covering product information management, Salesforce-to-Zoho migration, API integration, and business automation.",
   },
   {
     routePath: "/about",
     routePattern: "/about",
     filename: "about/index.html",
     component: About,
-    title: "About | Mark Judaya",
+    title: "Full-Stack Developer & Systems Specialist | Mark Judaya",
     description:
-      "How Mark Judaya approaches custom applications, business systems, integrations, technical planning, and long-term support.",
+      "Meet Mark Judaya, a Philippines-based full-stack developer specializing in custom software, business automation, systems integration, and Zoho.",
   },
   {
     routePath: "/contact",
     routePattern: "/contact",
     filename: "contact/index.html",
     component: Contact,
-    title: "Contact | Mark Judaya",
+    title: "Contact a Custom Software Developer | Mark Judaya",
     description:
-      "Discuss an application, integration, automation, technical planning, or ongoing support need with Mark Judaya.",
+      "Contact Mark Judaya to discuss a custom web application, Zoho or API integration, business automation, technical plan, or software support need.",
   },
 ];
 
@@ -136,10 +145,11 @@ const prerender = () => {
 
   for (const entry of [...staticPages, ...projectPages]) {
     try {
+      const helmetContext: HelmetServerState = {};
       const content = renderToStaticMarkup(
         createElement(
           HelmetProvider,
-          null,
+          { context: helmetContext },
           createElement(
             StaticRouter,
             { location: entry.routePath },
@@ -178,10 +188,32 @@ const prerender = () => {
       html = setMeta(html, "name", "twitter:card", "summary_large_image");
       html = setMeta(html, "name", "twitter:title", entry.title);
       html = setMeta(html, "name", "twitter:description", entry.description);
-      html = html.replace(
-        "</head>",
-        `  <link rel="canonical" href="${canonicalUrl}" />\n</head>`,
-      );
+
+      const helmet = helmetContext.helmet;
+      if (helmet) {
+        html = html
+          .replace(/<title[^>]*>.*?<\/title>/is, "")
+          .replace(
+            /<meta\s+(?:name|property)="(?:description|robots|theme-color|twitter:[^"]+|og:[^"]+)"[^>]*\/?>\s*/gi,
+            "",
+          )
+          .replace(/<link\s+rel="canonical"[^>]*\/?>\s*/gi, "");
+
+        const managedHead = [
+          helmet.title.toString(),
+          helmet.meta.toString(),
+          helmet.link.toString(),
+          helmet.script.toString(),
+        ]
+          .filter(Boolean)
+          .join("\n    ");
+        html = html.replace("</head>", `    ${managedHead}\n  </head>`);
+      } else {
+        html = html.replace(
+          "</head>",
+          `  <link rel="canonical" href="${canonicalUrl}" />\n</head>`,
+        );
+      }
 
       if (entry.projectId && projectDetails[entry.projectId]) {
         const payload = JSON.stringify({

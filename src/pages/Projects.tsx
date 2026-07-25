@@ -4,6 +4,7 @@ import Icon from "../components/Icon";
 import ProjectCard from "../components/ProjectCard";
 import Seo from "../components/Seo";
 import projects from "../data/projects";
+import { site } from "../data/site";
 
 const Projects = () => {
   const [leadProject, ...otherProjects] = projects;
@@ -11,14 +12,51 @@ const Projects = () => {
   return (
     <>
       <Seo
-        title="Selected work"
-        description="Case studies in custom application development, data migration, business automation, Zoho, API integration, and operational support."
+        title="Custom Software & Integration Case Studies"
+        description="Custom software case studies covering product information management, Salesforce-to-Zoho migration, API integration, and business automation."
         canonical="/projects"
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: "Custom Software and Integration Case Studies",
+            description:
+              "Case studies in custom software, data migration, Zoho, API integration, and business automation.",
+            url: `${site.url}/projects`,
+            mainEntity: {
+              "@type": "ItemList",
+              itemListElement: projects.map((project, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                name: project.title,
+                url: `${site.url}/projects/${project.id}`,
+              })),
+            },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: `${site.url}/`,
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Case studies",
+                item: `${site.url}/projects`,
+              },
+            ],
+          },
+        ]}
       />
 
       <header className="page-hero section-shell">
         <p className="eyebrow">Selected work</p>
-        <h1>Practical systems, explained through the problems they solve.</h1>
+        <h1>Custom software and integrations built around real workflows.</h1>
         <p>
           These projects span application development, data operations,
           integrations, and automation. Where client details are private, the
@@ -43,8 +81,8 @@ const Projects = () => {
                   leadProject.featuredPhotoAlt ??
                   `Featured interface from ${leadProject.title}`
                 }
-                width="1800"
-                height="1352"
+                width="1280"
+                height="720"
                 fetchPriority="high"
               />
             )}

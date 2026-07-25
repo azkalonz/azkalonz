@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import HalftonePortrait from "../components/HalftonePortrait";
+import DeferredHalftonePortrait from "../components/DeferredHalftonePortrait";
 import Icon from "../components/Icon";
 import Seo from "../components/Seo";
 import projects from "../data/projects";
@@ -12,17 +12,30 @@ const recentProjects = projects
 const Home = () => (
   <>
     <Seo
-      title="IT solutions for growing businesses"
-      description="Custom applications, automation, integrations, and ongoing technical support from full-stack systems developer Mark Judaya."
+      title="Custom Software, Automation & Integrations"
+      description="Philippines-based full-stack developer building custom web applications, business automation, Zoho integrations, and reliable internal systems."
       canonical="/"
       structuredData={[
         {
           "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": `${site.url}/#website`,
+          name: site.name,
+          alternateName: "Built by Mark",
+          url: site.url,
+        },
+        {
+          "@context": "https://schema.org",
           "@type": "Person",
+          "@id": `${site.url}/#mark-judaya`,
           name: site.name,
           url: site.url,
           image: `${site.url}/avatar.webp`,
-          jobTitle: "IT Solutions Developer",
+          jobTitle: "Full-Stack Developer and Systems Specialist",
+          address: {
+            "@type": "PostalAddress",
+            addressCountry: "PH",
+          },
           sameAs: [
             site.socials.linkedin,
             site.socials.github,
@@ -39,9 +52,11 @@ const Home = () => (
         {
           "@context": "https://schema.org",
           "@type": "ProfessionalService",
+          "@id": `${site.url}/#professional-service`,
           name: "Mark Judaya IT Solutions",
           url: site.url,
           email: site.email,
+          founder: { "@id": `${site.url}/#mark-judaya` },
           areaServed: "Worldwide",
           serviceType: services.map((service) => service.title),
         },
@@ -59,11 +74,11 @@ const Home = () => (
 
         <div className="matrix-hero__copy">
           <p className="matrix-kicker">
-            <span aria-hidden="true">&gt;_</span> Mark Judaya // Systems
-            Developer
+            <span aria-hidden="true">&gt;_</span> Mark Judaya // Full-Stack
+            Developer // Philippines
           </p>
           <h1 id="home-title" className="matrix-title">
-            I build systems that{" "}
+            Custom software to{" "}
             <span className="matrix-title__glitch" data-text="automate">
               automate
             </span>{" "}
@@ -119,7 +134,7 @@ const Home = () => (
               <span>LIVE</span>
             </div>
             <div className="matrix-portrait__screen">
-              <HalftonePortrait />
+              <DeferredHalftonePortrait />
               <div className="matrix-portrait__reticle" aria-hidden="true" />
               <span className="matrix-portrait__axis matrix-portrait__axis--x">
                 X.1209842
@@ -187,8 +202,8 @@ const Home = () => (
                     src={project.featuredPhoto}
                     alt=""
                     loading="lazy"
-                    width="1800"
-                    height="1352"
+                    width="1280"
+                    height="720"
                   />
                   <span aria-hidden="true">VISUAL_FEED // 01</span>
                 </div>

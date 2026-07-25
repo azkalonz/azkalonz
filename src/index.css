@@ -140,6 +140,12 @@ img {
   min-height: 100vh;
 }
 
+.route-loading {
+  min-height: 50vh;
+  padding-block: 5rem;
+  color: var(--muted);
+}
+
 .section-shell {
   width: min(calc(100% - 3rem), var(--container));
   margin-inline: auto;
@@ -599,6 +605,11 @@ img {
   user-select: none;
 }
 
+.deferred-halftone {
+  width: 100%;
+  height: 100%;
+}
+
 .halftone-portrait--subject-hovered,
 .halftone-portrait--selected {
   cursor: pointer;
@@ -608,15 +619,6 @@ img {
   display: block;
   width: 100%;
   height: 100%;
-}
-
-.halftone-portrait__fallback {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  color: inherit;
-  object-fit: contain;
 }
 
 .hero-halftone__coordinates {

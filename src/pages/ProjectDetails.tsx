@@ -64,15 +64,53 @@ const ProjectDetails = () => {
         title={project.title}
         description={project.description}
         ogType="article"
+        socialImage={project.featuredPhoto}
+        socialImageAlt={project.featuredPhotoAlt}
+        socialImageWidth={project.featuredPhoto ? 1280 : undefined}
+        socialImageHeight={project.featuredPhoto ? 720 : undefined}
         canonical={`/projects/${project.id}`}
-        structuredData={{
-          "@context": "https://schema.org",
-          "@type": "CreativeWork",
-          name: project.title,
-          description: project.description,
-          creator: { "@type": "Person", name: site.name, url: site.url },
-          url: `${site.url}/projects/${project.id}`,
-        }}
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            name: project.title,
+            description: project.description,
+            creator: {
+              "@type": "Person",
+              "@id": `${site.url}/#mark-judaya`,
+              name: site.name,
+              url: site.url,
+            },
+            url: `${site.url}/projects/${project.id}`,
+            ...(project.featuredPhoto
+              ? { image: new URL(project.featuredPhoto, site.url).toString() }
+              : {}),
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: `${site.url}/`,
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Case studies",
+                item: `${site.url}/projects`,
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: project.title,
+                item: `${site.url}/projects/${project.id}`,
+              },
+            ],
+          },
+        ]}
       />
 
       <article className="case-study">

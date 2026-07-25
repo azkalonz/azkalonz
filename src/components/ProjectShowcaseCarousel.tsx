@@ -93,6 +93,7 @@ const ProjectShowcaseCarousel = ({ screens }: ProjectShowcaseCarouselProps) => {
             key={activeScreen.src}
             src={activeScreen.src}
             alt={activeScreen.alt}
+            loading="lazy"
             decoding="async"
             width="1280"
             height="720"

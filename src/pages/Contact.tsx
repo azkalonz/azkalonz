@@ -5,9 +5,41 @@ import { site } from "../data/site";
 const Contact = () => (
   <>
     <Seo
-      title="Contact"
-      description="Contact Mark Judaya about an application, integration, automation, technical planning, or ongoing support need."
+      title="Contact a Custom Software Developer"
+      description="Contact Mark Judaya to discuss a custom web application, Zoho or API integration, business automation, technical plan, or software support need."
       canonical="/contact"
+      structuredData={[
+        {
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: "Contact Mark Judaya",
+          url: `${site.url}/contact`,
+          mainEntity: {
+            "@type": "Person",
+            "@id": `${site.url}/#mark-judaya`,
+            name: site.name,
+            url: site.url,
+          },
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Home",
+              item: `${site.url}/`,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Contact",
+              item: `${site.url}/contact`,
+            },
+          ],
+        },
+      ]}
     />
 
     <header className="page-hero page-hero--compact section-shell">

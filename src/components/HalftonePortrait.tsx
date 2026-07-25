@@ -664,7 +664,6 @@ const disposeModel = (root: THREE.Object3D) => {
 const HalftonePortrait = () => {
   const portraitRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [hasError, setHasError] = useState(false);
   const [isSubjectHovered, setIsSubjectHovered] = useState(false);
   const [isTouchPreviewVisible, setIsTouchPreviewVisible] = useState(false);
   const isSolidVisible = isSubjectHovered || isTouchPreviewVisible;
@@ -1236,7 +1235,6 @@ const HalftonePortrait = () => {
         (error) => {
           if (!disposed) {
             console.error(error);
-            setHasError(true);
           }
         },
       );
@@ -1751,15 +1749,6 @@ const HalftonePortrait = () => {
         className="halftone-portrait__canvas"
         aria-hidden="true"
       />
-      {hasError && (
-        <img
-          className="halftone-portrait__fallback"
-          src="/particle-portrait-fallback.jpg"
-          alt=""
-          width="483"
-          height="448"
-        />
-      )}
     </div>
   );
 };
