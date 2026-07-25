@@ -1,5 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <rect width="128" height="128" rx="64" fill="#10241f"/>
-  <circle cx="64" cy="64" r="49" fill="none" stroke="#7fc4b3" stroke-width="2"/>
-  <text x="64" y="77" text-anchor="middle" fill="#f6f5f1" font-family="Georgia, serif" font-size="40" letter-spacing="-2">MJ</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Mark Judaya MJ monogram</title>
+  <rect width="128" height="128" rx="22" fill="#050806"/>
+  <g transform="translate(16 10) scale(1.5)" fill="none" stroke="#63ff9b" stroke-linejoin="round">
+    <path d="M32 5 55 18v26L32 58 9 44V18L32 5Z" stroke-width="2.5"/>
+    <path d="M15 43V20l17 11 17-11v20c0 8-5 13-13 13-5 0-9-2-12-6" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M32 31v20" stroke-width="3.5" stroke-linecap="round"/>
+    <g fill="#050806" stroke-width="2.5">
+      <circle cx="32" cy="5" r="3.5"/>
+      <circle cx="55" cy="18" r="3.5"/>
+      <circle cx="55" cy="44" r="3.5"/>
+      <circle cx="32" cy="58" r="3.5"/>
+      <circle cx="9" cy="44" r="3.5"/>
+      <circle cx="9" cy="18" r="3.5"/>
+    </g>
+  </g>
 </svg>

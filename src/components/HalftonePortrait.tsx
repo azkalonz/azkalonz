@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import * as THREE from "three";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -10,9 +9,23 @@ const BASE_PARTICLE_COUNT = 50_000;
 const DETAIL_PARTICLE_COUNT = 52_000;
 const PARTICLE_COUNT = BASE_PARTICLE_COUNT + DETAIL_PARTICLE_COUNT;
 const EMITTER_COUNT = 1_400;
-const INTRO_HOLD_DURATION = 0.24;
-const INTRO_MORPH_DURATION = 1.46;
+const INTRO_HOLD_DURATION = 0.08;
+const INTRO_REVEAL_DURATION = 1.65;
+const INTRO_START_DEPTH = -1.4;
+const INTRO_START_ROTATION = Math.PI;
+const INTRO_START_SCALE = 0.82;
 const HOVER_EXIT_DELAY = 420;
+const SOLID_GLITCH_DURATION = 0.46;
+const SOLID_GLITCH_X = [0, -0.055, 0.032, -0.018, 0.046, -0.024, 0.012, 0];
+const SOLID_GLITCH_Y = [0, 0.012, -0.008, 0.005, -0.01, 0.006, -0.003, 0];
+const SOLID_ENTER_GLITCH_SIGNAL = [0.18, 1, 0.34, 0.9, 0.52, 1, 0.82, 1];
+const SOLID_EXIT_GLITCH_SIGNAL = [1, 0.72, 1, 0.48, 0.9, 0.34, 0.58, 0];
+const SOLID_ARTIFACT_MIN_DELAY = 520;
+const SOLID_ARTIFACT_DELAY_RANGE = 1_200;
+const SOLID_ARTIFACT_MIN_DURATION = 0.2;
+const SOLID_ARTIFACT_DURATION_RANGE = 0.22;
+const PARTICLE_WORK_BUDGET = 8;
+const MODEL_LOAD_IDLE_TIMEOUT = 1_200;
 const MODEL_HEIGHT = 3.08;
 const ROTATION_DURATION = 14;
 const ROTATION_SWAY = Math.PI / 12;
@@ -33,6 +46,11 @@ const vertexShader = `
   attribute float aTone;
 
   uniform vec3 uFillLightDirection;
+  uniform vec3 uArtifactCenterA;
+  uniform vec3 uArtifactCenterB;
+  uniform vec3 uArtifactCenterC;
+  uniform vec3 uArtifactRadii;
+  uniform vec3 uArtifactWeights;
   uniform vec3 uKeyLightDirection;
   uniform float uHoverReturn;
   uniform float uIntroProgress;
@@ -42,6 +60,7 @@ const vertexShader = `
   uniform float uTime;
 
   varying float vAlpha;
+  varying float vArtifactMask;
   varying float vDetail;
   varying float vFace;
   varying float vLight;
@@ -49,52 +68,11 @@ const vertexShader = `
   varying float vRim;
   varying float vSideLight;
   varying float vTone;
+  varying float vIntroVisibility;
 
   void main() {
-    float sphereY = fract(
-      sin(dot(position, vec3(12.9898, 78.233, 37.719)) + aSeed * 41.37) *
-      43758.5453
-    ) * 2.0 - 1.0;
-    float sphereAngle = fract(
-      sin(dot(position, vec3(39.346, 11.135, 83.155)) + aSeed * 73.91) *
-      24634.6345
-    ) * 6.2831853;
-    float sphereRadius = sqrt(max(1.0 - sphereY * sphereY, 0.0));
-    vec3 sphereDirection = vec3(
-      cos(sphereAngle) * sphereRadius,
-      sphereY,
-      sin(sphereAngle) * sphereRadius
-    );
-    float introEase = 1.0 - pow(1.0 - uIntroProgress, 3.0);
-    float organicNoise =
-      sin(sphereAngle * 3.0 + sphereY * 4.2 + uTime * 1.7) * 0.1 +
-      sin(sphereAngle * 7.0 - sphereY * 2.8 - uTime * 1.15 + aSeed * 8.0) *
-      0.055;
-    float pulse =
-      1.0 +
-      sin(uTime * 3.8 + aSeed * 2.4) * 0.045 +
-      sin(uTime * 1.45 + sphereY * 5.0) * 0.035;
-    vec3 organicPosition =
-      sphereDirection *
-      vec3(0.7, 0.82, 0.64) *
-      (1.0 + organicNoise) *
-      pulse;
-    organicPosition += vec3(
-      sin(uTime * 1.2 + sphereY * 3.0),
-      cos(uTime * 1.05 + sphereAngle * 0.7),
-      sin(uTime * 1.35 + aSeed * 11.0)
-    ) * 0.035;
-    vec3 swirlDirection = normalize(
-      cross(sphereDirection, vec3(0.18, 1.0, 0.12))
-    );
-    float swirlEnvelope =
-      sin(uIntroProgress * 3.1415926) * (1.0 - uIntroProgress * 0.55);
-    vec3 positionAnimated =
-      mix(organicPosition, position, introEase) +
-      swirlDirection *
-      swirlEnvelope *
-      (0.08 + aSeed * 0.11) *
-      sin(aSeed * 23.0 + uTime * 1.6);
+    vec3 positionAnimated = position;
+    vIntroVisibility = smoothstep(0.04, 0.88, uIntroProgress);
     float wave =
       sin(uTime * (0.7 + aSeed * 0.65) + aSeed * 19.0 + position.y * 5.5) *
       (0.006 + aSeed * 0.012) *
@@ -161,6 +139,33 @@ const vertexShader = `
     vAlpha =
       mix(surfaceAlpha, faceAlpha, aFace) *
       mix(0.58, 1.06, smoothstep(0.18, 1.2, particleLight));
+    vec3 artifactDistances = vec3(
+      distance(position.xy, uArtifactCenterA.xy),
+      distance(position.xy, uArtifactCenterB.xy),
+      distance(position.xy, uArtifactCenterC.xy)
+    );
+    vec3 artifactPatches =
+      vec3(1.0) -
+      smoothstep(uArtifactRadii * 0.38, uArtifactRadii, artifactDistances);
+    float artifactBreakupA =
+      step(0.32, fract(position.y * 17.0 + aSeed * 7.0)) *
+      step(0.18, fract(position.x * 13.0 - aSeed * 5.0));
+    float artifactBreakupB =
+      step(0.24, fract(position.x * 19.0 + aSeed * 5.0)) *
+      step(0.38, fract(position.y * 11.0 - aSeed * 9.0));
+    float artifactBreakupC =
+      step(0.28, fract((position.x + position.y) * 15.0 + aSeed * 11.0));
+    vec3 artifactBreakup = vec3(
+      mix(0.28, 1.0, artifactBreakupA),
+      mix(0.22, 0.92, artifactBreakupB),
+      mix(0.2, 0.84, artifactBreakupC)
+    );
+    vec3 artifactMasks =
+      artifactPatches * artifactBreakup * uArtifactWeights;
+    vArtifactMask = max(
+      artifactMasks.x,
+      max(artifactMasks.y, artifactMasks.z)
+    );
     vDetail = aDetail;
     vFace = aFace;
     vLight = particleLight;
@@ -181,6 +186,11 @@ const emitterVertexShader = `
   attribute float aTone;
 
   uniform vec3 uFillLightDirection;
+  uniform vec3 uArtifactCenterA;
+  uniform vec3 uArtifactCenterB;
+  uniform vec3 uArtifactCenterC;
+  uniform vec3 uArtifactRadii;
+  uniform vec3 uArtifactWeights;
   uniform vec3 uKeyLightDirection;
   uniform float uHoverReturn;
   uniform float uIntroProgress;
@@ -190,6 +200,7 @@ const emitterVertexShader = `
   uniform float uTime;
 
   varying float vAlpha;
+  varying float vArtifactMask;
   varying float vDetail;
   varying float vFace;
   varying float vLight;
@@ -197,6 +208,7 @@ const emitterVertexShader = `
   varying float vRim;
   varying float vSideLight;
   varying float vTone;
+  varying float vIntroVisibility;
 
   void main() {
     float life = fract(aSeed + uTime * (0.035 + aSpeed * 0.035) * uMotion);
@@ -220,50 +232,12 @@ const emitterVertexShader = `
       ) * 0.018 * remaining;
     emittedPosition = mix(position, emittedPosition, emissionStrength);
 
-    float sphereY = fract(
-      sin(dot(position, vec3(12.9898, 78.233, 37.719)) + aSeed * 41.37) *
-      43758.5453
-    ) * 2.0 - 1.0;
-    float sphereAngle = fract(
-      sin(dot(position, vec3(39.346, 11.135, 83.155)) + aSeed * 73.91) *
-      24634.6345
-    ) * 6.2831853;
-    float sphereRadius = sqrt(max(1.0 - sphereY * sphereY, 0.0));
-    vec3 sphereDirection = vec3(
-      cos(sphereAngle) * sphereRadius,
-      sphereY,
-      sin(sphereAngle) * sphereRadius
+    vec3 positionAnimated = mix(
+      position,
+      emittedPosition,
+      smoothstep(0.7, 1.0, uIntroProgress)
     );
-    float introEase = 1.0 - pow(1.0 - uIntroProgress, 3.0);
-    float organicNoise =
-      sin(sphereAngle * 3.0 + sphereY * 4.2 + uTime * 1.7) * 0.1 +
-      sin(sphereAngle * 7.0 - sphereY * 2.8 - uTime * 1.15 + aSeed * 8.0) *
-      0.055;
-    float pulse =
-      1.0 +
-      sin(uTime * 3.8 + aSeed * 2.4) * 0.045 +
-      sin(uTime * 1.45 + sphereY * 5.0) * 0.035;
-    vec3 organicPosition =
-      sphereDirection *
-      vec3(0.7, 0.82, 0.64) *
-      (1.0 + organicNoise) *
-      pulse;
-    organicPosition += vec3(
-      sin(uTime * 1.2 + sphereY * 3.0),
-      cos(uTime * 1.05 + sphereAngle * 0.7),
-      sin(uTime * 1.35 + aSeed * 11.0)
-    ) * 0.035;
-    vec3 swirlDirection = normalize(
-      cross(sphereDirection, vec3(0.18, 1.0, 0.12))
-    );
-    float swirlEnvelope =
-      sin(uIntroProgress * 3.1415926) * (1.0 - uIntroProgress * 0.55);
-    vec3 positionAnimated =
-      mix(organicPosition, emittedPosition, introEase) +
-      swirlDirection *
-      swirlEnvelope *
-      (0.08 + aSeed * 0.11) *
-      sin(aSeed * 23.0 + uTime * 1.6);
+    vIntroVisibility = smoothstep(0.16, 0.94, uIntroProgress);
 
     vec4 viewPosition = modelViewMatrix * vec4(positionAnimated, 1.0);
     vec4 clipPosition = projectionMatrix * viewPosition;
@@ -323,6 +297,33 @@ const emitterVertexShader = `
     vAlpha =
       mix(birth * pow(remaining, 0.62) * 0.86, 0.72, uHoverReturn) *
       mix(0.68, 1.04, smoothstep(0.22, 1.16, particleLight));
+    vec3 artifactDistances = vec3(
+      distance(position.xy, uArtifactCenterA.xy),
+      distance(position.xy, uArtifactCenterB.xy),
+      distance(position.xy, uArtifactCenterC.xy)
+    );
+    vec3 artifactPatches =
+      vec3(1.0) -
+      smoothstep(uArtifactRadii * 0.38, uArtifactRadii, artifactDistances);
+    float artifactBreakupA =
+      step(0.32, fract(position.y * 17.0 + aSeed * 7.0)) *
+      step(0.18, fract(position.x * 13.0 - aSeed * 5.0));
+    float artifactBreakupB =
+      step(0.24, fract(position.x * 19.0 + aSeed * 5.0)) *
+      step(0.38, fract(position.y * 11.0 - aSeed * 9.0));
+    float artifactBreakupC =
+      step(0.28, fract((position.x + position.y) * 15.0 + aSeed * 11.0));
+    vec3 artifactBreakup = vec3(
+      mix(0.28, 1.0, artifactBreakupA),
+      mix(0.22, 0.92, artifactBreakupB),
+      mix(0.2, 0.84, artifactBreakupC)
+    );
+    vec3 artifactMasks =
+      artifactPatches * artifactBreakup * uArtifactWeights;
+    vArtifactMask = max(
+      artifactMasks.x,
+      max(artifactMasks.y, artifactMasks.z)
+    );
     vDetail = aDetail;
     vFace = aFace;
     vLight = particleLight;
@@ -335,6 +336,7 @@ const emitterVertexShader = `
 
 const fragmentShader = `
   uniform vec3 uAccentColor;
+  uniform float uArtifactStrength;
   uniform vec3 uColor;
   uniform vec3 uKeyLightColor;
   uniform vec3 uKeyLightDirection;
@@ -342,6 +344,7 @@ const fragmentShader = `
   uniform vec3 uRimLightColor;
 
   varying float vAlpha;
+  varying float vArtifactMask;
   varying float vDetail;
   varying float vFace;
   varying float vLight;
@@ -349,6 +352,7 @@ const fragmentShader = `
   varying float vRim;
   varying float vSideLight;
   varying float vTone;
+  varying float vIntroVisibility;
 
   void main() {
     vec2 center = gl_PointCoord - vec2(0.5);
@@ -376,6 +380,11 @@ const fragmentShader = `
     float portraitLuminance = mix(1.28, 0.2, smoothstep(0.38, 0.96, vTone));
     vec3 portraitColor = uColor * portraitLuminance;
     vec3 color = mix(fieldColor, portraitColor, vFace);
+    color = mix(
+      color,
+      uAccentColor * 1.28,
+      uArtifactStrength * vArtifactMask * 0.72
+    );
     float featureInk = smoothstep(0.18, 0.72, vDetail) * vFace;
     color = mix(color, uColor * 1.22, featureInk * 0.48);
     float sideGlow = smoothstep(0.24, 0.96, vSideLight);
@@ -395,9 +404,13 @@ const fragmentShader = `
       color,
       circle *
         vAlpha *
+        vIntroVisibility *
         mix(0.45, 1.0, vRearVisibility) *
         mix(1.0, 1.18, featureInk) *
-        uParticleOpacity
+        min(
+          1.0,
+          uParticleOpacity + uArtifactStrength * vArtifactMask
+        )
     );
   }
 `;
@@ -454,8 +467,8 @@ const createTextureReader = (texture?: THREE.Texture | null): TextureReader => {
     };
     const readLuminance = (x: number, y: number) =>
       luminanceMap[
-        THREE.MathUtils.clamp(y, 0, sampleSize - 1) * sampleSize +
-          THREE.MathUtils.clamp(x, 0, sampleSize - 1)
+      THREE.MathUtils.clamp(y, 0, sampleSize - 1) * sampleSize +
+      THREE.MathUtils.clamp(x, 0, sampleSize - 1)
       ];
 
     return {
@@ -547,6 +560,64 @@ const createSelectiveRoughnessMap = (
   }
 };
 
+const closeMouthTextureGap = (texture?: THREE.Texture | null) => {
+  const image = texture?.image as CanvasImageSource | undefined;
+
+  if (!texture || !image) {
+    return;
+  }
+
+  const sourceSize = image as {
+    height?: number;
+    naturalHeight?: number;
+    naturalWidth?: number;
+    videoHeight?: number;
+    videoWidth?: number;
+    width?: number;
+  };
+  const width =
+    sourceSize.naturalWidth ?? sourceSize.videoWidth ?? sourceSize.width ?? 0;
+  const height =
+    sourceSize.naturalHeight ??
+    sourceSize.videoHeight ??
+    sourceSize.height ??
+    0;
+
+  if (!width || !height) {
+    return;
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    return;
+  }
+
+  context.drawImage(image, 0, 0, width, height);
+  const centerX = width * 0.515;
+  const centerY = height * 0.29;
+  const radiusX = Math.max(4, width * 0.0085);
+  const radiusY = Math.max(3, height * 0.0055);
+  context.save();
+  context.translate(centerX, centerY);
+  context.scale(radiusX, radiusY);
+  const fill = context.createRadialGradient(0, 0, 0, 0, 0, 1);
+  fill.addColorStop(0, "rgba(190, 140, 130, 0.98)");
+  fill.addColorStop(0.58, "rgba(190, 140, 130, 0.92)");
+  fill.addColorStop(1, "rgba(190, 140, 130, 0)");
+  context.fillStyle = fill;
+  context.beginPath();
+  context.arc(0, 0, 1, 0, Math.PI * 2);
+  context.fill();
+  context.restore();
+
+  texture.image = canvas;
+  texture.needsUpdate = true;
+};
+
 const getTriangleCount = (geometry: THREE.BufferGeometry) => {
   const indexCount = geometry.index?.count;
   return indexCount
@@ -593,11 +664,9 @@ const disposeModel = (root: THREE.Object3D) => {
 const HalftonePortrait = () => {
   const portraitRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const togglePinRef = useRef<() => void>(() => undefined);
-  const [hasError, setHasError] = useState(false);
-  const [isPinned, setIsPinned] = useState(false);
   const [isSubjectHovered, setIsSubjectHovered] = useState(false);
-  const isSolidVisible = isPinned || isSubjectHovered;
+  const [isTouchPreviewVisible, setIsTouchPreviewVisible] = useState(false);
+  const isSolidVisible = isSubjectHovered || isTouchPreviewVisible;
 
   useEffect(() => {
     const portrait = portraitRef.current;
@@ -611,19 +680,35 @@ const HalftonePortrait = () => {
     let animationFrame = 0;
     let animationStartTimestamp = 0;
     let introStartTimestamp = 0;
+    let isIntroSettled = false;
     let lastTimestamp = 0;
     let isVisible = true;
-    let isSolidPinned = false;
     let isSubjectHovering = false;
+    let isTouchPreviewing = false;
     let hoverExitTimer = 0;
     let hoverProgress = 0;
     let solidProgress = 0;
+    let solidGlitchStartedAt = 0;
+    let isExitGlitch = false;
+    let wasShowingSolid = false;
+    let nextSolidArtifactAt = Number.POSITIVE_INFINITY;
+    let solidArtifactStartedAt = 0;
+    let solidArtifactDuration = SOLID_ARTIFACT_MIN_DURATION;
+    let cursorArtifactEnergy = 0;
+    let lastPointerTimestamp = 0;
+    let lastPointerX = 0;
+    let lastPointerY = 0;
+    let touchStartX = Number.NaN;
+    let touchStartY = Number.NaN;
+    let modelLoadIdleCallback = 0;
+    let modelLoadTimer = 0;
     let swivelElapsed = 0;
     const keyLightDirection = KEY_LIGHT_DIRECTION.clone();
     const fillLightDirection = FILL_LIGHT_DIRECTION.clone();
     const targetKeyLightDirection = KEY_LIGHT_DIRECTION.clone();
     const targetFillLightDirection = FILL_LIGHT_DIRECTION.clone();
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    isIntroSettled = reducedMotion.matches;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
     camera.position.set(0, 0.1, 5.8);
@@ -664,6 +749,12 @@ const HalftonePortrait = () => {
 
     const commonUniforms = {
       uAccentColor: { value: ACCENT_COLOR },
+      uArtifactCenterA: { value: new THREE.Vector3(0, 0, 0) },
+      uArtifactCenterB: { value: new THREE.Vector3(0, 0, 0) },
+      uArtifactCenterC: { value: new THREE.Vector3(0, 0, 0) },
+      uArtifactRadii: { value: new THREE.Vector3(0.42, 0.32, 0.24) },
+      uArtifactStrength: { value: 0 },
+      uArtifactWeights: { value: new THREE.Vector3(1, 0.72, 0) },
       uColor: { value: PARTICLE_COLOR },
       uFillLightDirection: { value: fillLightDirection },
       uHoverReturn: { value: 0 },
@@ -700,12 +791,19 @@ const HalftonePortrait = () => {
     let pointCloud: THREE.Points | undefined;
     let emitterCloud: THREE.Points | undefined;
     let solidRoot: THREE.Group | undefined;
-    let hitMeshes: THREE.Mesh[] = [];
     let solidMaterials: THREE.MeshStandardMaterial[] = [];
-    const raycaster = new THREE.Raycaster();
-    const pointer = new THREE.Vector2();
+    const solidEmissiveIntensities = new Map<
+      THREE.MeshStandardMaterial,
+      number
+    >();
+    const hoverTarget =
+      portrait.closest<HTMLElement>(".matrix-portrait") ?? portrait;
 
     const setSubjectHover = (isHovered: boolean) => {
+      if (isHovered && !isIntroSettled) {
+        return;
+      }
+
       if (isHovered) {
         if (hoverExitTimer) {
           window.clearTimeout(hoverExitTimer);
@@ -734,32 +832,6 @@ const HalftonePortrait = () => {
       }, HOVER_EXIT_DELAY);
     };
 
-    const intersectsSubject = (event: PointerEvent) => {
-      if (!hitMeshes.length) {
-        return false;
-      }
-
-      const rect = canvas.getBoundingClientRect();
-      pointer.set(
-        ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 2 - 1,
-        -((event.clientY - rect.top) / Math.max(rect.height, 1)) * 2 + 1,
-      );
-      raycaster.setFromCamera(pointer, camera);
-
-      return raycaster.intersectObjects(hitMeshes, false).length > 0;
-    };
-
-    const togglePin = () => {
-      if (!solidRoot) {
-        return;
-      }
-
-      isSolidPinned = !isSolidPinned;
-      setIsPinned(isSolidPinned);
-      requestAnimation();
-    };
-    togglePinRef.current = togglePin;
-
     const resize = () => {
       const rect = portrait.getBoundingClientRect();
       const width = Math.max(1, rect.width);
@@ -776,341 +848,411 @@ const HalftonePortrait = () => {
 
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
-    loader.load(
-      MODEL_URL,
-      (gltf) => {
-        if (disposed) {
-          disposeModel(gltf.scene);
-          return;
-        }
+    const loadModel = () => {
+      if (disposed) {
+        return;
+      }
 
-        const sourceModel = gltf.scene;
-        const sourceBounds = new THREE.Box3().setFromObject(sourceModel);
-        const center = sourceBounds.getCenter(new THREE.Vector3());
-        const size = sourceBounds.getSize(new THREE.Vector3());
-        const normalizationScale = MODEL_HEIGHT / Math.max(size.y, 0.001);
-        const normalizedRoot = new THREE.Group();
-        normalizedRoot.scale.setScalar(normalizationScale);
-        normalizedRoot.position
-          .copy(center)
-          .multiplyScalar(-normalizationScale);
-        normalizedRoot.add(sourceModel);
-        normalizedRoot.updateMatrixWorld(true);
-
-        const meshes: THREE.Mesh[] = [];
-        normalizedRoot.traverse((object) => {
-          if (
-            object instanceof THREE.Mesh &&
-            getTriangleCount(object.geometry)
-          ) {
-            meshes.push(object);
+      loader.load(
+        MODEL_URL,
+        async (gltf) => {
+          if (disposed) {
+            disposeModel(gltf.scene);
+            return;
           }
-        });
 
-        const totalTriangles = meshes.reduce(
-          (sum, mesh) => sum + getTriangleCount(mesh.geometry),
-          0,
-        );
-        const positions = new Float32Array(PARTICLE_COUNT * 3);
-        const normals = new Int16Array(PARTICLE_COUNT * 3);
-        const details = new Uint8Array(PARTICLE_COUNT);
-        const seeds = new Uint8Array(PARTICLE_COUNT);
-        const sizes = new Float32Array(PARTICLE_COUNT);
-        const faceWeights = new Uint8Array(PARTICLE_COUNT);
-        const tones = new Uint8Array(PARTICLE_COUNT);
-        const samplePosition = new THREE.Vector3();
-        const sampleNormal = new THREE.Vector3();
-        const sampleUv = new THREE.Vector2();
-        const samplingContexts: Array<{
-          matrixWorld: THREE.Matrix4;
-          normalMatrix: THREE.Matrix3;
-          sampler: MeshSurfaceSampler;
-          textureReader: TextureReader;
-        }> = [];
-        let cursor = 0;
+          const sourceModel = gltf.scene;
+          const sourceBounds = new THREE.Box3().setFromObject(sourceModel);
+          const center = sourceBounds.getCenter(new THREE.Vector3());
+          const size = sourceBounds.getSize(new THREE.Vector3());
+          const normalizationScale = MODEL_HEIGHT / Math.max(size.y, 0.001);
+          const normalizedRoot = new THREE.Group();
+          normalizedRoot.scale.setScalar(normalizationScale);
+          normalizedRoot.position
+            .copy(center)
+            .multiplyScalar(-normalizationScale);
+          normalizedRoot.add(sourceModel);
+          normalizedRoot.updateMatrixWorld(true);
+          let workSliceStartedAt = performance.now();
+          const yieldIfNeeded = async (force = false) => {
+            if (
+              !force &&
+              performance.now() - workSliceStartedAt < PARTICLE_WORK_BUDGET
+            ) {
+              return disposed;
+            }
 
-        const sampleFromContext = (
-          context: (typeof samplingContexts)[number],
-        ) => {
-          context.sampler.sample(
-            samplePosition,
-            sampleNormal,
-            undefined,
-            sampleUv,
+            await new Promise<void>((resolve) => {
+              window.requestAnimationFrame(() => resolve());
+            });
+            workSliceStartedAt = performance.now();
+
+            return disposed;
+          };
+
+          const meshes: THREE.Mesh[] = [];
+          normalizedRoot.traverse((object) => {
+            if (
+              object instanceof THREE.Mesh &&
+              getTriangleCount(object.geometry)
+            ) {
+              meshes.push(object);
+            }
+          });
+
+          const totalTriangles = meshes.reduce(
+            (sum, mesh) => sum + getTriangleCount(mesh.geometry),
+            0,
           );
-          samplePosition.applyMatrix4(context.matrixWorld);
-          sampleNormal.applyNormalMatrix(context.normalMatrix).normalize();
-        };
+          const positions = new Float32Array(PARTICLE_COUNT * 3);
+          const normals = new Int16Array(PARTICLE_COUNT * 3);
+          const details = new Uint8Array(PARTICLE_COUNT);
+          const seeds = new Uint8Array(PARTICLE_COUNT);
+          const sizes = new Float32Array(PARTICLE_COUNT);
+          const faceWeights = new Uint8Array(PARTICLE_COUNT);
+          const tones = new Uint8Array(PARTICLE_COUNT);
+          const samplePosition = new THREE.Vector3();
+          const sampleNormal = new THREE.Vector3();
+          const sampleUv = new THREE.Vector2();
+          const samplingContexts: Array<{
+            matrixWorld: THREE.Matrix4;
+            normalMatrix: THREE.Matrix3;
+            sampler: MeshSurfaceSampler;
+            textureReader: TextureReader;
+          }> = [];
+          let cursor = 0;
 
-        const storeParticle = (
-          textureReader: TextureReader,
-          importanceSample = false,
-        ) => {
-          const faceWeight = getFaceWeight(samplePosition);
-          const luminance = textureReader.luminance(sampleUv);
-          const textureDetail = textureReader.detail(sampleUv);
-          const darkness = 1 - luminance;
-          const detailImportance = THREE.MathUtils.clamp(
-            0.05 +
+          const sampleFromContext = (
+            context: (typeof samplingContexts)[number],
+          ) => {
+            context.sampler.sample(
+              samplePosition,
+              sampleNormal,
+              undefined,
+              sampleUv,
+            );
+            samplePosition.applyMatrix4(context.matrixWorld);
+            sampleNormal.applyNormalMatrix(context.normalMatrix).normalize();
+          };
+
+          const storeParticle = (
+            textureReader: TextureReader,
+            importanceSample = false,
+          ) => {
+            const faceWeight = getFaceWeight(samplePosition);
+            const luminance = textureReader.luminance(sampleUv);
+            const textureDetail = textureReader.detail(sampleUv);
+            const darkness = 1 - luminance;
+            const detailImportance = THREE.MathUtils.clamp(
+              0.05 +
               darkness * 0.16 +
               faceWeight * 0.24 +
               textureDetail * (0.35 + faceWeight * 1.65),
-            0.05,
-            1,
-          );
+              0.05,
+              1,
+            );
 
-          if (importanceSample && Math.random() > detailImportance) {
-            return false;
-          }
+            if (importanceSample && Math.random() > detailImportance) {
+              return false;
+            }
 
-          const offset = cursor * 3;
-          const seed = Math.random();
+            const offset = cursor * 3;
+            const seed = Math.random();
 
-          positions[offset] = samplePosition.x;
-          positions[offset + 1] = samplePosition.y;
-          positions[offset + 2] = samplePosition.z;
-          normals[offset] = Math.round(sampleNormal.x * 32_767);
-          normals[offset + 1] = Math.round(sampleNormal.y * 32_767);
-          normals[offset + 2] = Math.round(sampleNormal.z * 32_767);
-          details[cursor] = Math.round(textureDetail * 255);
-          seeds[cursor] = Math.round(seed * 255);
-          faceWeights[cursor] = Math.round(faceWeight * 255);
-          tones[cursor] = Math.round(
-            THREE.MathUtils.clamp(0.16 + darkness * 0.92, 0.16, 1) * 255,
-          );
-          sizes[cursor] = THREE.MathUtils.clamp(
-            (0.18 + darkness * 1.55 + Math.pow(seed, 2) * 0.58) *
+            positions[offset] = samplePosition.x;
+            positions[offset + 1] = samplePosition.y;
+            positions[offset + 2] = samplePosition.z;
+            normals[offset] = Math.round(sampleNormal.x * 32_767);
+            normals[offset + 1] = Math.round(sampleNormal.y * 32_767);
+            normals[offset + 2] = Math.round(sampleNormal.z * 32_767);
+            details[cursor] = Math.round(textureDetail * 255);
+            seeds[cursor] = Math.round(seed * 255);
+            faceWeights[cursor] = Math.round(faceWeight * 255);
+            tones[cursor] = Math.round(
+              THREE.MathUtils.clamp(0.16 + darkness * 0.92, 0.16, 1) * 255,
+            );
+            sizes[cursor] = THREE.MathUtils.clamp(
+              (0.18 + darkness * 1.55 + Math.pow(seed, 2) * 0.58) *
               THREE.MathUtils.lerp(1.18, 0.72, textureDetail * faceWeight),
-            0.16,
-            2.35,
-          );
-          cursor += 1;
+              0.16,
+              2.35,
+            );
+            cursor += 1;
 
-          return true;
-        };
+            return true;
+          };
 
-        meshes.forEach((mesh, meshIndex) => {
-          const triangleShare =
-            getTriangleCount(mesh.geometry) / Math.max(totalTriangles, 1);
-          const remaining = BASE_PARTICLE_COUNT - cursor;
-          const meshParticleCount =
-            meshIndex === meshes.length - 1
-              ? remaining
-              : Math.min(
+          for (let meshIndex = 0; meshIndex < meshes.length; meshIndex += 1) {
+            const mesh = meshes[meshIndex];
+
+            if (await yieldIfNeeded(true)) {
+              disposeModel(normalizedRoot);
+              return;
+            }
+
+            const triangleShare =
+              getTriangleCount(mesh.geometry) / Math.max(totalTriangles, 1);
+            const remaining = BASE_PARTICLE_COUNT - cursor;
+            const meshParticleCount =
+              meshIndex === meshes.length - 1
+                ? remaining
+                : Math.min(
                   remaining,
                   Math.round(BASE_PARTICLE_COUNT * triangleShare),
                 );
-          const sampler = new MeshSurfaceSampler(mesh).build();
-          const normalMatrix = new THREE.Matrix3().getNormalMatrix(
-            mesh.matrixWorld,
-          );
-          const material = Array.isArray(mesh.material)
-            ? mesh.material[0]
-            : mesh.material;
-          const textureReader = createTextureReader(
-            material instanceof THREE.MeshStandardMaterial
-              ? material.map
-              : undefined,
-          );
-          const samplingContext = {
-            matrixWorld: mesh.matrixWorld,
-            normalMatrix,
-            sampler,
-            textureReader,
-          };
-          samplingContexts.push(samplingContext);
+            const sampler = new MeshSurfaceSampler(mesh).build();
+            const normalMatrix = new THREE.Matrix3().getNormalMatrix(
+              mesh.matrixWorld,
+            );
+            const material = Array.isArray(mesh.material)
+              ? mesh.material[0]
+              : mesh.material;
+            const textureReader = createTextureReader(
+              material instanceof THREE.MeshStandardMaterial
+                ? material.map
+                : undefined,
+            );
+            const samplingContext = {
+              matrixWorld: mesh.matrixWorld,
+              normalMatrix,
+              sampler,
+              textureReader,
+            };
+            samplingContexts.push(samplingContext);
 
-          for (
-            let meshParticle = 0;
-            meshParticle < meshParticleCount;
-            meshParticle += 1
+            for (
+              let meshParticle = 0;
+              meshParticle < meshParticleCount;
+              meshParticle += 1
+            ) {
+              sampleFromContext(samplingContext);
+              storeParticle(textureReader);
+
+              if (meshParticle % 512 === 0 && (await yieldIfNeeded())) {
+                disposeModel(normalizedRoot);
+                return;
+              }
+            }
+          }
+
+          let detailSampleAttempts = 0;
+          const maximumDetailSampleAttempts = DETAIL_PARTICLE_COUNT * 24;
+
+          while (
+            cursor < PARTICLE_COUNT &&
+            detailSampleAttempts < maximumDetailSampleAttempts
           ) {
-            sampleFromContext(samplingContext);
-            storeParticle(textureReader);
-          }
-        });
-
-        let detailSampleAttempts = 0;
-        const maximumDetailSampleAttempts = DETAIL_PARTICLE_COUNT * 24;
-
-        while (
-          cursor < PARTICLE_COUNT &&
-          detailSampleAttempts < maximumDetailSampleAttempts
-        ) {
-          const context =
-            samplingContexts[
+            const context =
+              samplingContexts[
               Math.floor(Math.random() * samplingContexts.length)
-            ];
-          sampleFromContext(context);
-          storeParticle(context.textureReader, true);
-          detailSampleAttempts += 1;
-        }
+              ];
+            sampleFromContext(context);
+            storeParticle(context.textureReader, true);
+            detailSampleAttempts += 1;
 
-        while (cursor < PARTICLE_COUNT) {
-          const context =
-            samplingContexts[
-              Math.floor(Math.random() * samplingContexts.length)
-            ];
-          sampleFromContext(context);
-          storeParticle(context.textureReader);
-        }
-
-        pointGeometry = new THREE.BufferGeometry();
-        pointGeometry.setAttribute(
-          "position",
-          new THREE.BufferAttribute(positions, 3),
-        );
-        pointGeometry.setAttribute(
-          "aNormal",
-          new THREE.BufferAttribute(normals, 3, true),
-        );
-        pointGeometry.setAttribute(
-          "aDetail",
-          new THREE.BufferAttribute(details, 1, true),
-        );
-        pointGeometry.setAttribute(
-          "aSeed",
-          new THREE.BufferAttribute(seeds, 1, true),
-        );
-        pointGeometry.setAttribute(
-          "aSize",
-          new THREE.BufferAttribute(sizes, 1),
-        );
-        pointGeometry.setAttribute(
-          "aFace",
-          new THREE.BufferAttribute(faceWeights, 1, true),
-        );
-        pointGeometry.setAttribute(
-          "aTone",
-          new THREE.BufferAttribute(tones, 1, true),
-        );
-        pointGeometry.computeBoundingSphere();
-        pointCloud = new THREE.Points(pointGeometry, pointMaterial);
-        pointCloud.renderOrder = 2;
-        modelGroup.add(pointCloud);
-
-        const emitterPositions = new Float32Array(EMITTER_COUNT * 3);
-        const emitterNormals = new Int16Array(EMITTER_COUNT * 3);
-        const emitterDetails = new Uint8Array(EMITTER_COUNT);
-        const emitterSeeds = new Uint8Array(EMITTER_COUNT);
-        const emitterSizes = new Float32Array(EMITTER_COUNT);
-        const emitterSpeeds = new Float32Array(EMITTER_COUNT);
-        const emitterFaceWeights = new Uint8Array(EMITTER_COUNT);
-        const emitterTones = new Uint8Array(EMITTER_COUNT);
-
-        for (let index = 0; index < EMITTER_COUNT; index += 1) {
-          const sourceIndex = Math.floor(Math.random() * BASE_PARTICLE_COUNT);
-          const sourceOffset = sourceIndex * 3;
-          const targetOffset = index * 3;
-
-          emitterPositions[targetOffset] = positions[sourceOffset];
-          emitterPositions[targetOffset + 1] = positions[sourceOffset + 1];
-          emitterPositions[targetOffset + 2] = positions[sourceOffset + 2];
-          emitterNormals[targetOffset] = normals[sourceOffset];
-          emitterNormals[targetOffset + 1] = normals[sourceOffset + 1];
-          emitterNormals[targetOffset + 2] = normals[sourceOffset + 2];
-          emitterDetails[index] = details[sourceIndex];
-          emitterSeeds[index] = Math.round(Math.random() * 255);
-          emitterSizes[index] = THREE.MathUtils.clamp(
-            sizes[sourceIndex] * (0.78 + Math.random() * 0.52),
-            0.18,
-            2.5,
-          );
-          emitterSpeeds[index] = 0.4 + Math.random() * 0.9;
-          emitterFaceWeights[index] = faceWeights[sourceIndex];
-          emitterTones[index] = tones[sourceIndex];
-        }
-
-        emitterGeometry = new THREE.BufferGeometry();
-        emitterGeometry.setAttribute(
-          "position",
-          new THREE.BufferAttribute(emitterPositions, 3),
-        );
-        emitterGeometry.setAttribute(
-          "aNormal",
-          new THREE.BufferAttribute(emitterNormals, 3, true),
-        );
-        emitterGeometry.setAttribute(
-          "aDetail",
-          new THREE.BufferAttribute(emitterDetails, 1, true),
-        );
-        emitterGeometry.setAttribute(
-          "aSeed",
-          new THREE.BufferAttribute(emitterSeeds, 1, true),
-        );
-        emitterGeometry.setAttribute(
-          "aSize",
-          new THREE.BufferAttribute(emitterSizes, 1),
-        );
-        emitterGeometry.setAttribute(
-          "aSpeed",
-          new THREE.BufferAttribute(emitterSpeeds, 1),
-        );
-        emitterGeometry.setAttribute(
-          "aFace",
-          new THREE.BufferAttribute(emitterFaceWeights, 1, true),
-        );
-        emitterGeometry.setAttribute(
-          "aTone",
-          new THREE.BufferAttribute(emitterTones, 1, true),
-        );
-        emitterGeometry.computeBoundingSphere();
-        emitterCloud = new THREE.Points(emitterGeometry, emitterMaterial);
-        emitterCloud.renderOrder = 3;
-        modelGroup.add(emitterCloud);
-
-        hitMeshes = meshes;
-        solidMaterials = meshes.flatMap((mesh) => {
-          mesh.renderOrder = 1;
-          const materials = Array.isArray(mesh.material)
-            ? mesh.material
-            : [mesh.material];
-
-          return materials.filter(
-            (material): material is THREE.MeshStandardMaterial =>
-              material instanceof THREE.MeshStandardMaterial,
-          );
-        });
-        solidMaterials.forEach((material) => {
-          material.transparent = true;
-          material.opacity = 0;
-          material.depthWrite = false;
-          material.color.setScalar(0.86);
-          material.metalness = 0;
-          material.metalnessMap = null;
-          material.roughness = THREE.MathUtils.clamp(
-            material.roughness,
-            0.96,
-            1,
-          );
-          material.roughnessMap = createSelectiveRoughnessMap(material.map);
-          material.envMapIntensity = 0.05;
-          material.normalScale.multiplyScalar(0.7);
-
-          if (material instanceof THREE.MeshPhysicalMaterial) {
-            material.clearcoat = 0;
-            material.clearcoatRoughness = 1;
-            material.specularIntensity = 0.68;
+            if (detailSampleAttempts % 512 === 0 && (await yieldIfNeeded())) {
+              disposeModel(normalizedRoot);
+              return;
+            }
           }
 
-          material.emissive.set(0x2b6b45);
-          material.emissiveMap = material.map;
-          material.emissiveIntensity = material.map ? 0.04 : 0.01;
-          material.needsUpdate = true;
-        });
-        solidRoot = normalizedRoot;
-        solidRoot.visible = true;
-        modelGroup.add(solidRoot);
-        requestAnimation();
-      },
-      undefined,
-      (error) => {
-        if (!disposed) {
-          console.error(error);
-          setHasError(true);
-        }
-      },
-    );
+          while (cursor < PARTICLE_COUNT) {
+            const context =
+              samplingContexts[
+              Math.floor(Math.random() * samplingContexts.length)
+              ];
+            sampleFromContext(context);
+            storeParticle(context.textureReader);
+
+            if (cursor % 512 === 0 && (await yieldIfNeeded())) {
+              disposeModel(normalizedRoot);
+              return;
+            }
+          }
+
+          pointGeometry = new THREE.BufferGeometry();
+          pointGeometry.setAttribute(
+            "position",
+            new THREE.BufferAttribute(positions, 3),
+          );
+          pointGeometry.setAttribute(
+            "aNormal",
+            new THREE.BufferAttribute(normals, 3, true),
+          );
+          pointGeometry.setAttribute(
+            "aDetail",
+            new THREE.BufferAttribute(details, 1, true),
+          );
+          pointGeometry.setAttribute(
+            "aSeed",
+            new THREE.BufferAttribute(seeds, 1, true),
+          );
+          pointGeometry.setAttribute(
+            "aSize",
+            new THREE.BufferAttribute(sizes, 1),
+          );
+          pointGeometry.setAttribute(
+            "aFace",
+            new THREE.BufferAttribute(faceWeights, 1, true),
+          );
+          pointGeometry.setAttribute(
+            "aTone",
+            new THREE.BufferAttribute(tones, 1, true),
+          );
+          pointGeometry.computeBoundingSphere();
+          pointCloud = new THREE.Points(pointGeometry, pointMaterial);
+          pointCloud.renderOrder = 2;
+          modelGroup.add(pointCloud);
+
+          const emitterPositions = new Float32Array(EMITTER_COUNT * 3);
+          const emitterNormals = new Int16Array(EMITTER_COUNT * 3);
+          const emitterDetails = new Uint8Array(EMITTER_COUNT);
+          const emitterSeeds = new Uint8Array(EMITTER_COUNT);
+          const emitterSizes = new Float32Array(EMITTER_COUNT);
+          const emitterSpeeds = new Float32Array(EMITTER_COUNT);
+          const emitterFaceWeights = new Uint8Array(EMITTER_COUNT);
+          const emitterTones = new Uint8Array(EMITTER_COUNT);
+
+          for (let index = 0; index < EMITTER_COUNT; index += 1) {
+            const sourceIndex = Math.floor(Math.random() * BASE_PARTICLE_COUNT);
+            const sourceOffset = sourceIndex * 3;
+            const targetOffset = index * 3;
+
+            emitterPositions[targetOffset] = positions[sourceOffset];
+            emitterPositions[targetOffset + 1] = positions[sourceOffset + 1];
+            emitterPositions[targetOffset + 2] = positions[sourceOffset + 2];
+            emitterNormals[targetOffset] = normals[sourceOffset];
+            emitterNormals[targetOffset + 1] = normals[sourceOffset + 1];
+            emitterNormals[targetOffset + 2] = normals[sourceOffset + 2];
+            emitterDetails[index] = details[sourceIndex];
+            emitterSeeds[index] = Math.round(Math.random() * 255);
+            emitterSizes[index] = THREE.MathUtils.clamp(
+              sizes[sourceIndex] * (0.78 + Math.random() * 0.52),
+              0.18,
+              2.5,
+            );
+            emitterSpeeds[index] = 0.4 + Math.random() * 0.9;
+            emitterFaceWeights[index] = faceWeights[sourceIndex];
+            emitterTones[index] = tones[sourceIndex];
+
+            if (index % 512 === 0 && (await yieldIfNeeded())) {
+              disposeModel(normalizedRoot);
+              return;
+            }
+          }
+
+          emitterGeometry = new THREE.BufferGeometry();
+          emitterGeometry.setAttribute(
+            "position",
+            new THREE.BufferAttribute(emitterPositions, 3),
+          );
+          emitterGeometry.setAttribute(
+            "aNormal",
+            new THREE.BufferAttribute(emitterNormals, 3, true),
+          );
+          emitterGeometry.setAttribute(
+            "aDetail",
+            new THREE.BufferAttribute(emitterDetails, 1, true),
+          );
+          emitterGeometry.setAttribute(
+            "aSeed",
+            new THREE.BufferAttribute(emitterSeeds, 1, true),
+          );
+          emitterGeometry.setAttribute(
+            "aSize",
+            new THREE.BufferAttribute(emitterSizes, 1),
+          );
+          emitterGeometry.setAttribute(
+            "aSpeed",
+            new THREE.BufferAttribute(emitterSpeeds, 1),
+          );
+          emitterGeometry.setAttribute(
+            "aFace",
+            new THREE.BufferAttribute(emitterFaceWeights, 1, true),
+          );
+          emitterGeometry.setAttribute(
+            "aTone",
+            new THREE.BufferAttribute(emitterTones, 1, true),
+          );
+          emitterGeometry.computeBoundingSphere();
+          emitterCloud = new THREE.Points(emitterGeometry, emitterMaterial);
+          emitterCloud.renderOrder = 3;
+          modelGroup.add(emitterCloud);
+
+          solidMaterials = meshes.flatMap((mesh) => {
+            mesh.renderOrder = 1;
+            const materials = Array.isArray(mesh.material)
+              ? mesh.material
+              : [mesh.material];
+
+            return materials.filter(
+              (material): material is THREE.MeshStandardMaterial =>
+                material instanceof THREE.MeshStandardMaterial,
+            );
+          });
+
+          if (await yieldIfNeeded(true)) {
+            disposeModel(normalizedRoot);
+            return;
+          }
+
+          solidMaterials.forEach((material) => {
+            material.transparent = true;
+            material.opacity = 0;
+            material.depthWrite = false;
+            material.color.setScalar(0.86);
+            material.metalness = 0;
+            material.metalnessMap = null;
+            material.roughness = THREE.MathUtils.clamp(
+              material.roughness,
+              0.96,
+              1,
+            );
+            material.roughnessMap = createSelectiveRoughnessMap(material.map);
+            closeMouthTextureGap(material.map);
+            material.envMapIntensity = 0.05;
+            material.normalScale.multiplyScalar(0.7);
+
+            if (material instanceof THREE.MeshPhysicalMaterial) {
+              material.clearcoat = 0;
+              material.clearcoatRoughness = 1;
+              material.specularIntensity = 0.68;
+            }
+
+            material.emissive.set(0x2b6b45);
+            material.emissiveMap = material.map;
+            const emissiveIntensity = material.map ? 0.04 : 0.01;
+            material.emissiveIntensity = emissiveIntensity;
+            solidEmissiveIntensities.set(material, emissiveIntensity);
+            material.needsUpdate = true;
+          });
+          solidRoot = normalizedRoot;
+          solidRoot.visible = true;
+          modelGroup.add(solidRoot);
+          requestAnimation();
+        },
+        undefined,
+        (error) => {
+          if (!disposed) {
+            console.error(error);
+          }
+        },
+      );
+    };
+
+    const requestIdleCallback = (
+      window as Window & {
+        requestIdleCallback?: Window["requestIdleCallback"];
+      }
+    ).requestIdleCallback;
+
+    if (requestIdleCallback) {
+      modelLoadIdleCallback = requestIdleCallback(loadModel, {
+        timeout: MODEL_LOAD_IDLE_TIMEOUT,
+      });
+    } else {
+      modelLoadTimer = window.setTimeout(loadModel, 180);
+    }
 
     const animate = (timestamp: number) => {
       animationFrame = 0;
@@ -1131,13 +1273,26 @@ const HalftonePortrait = () => {
       const introElapsed = introStartTimestamp
         ? (timestamp - introStartTimestamp) / 1000
         : 0;
-      commonUniforms.uIntroProgress.value = reducedMotion.matches
+      const introProgress = reducedMotion.matches
         ? 1
         : THREE.MathUtils.clamp(
-            (introElapsed - INTRO_HOLD_DURATION) / INTRO_MORPH_DURATION,
-            0,
-            1,
-          );
+          (introElapsed - INTRO_HOLD_DURATION) / INTRO_REVEAL_DURATION,
+          0,
+          1,
+        );
+      const introEase =
+        introProgress * introProgress * (3 - 2 * introProgress);
+      commonUniforms.uIntroProgress.value = introProgress;
+      if (!isIntroSettled && introProgress >= 1) {
+        isIntroSettled = true;
+
+        if (
+          hoverTarget.matches(":hover") ||
+          hoverTarget.contains(document.activeElement)
+        ) {
+          setSubjectHover(true);
+        }
+      }
       const lightResponse = delta ? 1 - Math.exp(-10 * delta) : 1;
       const hoverResponse = reducedMotion.matches
         ? 1
@@ -1160,40 +1315,162 @@ const HalftonePortrait = () => {
         isSubjectHovering ? 1 : 0,
         hoverResponse,
       );
-      const shouldShowSolid = isSubjectHovering || isSolidPinned;
+      const shouldShowSolid = isSubjectHovering || isTouchPreviewing;
+      if (shouldShowSolid && !wasShowingSolid && !reducedMotion.matches) {
+        solidGlitchStartedAt = timestamp;
+        isExitGlitch = false;
+        nextSolidArtifactAt =
+          timestamp +
+          SOLID_GLITCH_DURATION * 1000 +
+          SOLID_ARTIFACT_MIN_DELAY +
+          Math.random() * SOLID_ARTIFACT_DELAY_RANGE;
+      } else if (!shouldShowSolid) {
+        if (wasShowingSolid && !reducedMotion.matches) {
+          solidGlitchStartedAt = timestamp;
+          isExitGlitch = true;
+        }
+        solidArtifactStartedAt = 0;
+        cursorArtifactEnergy = 0;
+        nextSolidArtifactAt = Number.POSITIVE_INFINITY;
+      }
+      wasShowingSolid = shouldShowSolid;
+      const solidGlitchProgress = solidGlitchStartedAt
+        ? THREE.MathUtils.clamp(
+          (timestamp - solidGlitchStartedAt) / (SOLID_GLITCH_DURATION * 1000),
+          0,
+          1,
+        )
+        : 1;
+      const isSolidGlitching =
+        solidGlitchProgress < 1 && !reducedMotion.matches;
+      const isSolidExitGlitching = isSolidGlitching && isExitGlitch;
       solidProgress = THREE.MathUtils.lerp(
         solidProgress,
-        shouldShowSolid ? 1 : 0,
+        shouldShowSolid || isSolidExitGlitching ? 1 : 0,
         solidResponse,
       );
+
+      if (isExitGlitch && solidGlitchStartedAt && solidGlitchProgress >= 1) {
+        solidProgress = 0;
+        solidGlitchStartedAt = 0;
+        isExitGlitch = false;
+      }
+      const glitchStep = Math.min(
+        SOLID_GLITCH_X.length - 1,
+        Math.floor(solidGlitchProgress * SOLID_GLITCH_X.length),
+      );
+      const glitchSignal = isSolidGlitching
+        ? isExitGlitch
+          ? SOLID_EXIT_GLITCH_SIGNAL[glitchStep]
+          : SOLID_ENTER_GLITCH_SIGNAL[glitchStep]
+        : 1;
+      const visibleSolidProgress = solidProgress * glitchSignal;
+      const glitchFlash = isSolidGlitching
+        ? (1 - solidGlitchProgress) * (glitchStep % 2 === 0 ? 0.32 : 0.12)
+        : 0;
+      if (
+        shouldShowSolid &&
+        !isSolidGlitching &&
+        visibleSolidProgress > 0.98 &&
+        timestamp >= nextSolidArtifactAt
+      ) {
+        solidArtifactStartedAt = timestamp;
+        solidArtifactDuration =
+          SOLID_ARTIFACT_MIN_DURATION +
+          Math.random() * SOLID_ARTIFACT_DURATION_RANGE;
+        commonUniforms.uArtifactCenterA.value.set(
+          THREE.MathUtils.randFloat(-0.62, 0.62),
+          THREE.MathUtils.randFloat(-1.18, 1.18),
+          0,
+        );
+        commonUniforms.uArtifactCenterB.value.set(
+          THREE.MathUtils.randFloat(-0.62, 0.62),
+          THREE.MathUtils.randFloat(-1.18, 1.18),
+          0,
+        );
+        commonUniforms.uArtifactCenterC.value.set(
+          THREE.MathUtils.randFloat(-0.62, 0.62),
+          THREE.MathUtils.randFloat(-1.18, 1.18),
+          0,
+        );
+        commonUniforms.uArtifactRadii.value.set(
+          THREE.MathUtils.randFloat(0.27, 0.5),
+          THREE.MathUtils.randFloat(0.2, 0.4),
+          THREE.MathUtils.randFloat(0.16, 0.32),
+        );
+        commonUniforms.uArtifactWeights.value.set(
+          1,
+          THREE.MathUtils.randFloat(0.58, 0.86),
+          Math.random() > 0.28 ? THREE.MathUtils.randFloat(0.38, 0.68) : 0,
+        );
+        nextSolidArtifactAt =
+          timestamp +
+          solidArtifactDuration * 1000 +
+          SOLID_ARTIFACT_MIN_DELAY +
+          Math.random() * SOLID_ARTIFACT_DELAY_RANGE;
+      }
+      const solidArtifactProgress = solidArtifactStartedAt
+        ? (timestamp - solidArtifactStartedAt) / (solidArtifactDuration * 1000)
+        : 1;
+      const randomArtifactStrength =
+        shouldShowSolid && solidArtifactProgress < 1 && !reducedMotion.matches
+          ? Math.sin(solidArtifactProgress * Math.PI) *
+          (Math.floor(solidArtifactProgress * 7) % 2 === 0 ? 0.48 : 0.24)
+          : 0;
+      cursorArtifactEnergy *= delta ? Math.exp(-6.4 * delta) : 1;
+      const solidArtifactStrength = Math.max(
+        randomArtifactStrength,
+        shouldShowSolid && !isSolidGlitching && !reducedMotion.matches
+          ? cursorArtifactEnergy
+          : 0,
+      );
       commonUniforms.uTime.value = elapsed;
+      commonUniforms.uArtifactStrength.value = solidArtifactStrength;
       commonUniforms.uHoverReturn.value = hoverProgress;
-      commonUniforms.uParticleOpacity.value = 1 - solidProgress;
+      commonUniforms.uParticleOpacity.value = 1 - visibleSolidProgress;
       solidKeyLight.position.copy(keyLightDirection).multiplyScalar(5);
       solidFillLight.position.copy(fillLightDirection).multiplyScalar(4);
 
       if (solidRoot) {
         solidMaterials.forEach((material) => {
-          material.opacity = solidProgress;
-          material.depthWrite = solidProgress > 0.55;
+          material.opacity = visibleSolidProgress;
+          material.depthWrite = visibleSolidProgress > 0.55;
+          material.emissiveIntensity =
+            (solidEmissiveIntensities.get(material) ?? 0) + glitchFlash;
         });
       }
 
       if (pointCloud) {
-        pointCloud.visible = solidProgress < 0.998;
+        pointCloud.visible =
+          visibleSolidProgress < 0.998 || solidArtifactStrength > 0.001;
       }
 
       if (emitterCloud) {
-        emitterCloud.visible = solidProgress < 0.98;
+        emitterCloud.visible = visibleSolidProgress < 0.98;
       }
 
+      let swivelRotation = 0;
       if (!reducedMotion.matches) {
         swivelElapsed += delta;
-        modelGroup.rotation.y =
-          INITIAL_ROTATION +
+        swivelRotation =
           Math.sin((swivelElapsed / ROTATION_DURATION) * Math.PI * 2) *
-            ROTATION_SWAY;
+          ROTATION_SWAY;
       }
+      modelGroup.rotation.y =
+        INITIAL_ROTATION +
+        (1 - introEase) * INTRO_START_ROTATION +
+        swivelRotation * introEase;
+      modelGroup.position.set(
+        isSolidGlitching ? SOLID_GLITCH_X[glitchStep] : 0,
+        isSolidGlitching ? SOLID_GLITCH_Y[glitchStep] : 0,
+        THREE.MathUtils.lerp(INTRO_START_DEPTH, 0, introEase),
+      );
+      modelGroup.scale.setScalar(
+        THREE.MathUtils.lerp(INTRO_START_SCALE, 1, introEase),
+      );
+      modelGroup.rotation.z = isSolidGlitching
+        ? SOLID_GLITCH_X[glitchStep] * -0.08
+        : 0;
 
       renderer.render(scene, camera);
       animationFrame = window.requestAnimationFrame(animate);
@@ -1214,12 +1491,89 @@ const HalftonePortrait = () => {
       const y = 1 - (event.clientY / Math.max(window.innerHeight, 1)) * 2;
       targetKeyLightDirection.set(x * 0.88, y * 0.72, 1).normalize();
       targetFillLightDirection.set(-x * 0.34, -y * 0.26, 0.92).normalize();
+
+      const pointerDelta = lastPointerTimestamp
+        ? Math.max(event.timeStamp - lastPointerTimestamp, 8)
+        : 0;
+      const pointerSpeed = pointerDelta
+        ? Math.hypot(
+          event.clientX - lastPointerX,
+          event.clientY - lastPointerY,
+        ) / pointerDelta
+        : 0;
+      lastPointerTimestamp = event.timeStamp;
+      lastPointerX = event.clientX;
+      lastPointerY = event.clientY;
+
+      const hoverRect = hoverTarget.getBoundingClientRect();
+      const isInsideHoverTarget =
+        event.clientX >= hoverRect.left &&
+        event.clientX <= hoverRect.right &&
+        event.clientY >= hoverRect.top &&
+        event.clientY <= hoverRect.bottom;
+
+      if (
+        isInsideHoverTarget &&
+        pointerSpeed > 0.08 &&
+        !reducedMotion.matches
+      ) {
+        const pointerX = THREE.MathUtils.clamp(
+          ((event.clientX - hoverRect.left) / Math.max(hoverRect.width, 1) -
+            0.5) *
+          1.45,
+          -0.68,
+          0.68,
+        );
+        const pointerY = THREE.MathUtils.clamp(
+          (0.5 -
+            (event.clientY - hoverRect.top) / Math.max(hoverRect.height, 1)) *
+          2.7,
+          -1.2,
+          1.2,
+        );
+        const pointerPhase = event.timeStamp * 0.012;
+        const movementStrength = THREE.MathUtils.clamp(
+          (pointerSpeed - 0.08) * 0.42,
+          0,
+          0.62,
+        );
+        cursorArtifactEnergy = Math.max(cursorArtifactEnergy, movementStrength);
+        commonUniforms.uArtifactCenterA.value.set(pointerX, pointerY, 0);
+        commonUniforms.uArtifactCenterB.value.set(
+          THREE.MathUtils.clamp(
+            pointerX + Math.sin(pointerPhase) * 0.28,
+            -0.68,
+            0.68,
+          ),
+          THREE.MathUtils.clamp(
+            pointerY + Math.cos(pointerPhase * 0.83) * 0.36,
+            -1.2,
+            1.2,
+          ),
+          0,
+        );
+        commonUniforms.uArtifactCenterC.value.set(
+          THREE.MathUtils.clamp(
+            pointerX - Math.cos(pointerPhase * 0.71) * 0.22,
+            -0.68,
+            0.68,
+          ),
+          THREE.MathUtils.clamp(
+            pointerY - Math.sin(pointerPhase * 0.91) * 0.3,
+            -1.2,
+            1.2,
+          ),
+          0,
+        );
+        commonUniforms.uArtifactRadii.value.set(0.26, 0.2, 0.15);
+        commonUniforms.uArtifactWeights.value.set(1, 0.68, 0.46);
+      }
       requestAnimation();
     };
 
-    const handleSubjectPointerMove = (event: PointerEvent) => {
+    const handlePortraitPointerEnter = (event: PointerEvent) => {
       if (event.pointerType !== "touch") {
-        setSubjectHover(intersectsSubject(event));
+        setSubjectHover(true);
       }
     };
 
@@ -1227,11 +1581,52 @@ const HalftonePortrait = () => {
       setSubjectHover(false);
     };
 
-    const handleSubjectPointerDown = (event: PointerEvent) => {
-      if (intersectsSubject(event)) {
-        event.preventDefault();
-        togglePin();
+    const handlePortraitPointerDown = (event: PointerEvent) => {
+      if (
+        event.pointerType !== "touch" ||
+        (event.target as Element | null)?.closest(
+          ".matrix-portrait__mobile-link",
+        )
+      ) {
+        return;
       }
+
+      touchStartX = event.clientX;
+      touchStartY = event.clientY;
+    };
+
+    const handlePortraitPointerUp = (event: PointerEvent) => {
+      const isMobileLink = (event.target as Element | null)?.closest(
+        ".matrix-portrait__mobile-link",
+      );
+      const isTap =
+        event.pointerType === "touch" &&
+        Number.isFinite(touchStartX) &&
+        Math.hypot(event.clientX - touchStartX, event.clientY - touchStartY) <
+        12;
+      touchStartX = Number.NaN;
+      touchStartY = Number.NaN;
+
+      if (!isTap || isMobileLink || !isIntroSettled) {
+        return;
+      }
+
+      isTouchPreviewing = !isTouchPreviewing;
+      setIsTouchPreviewVisible(isTouchPreviewing);
+      requestAnimation();
+    };
+
+    const handlePortraitPointerCancel = () => {
+      touchStartX = Number.NaN;
+      touchStartY = Number.NaN;
+    };
+
+    const handlePortraitFocus = () => {
+      setSubjectHover(true);
+    };
+
+    const handlePortraitBlur = () => {
+      setSubjectHover(false);
     };
 
     const handleMotionPreference = () => {
@@ -1241,7 +1636,10 @@ const HalftonePortrait = () => {
         : commonUniforms.uIntroProgress.value;
 
       if (reducedMotion.matches) {
+        isIntroSettled = true;
         modelGroup.rotation.y = INITIAL_ROTATION;
+      } else if (!introStartTimestamp) {
+        isIntroSettled = false;
       }
 
       requestAnimation();
@@ -1268,22 +1666,47 @@ const HalftonePortrait = () => {
     window.addEventListener("pointermove", handlePointerMove, {
       passive: true,
     });
-    canvas.addEventListener("pointermove", handleSubjectPointerMove, {
+    hoverTarget.addEventListener("pointerenter", handlePortraitPointerEnter, {
       passive: true,
     });
-    canvas.addEventListener("pointerdown", handleSubjectPointerDown);
-    portrait.addEventListener("pointerleave", handlePortraitPointerLeave);
+    hoverTarget.addEventListener("pointerleave", handlePortraitPointerLeave);
+    hoverTarget.addEventListener("pointerdown", handlePortraitPointerDown);
+    hoverTarget.addEventListener("pointerup", handlePortraitPointerUp);
+    hoverTarget.addEventListener("pointercancel", handlePortraitPointerCancel);
+    hoverTarget.addEventListener("focusin", handlePortraitFocus);
+    hoverTarget.addEventListener("focusout", handlePortraitBlur);
     reducedMotion.addEventListener("change", handleMotionPreference);
     resize();
     requestAnimation();
 
     return () => {
       disposed = true;
-      togglePinRef.current = () => undefined;
+
+      if (modelLoadIdleCallback) {
+        window.cancelIdleCallback(modelLoadIdleCallback);
+      }
+
+      if (modelLoadTimer) {
+        window.clearTimeout(modelLoadTimer);
+      }
+
       window.removeEventListener("pointermove", handlePointerMove);
-      canvas.removeEventListener("pointermove", handleSubjectPointerMove);
-      canvas.removeEventListener("pointerdown", handleSubjectPointerDown);
-      portrait.removeEventListener("pointerleave", handlePortraitPointerLeave);
+      hoverTarget.removeEventListener(
+        "pointerenter",
+        handlePortraitPointerEnter,
+      );
+      hoverTarget.removeEventListener(
+        "pointerleave",
+        handlePortraitPointerLeave,
+      );
+      hoverTarget.removeEventListener("pointerdown", handlePortraitPointerDown);
+      hoverTarget.removeEventListener("pointerup", handlePortraitPointerUp);
+      hoverTarget.removeEventListener(
+        "pointercancel",
+        handlePortraitPointerCancel,
+      );
+      hoverTarget.removeEventListener("focusin", handlePortraitFocus);
+      hoverTarget.removeEventListener("focusout", handlePortraitBlur);
       reducedMotion.removeEventListener("change", handleMotionPreference);
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
@@ -1315,53 +1738,17 @@ const HalftonePortrait = () => {
       className={[
         "halftone-portrait",
         isSolidVisible && "halftone-portrait--selected",
-        isPinned && "halftone-portrait--pinned",
         isSubjectHovered && "halftone-portrait--subject-hovered",
       ]
         .filter(Boolean)
         .join(" ")}
-      role={isSolidVisible ? "group" : "button"}
-      tabIndex={isSolidVisible ? -1 : 0}
-      aria-label={
-        isPinned
-          ? "Pinned solid portrait of Mark Judaya"
-          : isSolidVisible
-            ? "Solid portrait preview of Mark Judaya. Select the portrait to keep it visible."
-            : "Interactive three-dimensional portrait of Mark Judaya. Hover to preview the solid portrait or select it to keep it visible."
-      }
-      aria-pressed={isSolidVisible ? undefined : false}
-      onKeyDown={(event) => {
-        if (
-          event.target === event.currentTarget &&
-          (event.key === "Enter" || event.key === " ")
-        ) {
-          event.preventDefault();
-          togglePinRef.current();
-        } else if (event.key === "Escape" && isPinned) {
-          togglePinRef.current();
-        }
-      }}
+      aria-hidden="true"
     >
       <canvas
         ref={canvasRef}
         className="halftone-portrait__canvas"
         aria-hidden="true"
       />
-      {hasError && (
-        <img
-          className="halftone-portrait__fallback"
-          src="/particle-portrait-fallback.jpg"
-          alt=""
-          width="483"
-          height="448"
-        />
-      )}
-      {isSolidVisible && (
-        <Link className="halftone-portrait__about-link" to="/about">
-          <span>About Me</span>
-          <span aria-hidden="true">→</span>
-        </Link>
-      )}
     </div>
   );
 };

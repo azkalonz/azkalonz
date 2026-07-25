@@ -7,16 +7,53 @@ import { site } from "../data/site";
 const About = () => (
   <>
     <Seo
-      title="About"
-      description="Learn how Mark Judaya approaches custom applications, business systems, integrations, technical planning, and long-term application support."
+      title="Full-Stack Developer & Systems Specialist"
+      description="Meet Mark Judaya, a Philippines-based full-stack developer specializing in custom software, business automation, systems integration, and Zoho."
       canonical="/about"
+      structuredData={[
+        {
+          "@context": "https://schema.org",
+          "@type": "ProfilePage",
+          mainEntity: {
+            "@type": "Person",
+            "@id": `${site.url}/#mark-judaya`,
+            name: site.name,
+            url: site.url,
+            image: `${site.url}/avatar.webp`,
+            jobTitle: "Full-Stack Developer and Systems Specialist",
+            sameAs: [
+              site.socials.linkedin,
+              site.socials.github,
+              site.socials.fiverr,
+            ],
+          },
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Home",
+              item: `${site.url}/`,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "About Mark Judaya",
+              item: `${site.url}/about`,
+            },
+          ],
+        },
+      ]}
     />
 
     <header className="about-hero section-shell">
       <div className="about-hero__copy">
         <p className="eyebrow">About</p>
         <h1>
-          I work where business workflows and software implementation meet.
+          Full-stack development for the systems behind day-to-day operations.
         </h1>
         <p className="about-hero__lead">
           I’m Mark Judaya, a full-stack developer and systems specialist based
@@ -154,7 +191,7 @@ const About = () => (
           </a>
           <a href={site.socials.fiverr} target="_blank" rel="noreferrer">
             <span>
-              <Icon name="message" />
+              <Icon name="fiverr" />
               Fiverr
             </span>
             <Icon name="arrow-up-right" />

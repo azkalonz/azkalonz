@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && tsx --tsconfig tsconfig.app.json scripts/prerender.ts && cp public/CNAME dist/CNAME",
+    "build": "tsc -b && vite build && TSX_TSCONFIG_PATH=tsconfig.app.json node --import tsx scripts/prerender.ts && cp public/CNAME dist/CNAME",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "build:nopr": "tsc -b && vite build",

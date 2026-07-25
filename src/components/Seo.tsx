@@ -9,6 +9,10 @@ interface SeoProps {
   ogTitle?: string;
   ogDescription?: string;
   ogType?: string;
+  socialImage?: string;
+  socialImageAlt?: string;
+  socialImageWidth?: number;
+  socialImageHeight?: number;
   canonical?: string;
   noIndex?: boolean;
   structuredData?: StructuredData | StructuredData[];
@@ -20,6 +24,10 @@ const Seo = ({
   ogTitle,
   ogDescription,
   ogType = "website",
+  socialImage = "/social-card.svg",
+  socialImageAlt = "Mark Judaya — custom software, automation, and integrations",
+  socialImageWidth = 1200,
+  socialImageHeight = 630,
   canonical = "/",
   noIndex = false,
   structuredData,
@@ -28,29 +36,38 @@ const Seo = ({
   const canonicalUrl = canonical.startsWith("http")
     ? canonical
     : new URL(canonical, site.url).toString();
-  const socialImage = `${site.url}/social-card.svg`;
+  const socialImageUrl = socialImage.startsWith("http")
+    ? socialImage
+    : new URL(socialImage, site.url).toString();
 
   return (
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
-      {noIndex && <meta name="robots" content="noindex, follow" />}
+      <meta
+        name="robots"
+        content={
+          noIndex
+            ? "noindex, follow"
+            : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        }
+      />
       <link rel="canonical" href={canonicalUrl} />
 
       <meta property="og:title" content={ogTitle || fullTitle} />
       <meta property="og:description" content={ogDescription || description} />
       <meta property="og:type" content={ogType} />
+      <meta property="og:locale" content="en_PH" />
       <meta property="og:site_name" content={site.name} />
       <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:image" content={socialImage} />
-      <meta
-        property="og:image:alt"
-        content="Mark Judaya — IT solutions for growing businesses"
-      />
+      <meta property="og:image" content={socialImageUrl} />
+      <meta property="og:image:width" content={String(socialImageWidth)} />
+      <meta property="og:image:height" content={String(socialImageHeight)} />
+      <meta property="og:image:alt" content={socialImageAlt} />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={ogTitle || fullTitle} />
       <meta name="twitter:description" content={ogDescription || description} />
-      <meta name="twitter:image" content={socialImage} />
+      <meta name="twitter:image" content={socialImageUrl} />
       <meta
         name="theme-color"
         content="#f6f5f1"

@@ -1,28 +1,33 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import RouteLoader from "./components/RouteLoader";
 import ScrollToTop from "./components/ScrollToTop";
 import MainLayout from "./layouts/MainLayout";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
-import ProjectDetails from "./pages/ProjectDetails";
-import Projects from "./pages/Projects";
-import Services from "./pages/Services";
+
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const ProjectDetails = lazy(() => import("./pages/ProjectDetails"));
+const Projects = lazy(() => import("./pages/Projects"));
+const Services = lazy(() => import("./pages/Services"));
 
 const App = () => (
   <BrowserRouter>
     <ScrollToTop />
     <MainLayout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/work" element={<Navigate to="/projects" replace />} />
-        <Route path="/projects/:id" element={<ProjectDetails />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Suspense fallback={<RouteLoader />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/work" element={<Navigate to="/projects" replace />} />
+          <Route path="/projects/:id" element={<ProjectDetails />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </MainLayout>
   </BrowserRouter>
 );
