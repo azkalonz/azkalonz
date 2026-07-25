@@ -74,11 +74,11 @@ const Home = () => (
 
         <div className="matrix-hero__copy">
           <p className="matrix-kicker">
-            <span aria-hidden="true">&gt;_</span> Mark Judaya // Full-Stack
-            Developer // Philippines
+            <span aria-hidden="true">&gt;_</span> Mark Judaya // Full-stack
+            developer
           </p>
           <h1 id="home-title" className="matrix-title">
-            Custom software to{" "}
+            I build systems that{" "}
             <span className="matrix-title__glitch" data-text="automate">
               automate
             </span>{" "}

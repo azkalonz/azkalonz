@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import RouteLoader from "./components/RouteLoader";
 import ScrollToTop from "./components/ScrollToTop";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
@@ -15,13 +16,7 @@ const App = () => (
   <BrowserRouter>
     <ScrollToTop />
     <MainLayout>
-      <Suspense
-        fallback={
-          <div className="route-loading section-shell" role="status">
-            Loading page…
-          </div>
-        }
-      >
+      <Suspense fallback={<RouteLoader />}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />

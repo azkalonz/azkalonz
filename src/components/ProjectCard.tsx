@@ -8,26 +8,21 @@ type ProjectCardProps = {
 };
 
 const ProjectCard = ({ project, layout = "card" }: ProjectCardProps) => (
-  <article
+  <Link
+    to={`/projects/${project.id}`}
     className={`project-card ${layout === "feature" ? "project-card--feature" : ""}`}
+    aria-labelledby={`project-card-${project.id}`}
   >
     {project.featuredPhoto ? (
-      <Link
-        to={`/projects/${project.id}`}
-        className="project-card__media"
-        aria-label={`Read the ${project.title} case study`}
-      >
+      <div className="project-card__media">
         <img
           src={project.featuredPhoto}
-          alt={
-            project.featuredPhotoAlt ??
-            `Featured interface from ${project.title}`
-          }
+          alt=""
           loading="lazy"
           width="1800"
           height="1352"
         />
-      </Link>
+      </div>
     ) : (
       <div className="project-card__identity" aria-hidden="true">
         <span>{project.tags[0]}</span>
@@ -47,20 +42,18 @@ const ProjectCard = ({ project, layout = "card" }: ProjectCardProps) => (
         <span aria-hidden="true">•</span>
         <span>{project.services[0]}</span>
       </div>
-      <h3>
-        <Link to={`/projects/${project.id}`}>{project.title}</Link>
-      </h3>
+      <h3 id={`project-card-${project.id}`}>{project.title}</h3>
       <p>{project.description}</p>
       <div className="tag-list" aria-label="Technologies used">
         {project.stack.slice(0, layout === "feature" ? 5 : 3).map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>
-      <Link to={`/projects/${project.id}`} className="text-link">
+      <span className="text-link" aria-hidden="true">
         Read case study <Icon name="arrow-right" />
-      </Link>
+      </span>
     </div>
-  </article>
+  </Link>
 );
 
 export default ProjectCard;

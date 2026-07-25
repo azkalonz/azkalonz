@@ -98,6 +98,7 @@ const Contact = () => (
           <a href={site.socials.fiverr} target="_blank" rel="noreferrer">
             <span>Freelance services</span>
             <strong>
+              <Icon name="fiverr" className="contact-social-icon" />
               Fiverr <Icon name="arrow-up-right" />
             </strong>
           </a>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { site } from "../data/site";
+import BrandMark from "./BrandMark";
 import Icon from "./Icon";
 import ThemeToggle from "./ThemeToggle";
 
@@ -51,9 +52,7 @@ const Navbar = () => {
           className="brand"
           aria-label="Mark Judaya, home"
         >
-          <span className="brand__mark" aria-hidden="true">
-            MJ
-          </span>
+          <BrandMark />
           <span className="brand__text">
             <strong>Mark Judaya</strong>
             <small>IT Solutions Developer</small>

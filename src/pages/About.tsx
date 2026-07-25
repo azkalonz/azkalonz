@@ -191,7 +191,7 @@ const About = () => (
           </a>
           <a href={site.socials.fiverr} target="_blank" rel="noreferrer">
             <span>
-              <Icon name="message" />
+              <Icon name="fiverr" />
               Fiverr
             </span>
             <Icon name="arrow-up-right" />

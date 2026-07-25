@@ -6,6 +6,7 @@ export type IconName =
   | "check"
   | "code"
   | "compass"
+  | "fiverr"
   | "github"
   | "layers"
   | "linkedin"
@@ -50,6 +51,16 @@ const Icon = ({ name, ...props }: IconProps) => {
       <>
         <circle cx="12" cy="12" r="9" />
         <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
+      </>
+    ),
+    fiverr: (
+      <>
+        <circle cx="12" cy="12" r="12" fill="currentColor" stroke="none" />
+        <path
+          fill="var(--matrix-bg, var(--bg))"
+          stroke="none"
+          d="M11.05 4.57h2.92v2.59h-2.22c-.49 0-.73.38-.73 1.12v.48h6.09v9.57h-3.14v-6.98h-2.95v6.98H7.94v-6.98H6.09V8.76h1.85V8c0-2.05 1.26-3.43 3.11-3.43Z"
+        />
       </>
     ),
     github: (

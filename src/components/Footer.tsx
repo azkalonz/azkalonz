@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { site } from "../data/site";
+import BrandMark from "./BrandMark";
 import Icon from "./Icon";
 
 const Footer = () => (
@@ -11,9 +12,7 @@ const Footer = () => (
           className="brand brand--footer"
           aria-label="Mark Judaya, home"
         >
-          <span className="brand__mark" aria-hidden="true">
-            MJ
-          </span>
+          <BrandMark />
           <span className="brand__text">
             <strong>Mark Judaya</strong>
           </span>

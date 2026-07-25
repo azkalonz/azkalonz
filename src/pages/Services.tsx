@@ -55,7 +55,7 @@ const Services = () => (
       ]}
     />
 
-    <header className="page-hero section-shell">
+    <header className="page-hero page-hero--listing section-shell">
       <p className="eyebrow">Services</p>
       <h1>Custom software, automation, integrations, and technical support.</h1>
       <p>

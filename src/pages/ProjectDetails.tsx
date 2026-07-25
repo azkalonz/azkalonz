@@ -5,6 +5,7 @@ import ContactCta from "../components/ContactCta";
 import Icon from "../components/Icon";
 import ProjectShowcaseCarousel from "../components/ProjectShowcaseCarousel";
 import Seo from "../components/Seo";
+import TechLogo from "../components/TechLogo";
 import projects from "../data/projects";
 import { services, site } from "../data/site";
 
@@ -119,11 +120,13 @@ const ProjectDetails = () => {
             <Icon name="arrow-right" /> Back to selected work
           </Link>
           <div className="case-hero__grid">
-            <div>
+            <div className="case-hero__main">
               <div className="project-card__meta">
                 <span>{project.projectType}</span>
                 <span aria-hidden="true">•</span>
-                <span>{project.services[0]}</span>
+                <span>
+                  {project.dateStarted} — {project.dateFinished}
+                </span>
               </div>
               <h1>{project.title}</h1>
               <p className="case-hero__lead">{project.description}</p>
@@ -152,22 +155,20 @@ const ProjectDetails = () => {
                 )}
               </div>
             </div>
-            <dl className="case-facts">
-              <div>
-                <dt>My role</dt>
-                <dd>{project.role}</dd>
+            <aside className="case-hero__meta" aria-label="Project overview">
+              <div className="case-services" aria-label="Services">
+                <span className="case-services__label">Services</span>
+                <ul>
+                  {project.services.map((service) => (
+                    <li key={service}>{service}</li>
+                  ))}
+                </ul>
               </div>
-              <div>
-                <dt>Timeline</dt>
-                <dd>
-                  {project.dateStarted} — {project.dateFinished}
-                </dd>
-              </div>
-              <div>
-                <dt>Services</dt>
-                <dd>{project.services.join(", ")}</dd>
-              </div>
-            </dl>
+              <p className="case-role">
+                <span>Role</span>
+                {project.role}
+              </p>
+            </aside>
           </div>
         </header>
 
@@ -195,18 +196,18 @@ const ProjectDetails = () => {
           className="case-summary section-shell"
           aria-label="Case study summary"
         >
-          <div>
-            <span>Context</span>
-            <p>{project.context}</p>
-          </div>
-          <div>
-            <span>Problem</span>
-            <p>{project.problem}</p>
-          </div>
-          <div>
+          <div className="case-summary__outcome">
             <span>Outcome</span>
             <p>{project.outcome}</p>
           </div>
+          <details>
+            <summary>Context</summary>
+            <p>{project.context}</p>
+          </details>
+          <details>
+            <summary>Problem</summary>
+            <p>{project.problem}</p>
+          </details>
         </section>
 
         {project.showcase && (
@@ -236,9 +237,11 @@ const ProjectDetails = () => {
           <aside className="case-sidebar">
             <div>
               <span>Technology</span>
-              <ul>
+              <ul className="case-tech-logos">
                 {project.stack.map((item) => (
-                  <li key={item}>{item}</li>
+                  <li key={item}>
+                    <TechLogo name={item} />
+                  </li>
                 ))}
               </ul>
             </div>
@@ -274,6 +277,7 @@ const ProjectDetails = () => {
                   rel="noreferrer"
                   className="text-link"
                 >
+                  <Icon name="fiverr" className="case-fiverr-icon" />
                   View this service on Fiverr <Icon name="arrow-up-right" />
                 </a>
               </div>
