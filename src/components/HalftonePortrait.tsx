@@ -467,8 +467,8 @@ const createTextureReader = (texture?: THREE.Texture | null): TextureReader => {
     };
     const readLuminance = (x: number, y: number) =>
       luminanceMap[
-      THREE.MathUtils.clamp(y, 0, sampleSize - 1) * sampleSize +
-      THREE.MathUtils.clamp(x, 0, sampleSize - 1)
+        THREE.MathUtils.clamp(y, 0, sampleSize - 1) * sampleSize +
+          THREE.MathUtils.clamp(x, 0, sampleSize - 1)
       ];
 
     return {
@@ -707,8 +707,6 @@ const HalftonePortrait = () => {
     const fillLightDirection = FILL_LIGHT_DIRECTION.clone();
     const targetKeyLightDirection = KEY_LIGHT_DIRECTION.clone();
     const targetFillLightDirection = FILL_LIGHT_DIRECTION.clone();
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    isIntroSettled = reducedMotion.matches;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
     camera.position.set(0, 0.1, 5.8);
@@ -758,10 +756,10 @@ const HalftonePortrait = () => {
       uColor: { value: PARTICLE_COLOR },
       uFillLightDirection: { value: fillLightDirection },
       uHoverReturn: { value: 0 },
-      uIntroProgress: { value: reducedMotion.matches ? 1 : 0 },
+      uIntroProgress: { value: 0 },
       uKeyLightColor: { value: KEY_LIGHT_COLOR },
       uKeyLightDirection: { value: keyLightDirection },
-      uMotion: { value: reducedMotion.matches ? 0 : 1 },
+      uMotion: { value: 1 },
       uParticleOpacity: { value: 1 },
       uPointScale: { value: 1 },
       uRimLightColor: { value: RIM_LIGHT_COLOR },
@@ -945,9 +943,9 @@ const HalftonePortrait = () => {
             const darkness = 1 - luminance;
             const detailImportance = THREE.MathUtils.clamp(
               0.05 +
-              darkness * 0.16 +
-              faceWeight * 0.24 +
-              textureDetail * (0.35 + faceWeight * 1.65),
+                darkness * 0.16 +
+                faceWeight * 0.24 +
+                textureDetail * (0.35 + faceWeight * 1.65),
               0.05,
               1,
             );
@@ -973,7 +971,7 @@ const HalftonePortrait = () => {
             );
             sizes[cursor] = THREE.MathUtils.clamp(
               (0.18 + darkness * 1.55 + Math.pow(seed, 2) * 0.58) *
-              THREE.MathUtils.lerp(1.18, 0.72, textureDetail * faceWeight),
+                THREE.MathUtils.lerp(1.18, 0.72, textureDetail * faceWeight),
               0.16,
               2.35,
             );
@@ -997,9 +995,9 @@ const HalftonePortrait = () => {
               meshIndex === meshes.length - 1
                 ? remaining
                 : Math.min(
-                  remaining,
-                  Math.round(BASE_PARTICLE_COUNT * triangleShare),
-                );
+                    remaining,
+                    Math.round(BASE_PARTICLE_COUNT * triangleShare),
+                  );
             const sampler = new MeshSurfaceSampler(mesh).build();
             const normalMatrix = new THREE.Matrix3().getNormalMatrix(
               mesh.matrixWorld,
@@ -1044,7 +1042,7 @@ const HalftonePortrait = () => {
           ) {
             const context =
               samplingContexts[
-              Math.floor(Math.random() * samplingContexts.length)
+                Math.floor(Math.random() * samplingContexts.length)
               ];
             sampleFromContext(context);
             storeParticle(context.textureReader, true);
@@ -1059,7 +1057,7 @@ const HalftonePortrait = () => {
           while (cursor < PARTICLE_COUNT) {
             const context =
               samplingContexts[
-              Math.floor(Math.random() * samplingContexts.length)
+                Math.floor(Math.random() * samplingContexts.length)
               ];
             sampleFromContext(context);
             storeParticle(context.textureReader);
@@ -1273,15 +1271,12 @@ const HalftonePortrait = () => {
       const introElapsed = introStartTimestamp
         ? (timestamp - introStartTimestamp) / 1000
         : 0;
-      const introProgress = reducedMotion.matches
-        ? 1
-        : THREE.MathUtils.clamp(
-          (introElapsed - INTRO_HOLD_DURATION) / INTRO_REVEAL_DURATION,
-          0,
-          1,
-        );
-      const introEase =
-        introProgress * introProgress * (3 - 2 * introProgress);
+      const introProgress = THREE.MathUtils.clamp(
+        (introElapsed - INTRO_HOLD_DURATION) / INTRO_REVEAL_DURATION,
+        0,
+        1,
+      );
+      const introEase = introProgress * introProgress * (3 - 2 * introProgress);
       commonUniforms.uIntroProgress.value = introProgress;
       if (!isIntroSettled && introProgress >= 1) {
         isIntroSettled = true;
@@ -1294,16 +1289,8 @@ const HalftonePortrait = () => {
         }
       }
       const lightResponse = delta ? 1 - Math.exp(-10 * delta) : 1;
-      const hoverResponse = reducedMotion.matches
-        ? 1
-        : delta
-          ? 1 - Math.exp(-5.2 * delta)
-          : 1;
-      const solidResponse = reducedMotion.matches
-        ? 1
-        : delta
-          ? 1 - Math.exp(-7.5 * delta)
-          : 1;
+      const hoverResponse = delta ? 1 - Math.exp(-5.2 * delta) : 1;
+      const solidResponse = delta ? 1 - Math.exp(-7.5 * delta) : 1;
       keyLightDirection
         .lerp(targetKeyLightDirection, lightResponse)
         .normalize();
@@ -1316,7 +1303,7 @@ const HalftonePortrait = () => {
         hoverResponse,
       );
       const shouldShowSolid = isSubjectHovering || isTouchPreviewing;
-      if (shouldShowSolid && !wasShowingSolid && !reducedMotion.matches) {
+      if (shouldShowSolid && !wasShowingSolid) {
         solidGlitchStartedAt = timestamp;
         isExitGlitch = false;
         nextSolidArtifactAt =
@@ -1325,7 +1312,7 @@ const HalftonePortrait = () => {
           SOLID_ARTIFACT_MIN_DELAY +
           Math.random() * SOLID_ARTIFACT_DELAY_RANGE;
       } else if (!shouldShowSolid) {
-        if (wasShowingSolid && !reducedMotion.matches) {
+        if (wasShowingSolid) {
           solidGlitchStartedAt = timestamp;
           isExitGlitch = true;
         }
@@ -1336,13 +1323,12 @@ const HalftonePortrait = () => {
       wasShowingSolid = shouldShowSolid;
       const solidGlitchProgress = solidGlitchStartedAt
         ? THREE.MathUtils.clamp(
-          (timestamp - solidGlitchStartedAt) / (SOLID_GLITCH_DURATION * 1000),
-          0,
-          1,
-        )
+            (timestamp - solidGlitchStartedAt) / (SOLID_GLITCH_DURATION * 1000),
+            0,
+            1,
+          )
         : 1;
-      const isSolidGlitching =
-        solidGlitchProgress < 1 && !reducedMotion.matches;
+      const isSolidGlitching = solidGlitchProgress < 1;
       const isSolidExitGlitching = isSolidGlitching && isExitGlitch;
       solidProgress = THREE.MathUtils.lerp(
         solidProgress,
@@ -1413,16 +1399,14 @@ const HalftonePortrait = () => {
         ? (timestamp - solidArtifactStartedAt) / (solidArtifactDuration * 1000)
         : 1;
       const randomArtifactStrength =
-        shouldShowSolid && solidArtifactProgress < 1 && !reducedMotion.matches
+        shouldShowSolid && solidArtifactProgress < 1
           ? Math.sin(solidArtifactProgress * Math.PI) *
-          (Math.floor(solidArtifactProgress * 7) % 2 === 0 ? 0.48 : 0.24)
+            (Math.floor(solidArtifactProgress * 7) % 2 === 0 ? 0.48 : 0.24)
           : 0;
       cursorArtifactEnergy *= delta ? Math.exp(-6.4 * delta) : 1;
       const solidArtifactStrength = Math.max(
         randomArtifactStrength,
-        shouldShowSolid && !isSolidGlitching && !reducedMotion.matches
-          ? cursorArtifactEnergy
-          : 0,
+        shouldShowSolid && !isSolidGlitching ? cursorArtifactEnergy : 0,
       );
       commonUniforms.uTime.value = elapsed;
       commonUniforms.uArtifactStrength.value = solidArtifactStrength;
@@ -1450,12 +1434,10 @@ const HalftonePortrait = () => {
       }
 
       let swivelRotation = 0;
-      if (!reducedMotion.matches) {
-        swivelElapsed += delta;
-        swivelRotation =
-          Math.sin((swivelElapsed / ROTATION_DURATION) * Math.PI * 2) *
-          ROTATION_SWAY;
-      }
+      swivelElapsed += delta;
+      swivelRotation =
+        Math.sin((swivelElapsed / ROTATION_DURATION) * Math.PI * 2) *
+        ROTATION_SWAY;
       modelGroup.rotation.y =
         INITIAL_ROTATION +
         (1 - introEase) * INTRO_START_ROTATION +
@@ -1497,9 +1479,9 @@ const HalftonePortrait = () => {
         : 0;
       const pointerSpeed = pointerDelta
         ? Math.hypot(
-          event.clientX - lastPointerX,
-          event.clientY - lastPointerY,
-        ) / pointerDelta
+            event.clientX - lastPointerX,
+            event.clientY - lastPointerY,
+          ) / pointerDelta
         : 0;
       lastPointerTimestamp = event.timeStamp;
       lastPointerX = event.clientX;
@@ -1512,22 +1494,18 @@ const HalftonePortrait = () => {
         event.clientY >= hoverRect.top &&
         event.clientY <= hoverRect.bottom;
 
-      if (
-        isInsideHoverTarget &&
-        pointerSpeed > 0.08 &&
-        !reducedMotion.matches
-      ) {
+      if (isInsideHoverTarget && pointerSpeed > 0.08) {
         const pointerX = THREE.MathUtils.clamp(
           ((event.clientX - hoverRect.left) / Math.max(hoverRect.width, 1) -
             0.5) *
-          1.45,
+            1.45,
           -0.68,
           0.68,
         );
         const pointerY = THREE.MathUtils.clamp(
           (0.5 -
             (event.clientY - hoverRect.top) / Math.max(hoverRect.height, 1)) *
-          2.7,
+            2.7,
           -1.2,
           1.2,
         );
@@ -1603,7 +1581,7 @@ const HalftonePortrait = () => {
         event.pointerType === "touch" &&
         Number.isFinite(touchStartX) &&
         Math.hypot(event.clientX - touchStartX, event.clientY - touchStartY) <
-        12;
+          12;
       touchStartX = Number.NaN;
       touchStartY = Number.NaN;
 
@@ -1627,22 +1605,6 @@ const HalftonePortrait = () => {
 
     const handlePortraitBlur = () => {
       setSubjectHover(false);
-    };
-
-    const handleMotionPreference = () => {
-      commonUniforms.uMotion.value = reducedMotion.matches ? 0 : 1;
-      commonUniforms.uIntroProgress.value = reducedMotion.matches
-        ? 1
-        : commonUniforms.uIntroProgress.value;
-
-      if (reducedMotion.matches) {
-        isIntroSettled = true;
-        modelGroup.rotation.y = INITIAL_ROTATION;
-      } else if (!introStartTimestamp) {
-        isIntroSettled = false;
-      }
-
-      requestAnimation();
     };
 
     const resizeObserver = new ResizeObserver(() => {
@@ -1675,7 +1637,6 @@ const HalftonePortrait = () => {
     hoverTarget.addEventListener("pointercancel", handlePortraitPointerCancel);
     hoverTarget.addEventListener("focusin", handlePortraitFocus);
     hoverTarget.addEventListener("focusout", handlePortraitBlur);
-    reducedMotion.addEventListener("change", handleMotionPreference);
     resize();
     requestAnimation();
 
@@ -1707,7 +1668,6 @@ const HalftonePortrait = () => {
       );
       hoverTarget.removeEventListener("focusin", handlePortraitFocus);
       hoverTarget.removeEventListener("focusout", handlePortraitBlur);
-      reducedMotion.removeEventListener("change", handleMotionPreference);
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
 
