@@ -1,85 +1,64 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
   <title id="title">I Build Systems That Automate The Work — Mark Judaya</title>
-  <desc id="description">Mark Judaya, full-stack developer and systems specialist, shown as a green particle portrait.</desc>
+  <desc id="description">Mark Judaya, full-stack developer and systems specialist.</desc>
 
   <defs>
     <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
       <path d="M48 0H0V48" fill="none" stroke="#1d3a2c" stroke-width="1"/>
     </pattern>
     <pattern id="scanlines" width="4" height="4" patternUnits="userSpaceOnUse">
-      <path d="M0 3.5H4" stroke="#000" stroke-opacity=".2"/>
+      <path d="M0 3.5H4" stroke="#000" stroke-opacity=".22"/>
     </pattern>
-    <radialGradient id="portrait-glow" cx="76%" cy="46%" r="42%">
-      <stop offset="0" stop-color="#21553b" stop-opacity=".8"/>
-      <stop offset=".58" stop-color="#0b1912" stop-opacity=".36"/>
+    <radialGradient id="glow" cx="80%" cy="44%" r="55%">
+      <stop offset="0" stop-color="#173b2a"/>
+      <stop offset=".55" stop-color="#08110d" stop-opacity=".4"/>
       <stop offset="1" stop-color="#050806" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="portrait-fade" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#fff" stop-opacity=".08"/>
-      <stop offset=".18" stop-color="#fff" stop-opacity=".9"/>
-      <stop offset="1" stop-color="#fff"/>
-    </linearGradient>
-    <mask id="portrait-mask" maskUnits="userSpaceOnUse" x="757" y="91" width="390" height="448">
-      <rect x="757" y="91" width="390" height="448" fill="url(#portrait-fade)"/>
-    </mask>
-    <filter id="green-glow" x="-50%" y="-50%" width="200%" height="200%">
+    <filter id="green-glow" x="-40%" y="-40%" width="180%" height="180%">
       <feGaussianBlur stdDeviation="5" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
-    <clipPath id="portrait-clip">
-      <rect x="757" y="91" width="390" height="448"/>
-    </clipPath>
   </defs>
 
   <rect width="1200" height="630" fill="#050806"/>
   <rect width="1200" height="630" fill="url(#grid)" opacity=".58"/>
-  <rect width="1200" height="630" fill="url(#portrait-glow)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
 
   <path d="M24 80H1176M24 550H1176" stroke="#1d3a2c"/>
   <path d="M24 80H260M940 80H1176M24 550H330M990 550H1176" stroke="#3d7455"/>
-
-  <g clip-path="url(#portrait-clip)">
-    <image href="/particle-portrait-fallback.webp" x="757" y="91" width="390" height="448" preserveAspectRatio="xMidYMid slice" mask="url(#portrait-mask)"/>
-    <rect x="757" y="91" width="390" height="448" fill="url(#scanlines)" opacity=".42"/>
-  </g>
-  <rect x="757" y="91" width="390" height="448" fill="none" stroke="#3d7455"/>
-  <path d="M757 117V91H783M1121 91H1147V117M757 513V539H783M1121 539H1147V513" fill="none" stroke="#63ff9b" stroke-width="2"/>
-  <path d="M952 103V527M769 315H1135" stroke="#63ff9b" stroke-opacity=".18" stroke-dasharray="3 7"/>
 
   <g font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace">
     <text x="42" y="51" fill="#86a893" font-size="15" letter-spacing="2.5">SYS.01 // BUILTBYMARK.DEV</text>
     <circle cx="1024" cy="45" r="5" fill="#63ff9b" filter="url(#green-glow)"/>
     <text x="1040" y="51" fill="#b8ffd0" font-size="15" letter-spacing="2.5">ONLINE</text>
 
-    <text x="52" y="128" fill="#ffc857" font-size="18" font-weight="700">&gt;_</text>
-    <text x="90" y="128" fill="#63ff9b" font-size="17" font-weight="700" letter-spacing="1.6">MARK JUDAYA // FULL-STACK DEVELOPER</text>
+    <text x="54" y="128" fill="#ffc857" font-size="18" font-weight="700">&gt;_</text>
+    <text x="92" y="128" fill="#63ff9b" font-size="18" font-weight="700" letter-spacing="2">MARK JUDAYA // SYSTEMS DEVELOPER</text>
 
-    <text x="52" y="219" fill="#edf8f0" font-size="61" font-weight="800" letter-spacing="-3">I BUILD</text>
-    <text x="52" y="286" fill="#edf8f0" font-size="61" font-weight="800" letter-spacing="-3">SYSTEMS THAT</text>
-    <text x="52" y="353" fill="#63ff9b" font-size="61" font-weight="800" letter-spacing="-3" filter="url(#green-glow)">AUTOMATE</text>
-    <text x="52" y="420" fill="#edf8f0" font-size="61" font-weight="800" letter-spacing="-3">THE WORK.</text>
+    <text x="52" y="225" fill="#edf8f0" font-size="70" font-weight="800" letter-spacing="-3">I BUILD SYSTEMS</text>
+    <text x="52" y="310" fill="#edf8f0" font-size="70" font-weight="800" letter-spacing="-3">THAT </text>
+    <text x="250" y="310" fill="#63ff9b" font-size="70" font-weight="800" letter-spacing="-3" filter="url(#green-glow)">AUTOMATE</text>
+    <text x="52" y="395" fill="#edf8f0" font-size="70" font-weight="800" letter-spacing="-3">THE WORK.</text>
 
-    <g transform="translate(54 459)">
-      <rect width="188" height="48" fill="#08110d" stroke="#3d7455"/>
-      <rect x="207" width="188" height="48" fill="#08110d" stroke="#63ff9b"/>
-      <rect x="414" width="188" height="48" fill="#08110d" stroke="#3d7455"/>
+    <g transform="translate(54 448)">
+      <rect width="274" height="54" fill="#08110d" stroke="#3d7455"/>
+      <rect x="300" width="274" height="54" fill="#08110d" stroke="#63ff9b"/>
+      <rect x="600" width="274" height="54" fill="#08110d" stroke="#3d7455"/>
 
-      <rect x="16" y="20" width="7" height="7" fill="none" stroke="#63ff9b"/>
-      <text x="36" y="31" fill="#b8ffd0" font-size="13" font-weight="700" letter-spacing="1.8">INPUT</text>
+      <rect x="18" y="23" width="8" height="8" fill="none" stroke="#63ff9b"/>
+      <text x="42" y="34" fill="#b8ffd0" font-size="15" font-weight="700" letter-spacing="2">INPUT</text>
 
-      <circle cx="225" cy="24" r="4" fill="#63ff9b" filter="url(#green-glow)"/>
-      <text x="242" y="31" fill="#63ff9b" font-size="13" font-weight="700" letter-spacing="1.8">AUTOMATE</text>
+      <circle cx="321" cy="27" r="5" fill="#63ff9b" filter="url(#green-glow)"/>
+      <text x="341" y="34" fill="#63ff9b" font-size="15" font-weight="700" letter-spacing="2">AUTOMATE</text>
 
-      <rect x="430" y="20" width="7" height="7" fill="#63ff9b"/>
-      <text x="450" y="31" fill="#b8ffd0" font-size="13" font-weight="700" letter-spacing="1.8">OUTPUT</text>
+      <rect x="618" y="23" width="8" height="8" fill="#63ff9b"/>
+      <text x="642" y="34" fill="#b8ffd0" font-size="15" font-weight="700" letter-spacing="2">OUTPUT</text>
+
+      <path d="M274 27H300M574 27H600" stroke="#63ff9b" stroke-dasharray="3 5"/>
     </g>
-
-    <text x="778" y="118" fill="#b8ffd0" font-size="11" letter-spacing="1.5">PORTRAIT_STREAM.dat</text>
-    <text x="1075" y="118" fill="#63ff9b" font-size="11" letter-spacing="1.5">LIVE</text>
-    <text x="778" y="522" fill="#86a893" font-size="10" letter-spacing="1.2">PARTICLE FIELD: ACTIVE</text>
 
     <text x="42" y="588" fill="#63ff9b" font-size="16">mark@systems:~$</text>
     <text x="218" y="588" fill="#86a893" font-size="16">orchestrate --reliable --maintainable</text>
