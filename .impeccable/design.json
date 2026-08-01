@@ -1,0 +1,384 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-30T20:15:55Z",
+  "title": "Design System: Connected Workbench",
+  "extensions": {
+    "colorMeta": {
+      "daylight-canvas": {
+        "role": "neutral",
+        "displayName": "Daylight Canvas",
+        "canonical": "#f7f8fc",
+        "tonalRamp": [
+          "#1d2030",
+          "#343849",
+          "#555b6e",
+          "#798095",
+          "#a4aabc",
+          "#c9cedb",
+          "#e6e9f1",
+          "#f7f8fc"
+        ]
+      },
+      "paper-surface": {
+        "role": "neutral",
+        "displayName": "Paper Surface",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#202020",
+          "#3d3d3d",
+          "#626262",
+          "#888888",
+          "#adadad",
+          "#d0d0d0",
+          "#ededed",
+          "#ffffff"
+        ]
+      },
+      "surface-soft": {
+        "role": "neutral",
+        "displayName": "Soft Working Surface",
+        "canonical": "#edf1f8",
+        "tonalRamp": [
+          "#18202c",
+          "#303a48",
+          "#4e596a",
+          "#727d8f",
+          "#9da7b7",
+          "#c1c9d5",
+          "#dde2eb",
+          "#edf1f8"
+        ]
+      },
+      "blueprint-ink": {
+        "role": "neutral",
+        "displayName": "Blueprint Ink",
+        "canonical": "#18213d",
+        "tonalRamp": [
+          "#0c1122",
+          "#18213d",
+          "#2f3a5d",
+          "#515e82",
+          "#7985a6",
+          "#a5aec6",
+          "#d2d7e5",
+          "#f0f2f8"
+        ]
+      },
+      "quiet-slate": {
+        "role": "neutral",
+        "displayName": "Quiet Slate",
+        "canonical": "#5d687d",
+        "tonalRamp": [
+          "#171b24",
+          "#2d3442",
+          "#465064",
+          "#5d687d",
+          "#7e899e",
+          "#a4adbe",
+          "#cbd1dc",
+          "#eef0f5"
+        ]
+      },
+      "construction-line": {
+        "role": "neutral",
+        "displayName": "Construction Line",
+        "canonical": "#d9deea",
+        "tonalRamp": [
+          "#1c2029",
+          "#363b47",
+          "#565d6b",
+          "#7b8392",
+          "#a2a9b6",
+          "#c1c7d2",
+          "#d9deea",
+          "#f3f5f8"
+        ]
+      },
+      "workbench-periwinkle": {
+        "role": "primary",
+        "displayName": "Workbench Periwinkle",
+        "canonical": "#5b4ff0",
+        "tonalRamp": [
+          "#171040",
+          "#291f72",
+          "#3d31a6",
+          "#5144d4",
+          "#6f64f2",
+          "#9b94f7",
+          "#c8c4fb",
+          "#efeeff"
+        ]
+      },
+      "periwinkle-deep": {
+        "role": "primary",
+        "displayName": "Periwinkle Deep",
+        "canonical": "#493ddb",
+        "tonalRamp": [
+          "#140d3c",
+          "#251a6b",
+          "#37299a",
+          "#4939c8",
+          "#6658df",
+          "#9389eb",
+          "#c0bbf5",
+          "#eceafd"
+        ]
+      },
+      "periwinkle-soft": {
+        "role": "primary",
+        "displayName": "Periwinkle Soft",
+        "canonical": "#e9e8ff",
+        "tonalRamp": [
+          "#1d1a45",
+          "#38346d",
+          "#5b5598",
+          "#817ac0",
+          "#aaa5df",
+          "#cdc9f0",
+          "#e9e8ff",
+          "#f7f6ff"
+        ]
+      },
+      "connection-mint": {
+        "role": "secondary",
+        "displayName": "Connection Mint",
+        "canonical": "#43c69a",
+        "tonalRamp": [
+          "#0b372a",
+          "#12604a",
+          "#1d8a6a",
+          "#2fb489",
+          "#54cca3",
+          "#86dcbe",
+          "#b9ebda",
+          "#e8f9f2"
+        ]
+      },
+      "mint-soft": {
+        "role": "secondary",
+        "displayName": "Mint Soft",
+        "canonical": "#ddf6ec",
+        "tonalRamp": [
+          "#12352a",
+          "#285a49",
+          "#4a806c",
+          "#70a793",
+          "#9bcab8",
+          "#c1e5d6",
+          "#ddf6ec",
+          "#f3fcf8"
+        ]
+      },
+      "signal-coral": {
+        "role": "secondary",
+        "displayName": "Signal Coral",
+        "canonical": "#e95f7b",
+        "tonalRamp": [
+          "#42121e",
+          "#742037",
+          "#a83250",
+          "#d94b6b",
+          "#ec7089",
+          "#f29caf",
+          "#f8c7d1",
+          "#fdeef1"
+        ]
+      },
+      "coral-soft": {
+        "role": "secondary",
+        "displayName": "Coral Soft",
+        "canonical": "#fde7ec",
+        "tonalRamp": [
+          "#401820",
+          "#6d303d",
+          "#984d5e",
+          "#c06f7f",
+          "#dc98a5",
+          "#efbdc6",
+          "#fde7ec",
+          "#fff6f8"
+        ]
+      },
+      "open-sky": {
+        "role": "tertiary",
+        "displayName": "Open Sky",
+        "canonical": "#398caf",
+        "tonalRamp": [
+          "#0c2b39",
+          "#164b62",
+          "#226d8c",
+          "#3490b5",
+          "#5aaac7",
+          "#88c6da",
+          "#bae0eb",
+          "#e8f7fb"
+        ]
+      },
+      "sky-soft": {
+        "role": "tertiary",
+        "displayName": "Sky Soft",
+        "canonical": "#e2f4fb",
+        "tonalRamp": [
+          "#12313d",
+          "#2b5564",
+          "#4d7c8d",
+          "#75a3b3",
+          "#a2c9d6",
+          "#c4e2eb",
+          "#e2f4fb",
+          "#f5fcfe"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headlines only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section ideas and major page titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading copy, descriptions, and case-study content."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Eyebrows, metadata, and compact UI labels."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient-work-surface",
+        "value": "0 24px 65px rgba(45, 57, 95, 0.11)",
+        "purpose": "Genuinely lifted media or interactive previews only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Image and directional-icon movement."
+      },
+      {
+        "name": "state",
+        "value": "180ms ease",
+        "purpose": "Color and boundary state changes."
+      },
+      {
+        "name": "workflow-signal",
+        "value": "11s linear infinite",
+        "purpose": "The single signal traveling through the hero workflow."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "small",
+        "value": "640px"
+      },
+      {
+        "name": "stack",
+        "value": "900px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "1080px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main project action: solid, friendly, and unambiguous.",
+      "html": "<button class=\"ds-btn-primary\">Start a project <span aria-hidden=\"true\">↗</span></button>",
+      "css": ".ds-btn-primary{display:inline-flex;min-height:3.1rem;align-items:center;justify-content:center;gap:.55rem;border:0;border-radius:.7rem;background:#5b4ff0;color:#fff;padding:.75rem 1.2rem;font:650 .92rem/1.2 'Schibsted Grotesk',system-ui,sans-serif;transition:background-color 180ms ease,transform 180ms ease}.ds-btn-primary:hover{background:#493ddb;transform:translateY(-1px)}.ds-btn-primary:focus-visible{outline:3px solid #e95f7b;outline-offset:3px}.ds-btn-primary:active{transform:translateY(0)}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A quiet bounded alternative when two actions need equal discoverability.",
+      "html": "<button class=\"ds-btn-secondary\">See relevant work</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;min-height:3.1rem;align-items:center;justify-content:center;border:1px solid #d9deea;border-radius:.7rem;background:transparent;color:#18213d;padding:.75rem 1.2rem;font:650 .92rem/1.2 'Schibsted Grotesk',system-ui,sans-serif;transition:border-color 180ms ease,color 180ms ease}.ds-btn-secondary:hover{border-color:#5b4ff0;color:#493ddb}.ds-btn-secondary:focus-visible{outline:3px solid #e95f7b;outline-offset:3px}"
+    },
+    {
+      "name": "Directional Text Link",
+      "kind": "custom",
+      "description": "A compact in-flow route to related evidence or a deeper page.",
+      "html": "<a class=\"ds-text-link\" href=\"#\">View selected work <span aria-hidden=\"true\">→</span></a>",
+      "css": ".ds-text-link{display:inline-flex;min-height:2.75rem;align-items:center;gap:.5rem;color:#493ddb;text-decoration:none;font:650 .9rem/1.2 'Schibsted Grotesk',system-ui,sans-serif}.ds-text-link span{transition:transform 180ms cubic-bezier(.16,1,.3,1)}.ds-text-link:hover span{transform:translateX(.25rem)}.ds-text-link:focus-visible{outline:3px solid #e95f7b;outline-offset:3px}"
+    },
+    {
+      "name": "Navigation Link",
+      "kind": "nav",
+      "description": "Sentence-case navigation with a short active baseline.",
+      "html": "<a class=\"ds-nav-link ds-nav-link--active\" href=\"#\">Services</a>",
+      "css": ".ds-nav-link{position:relative;display:inline-flex;min-height:2.75rem;align-items:center;color:#5d687d;text-decoration:none;font:600 .86rem/1 'Schibsted Grotesk',system-ui,sans-serif}.ds-nav-link:hover,.ds-nav-link--active{color:#18213d}.ds-nav-link--active::after{position:absolute;right:0;bottom:0;left:0;height:.22rem;border-radius:.22rem .22rem 0 0;background:#5b4ff0;content:''}.ds-nav-link:focus-visible{outline:3px solid #e95f7b;outline-offset:3px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "description": "A calm paper field with explicit boundary and accessible focus.",
+      "html": "<label class=\"ds-field\">Project summary<input type=\"text\" placeholder=\"What needs to work better?\"></label>",
+      "css": ".ds-field{display:grid;gap:.5rem;color:#18213d;font:650 .8rem/1.3 'Schibsted Grotesk',system-ui,sans-serif}.ds-field input{min-height:3.25rem;border:1px solid #d9deea;border-radius:.7rem;background:#fff;color:#18213d;padding:.75rem 1rem;font:400 1rem/1.4 'Schibsted Grotesk',system-ui,sans-serif}.ds-field input::placeholder{color:#5d687d}.ds-field input:focus{border-color:#5b4ff0;outline:3px solid #e95f7b;outline-offset:2px}"
+    },
+    {
+      "name": "Workflow Node",
+      "kind": "custom",
+      "description": "The signature diagram unit: a meaningful stage, not a decorative icon tile.",
+      "html": "<div class=\"ds-node\"><span class=\"ds-node__mark\" aria-hidden=\"true\">✓</span><div><strong>Connect</strong><small>Join the systems</small></div></div>",
+      "css": ".ds-node{display:inline-flex;align-items:center;gap:.75rem;color:#18213d;font-family:'Schibsted Grotesk',system-ui,sans-serif}.ds-node__mark{display:grid;width:2.75rem;height:2.75rem;place-items:center;border:2px solid #43c69a;border-radius:50%;background:#ddf6ec;color:#237b5b;font-weight:700}.ds-node strong,.ds-node small{display:block}.ds-node strong{font-size:1rem}.ds-node small{margin-top:.18rem;color:#5d687d;font-size:.75rem}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Connected Workbench",
+    "overview": "The portfolio feels like a bright working table where a client can see a business problem become a dependable system. Fine connection lines, purposeful nodes, interface fragments, and an original developer illustration make technical work tangible without turning the site into a diagramming tool or a collection of faux application windows. The world is friendly, capable, and calm. Cool daylight surfaces and generous breathing room keep long pages easy on the eyes. Illustration carries the expressive weight; interface chrome remains legible and composed. Motion demonstrates a workflow once, then settles.",
+    "keyCharacteristics": [
+      "Light-only cool daylight surfaces with deep navy text",
+      "One continuous line language connecting illustrations and process",
+      "Periwinkle, mint, coral, and sky accents with explicit roles",
+      "Humanist grotesque typography with open counters and compact display rhythm",
+      "Real screenshots and outcomes presented at editorial scale",
+      "Restrained motion that explains sequence instead of decorating every element"
+    ],
+    "rules": [
+      {
+        "name": "The Daylight Majority Rule",
+        "body": "Neutral daylight surfaces own at least three quarters of every screen. Accent color appears in meaningful fields and workflow states, not as scattered confetti.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Gradient Type Rule",
+        "body": "Emphasis comes from wording, weight, scale, or a single solid accent; display text is never gradient-filled.",
+        "section": "colors"
+      },
+      {
+        "name": "The Plain-Language Type Rule",
+        "body": "Technical credibility comes from specific content, not monospace costuming, excessive tracking, or interface jargon.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-by-Default Rule",
+        "body": "A border or a shadow establishes a surface at rest, never both. Shadows appear because an object overlaps another plane, not because every container needs elevation.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do let one authored illustration or real project screenshot dominate a composition.",
+      "Do use accent colors to explain workflow roles and state.",
+      "Do show real services, tools, process, and case-study outcomes.",
+      "Do keep interfaces spacious, direct, keyboard accessible, and readable in daylight.",
+      "Do make motion reveal sequence once and provide a complete reduced-motion state."
+    ],
+    "donts": [
+      "Don't recreate the previous dark terminal, neon, glitch, grid, or faux-telemetry world.",
+      "Don't build pages from repeated equal-sized icon cards or floating browser windows.",
+      "Don't use glassmorphism, decorative blur, gradient text, excessive pills, or ambient blobs.",
+      "Don't imply AI expertise, clients, metrics, or testimonials without supplied evidence.",
+      "Don't shrink dense desktop labels below legibility; remove or recompose them."
+    ]
+  }
+}

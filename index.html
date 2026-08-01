@@ -3,33 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.documentElement.classList.add("has-brand-motion");
+      }
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
     <meta
       name="description"
-      content="Philippines-based full-stack developer building custom web applications, business automation, Zoho integrations, and reliable internal systems."
+      content="Mark Judaya builds custom business software, integrations, and automation for teams managing orders, inventory, CRM, and product data."
     />
     <meta name="author" content="Mark Judaya" />
     <meta
       name="robots"
       content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
     />
-    <meta name="theme-color" content="#f5f4ef" />
+    <meta name="theme-color" content="#eeeee8" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Mark Judaya" />
+    <meta property="og:site_name" content="BuiltByMark.dev" />
     <meta
       property="og:title"
-      content="Custom Software, Automation & Integrations | Mark Judaya"
+      content="Custom Software, Integrations & Support | BuiltByMark.dev"
     />
     <meta
       property="og:description"
-      content="Custom web applications, business automation, Zoho integrations, and reliable internal systems for growing teams."
+      content="Custom business software, Zoho and API integrations, automation, and support from Mark Judaya."
     />
     <meta property="og:url" content="https://builtbymark.dev" />
     <meta
       property="og:image"
-      content="https://builtbymark.dev/social-card.svg"
+      content="https://builtbymark.dev/social-card.png"
     />
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -76,15 +81,16 @@
             (!storedTheme &&
               window.matchMedia("(prefers-color-scheme: dark)").matches);
           if (dark) document.documentElement.classList.add("dark");
+          document.documentElement.style.colorScheme = dark ? "dark" : "light";
           document.documentElement.style.backgroundColor = dark
-            ? "#0e1513"
-            : "#f5f4ef";
+            ? "#131917"
+            : "#eeeee8";
         } catch (error) {
-          document.documentElement.style.backgroundColor = "#f5f4ef";
+          document.documentElement.style.backgroundColor = "#eeeee8";
         }
       })();
     </script>
-    <title>Custom Software, Automation & Integrations | Mark Judaya</title>
+    <title>Custom Software, Integrations & Support | BuiltByMark.dev</title>
   </head>
   <body>
     <div id="root"></div>

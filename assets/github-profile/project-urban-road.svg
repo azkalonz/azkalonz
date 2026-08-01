@@ -1,15 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="580" height="250" viewBox="0 0 580 250" role="img" aria-labelledby="title desc">
   <title id="title">Urban Road Product Information Management Platform</title>
-  <desc id="desc">A governed product catalogue, validation, and channel export platform built with Laravel, React, TypeScript, PostgreSQL, and Redis.</desc>
-  <rect width="580" height="250" rx="14" fill="#08110d"/>
-  <rect x=".5" y=".5" width="579" height="249" rx="13.5" fill="none" stroke="#3d7455"/>
-  <path d="M0 48H580" stroke="#1d3a2c"/>
-  <g font-family="'JetBrains Mono','SFMono-Regular',Consolas,monospace">
-    <text x="22" y="30" fill="#63ff9b" font-size="11" letter-spacing="1.8">CASE_01 // LIVE PRODUCT</text>
-    <text x="22" y="85" fill="#edf8f0" font-size="22" font-weight="700">URBAN ROAD PIM</text>
-    <text x="22" y="118" fill="#a9c2b1" font-size="12">Governed catalogue, validation, review,</text>
-    <text x="22" y="139" fill="#a9c2b1" font-size="12">and channel-ready exports in one workflow.</text>
-    <text x="22" y="184" fill="#86a893" font-size="10">LARAVEL · REACT · TYPESCRIPT · POSTGRESQL · REDIS</text>
-    <text x="22" y="222" fill="#63ff9b" font-size="11">OPEN CASE STUDY  →</text>
-  </g>
+  <desc id="desc">A governed product catalogue with validation, review, and channel-ready exports.</desc>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      [fill="#f8f7f1"] { fill:#1a211e; } [fill="#17211f"] { fill:#eeece4; }
+      [fill="#596460"] { fill:#a7b0ab; } [fill="#b84421"] { fill:#ff7a45; }
+      [fill="#4b6a94"] { fill:#8eadd5; } [stroke="#c7cbc4"] { stroke:#39423d; }
+    }
+    text { font-family:"Source Sans 3 Variable","Segoe UI",Arial,sans-serif; }
+  </style>
+  <rect width="580" height="250" rx="5" fill="#f8f7f1"/>
+  <path d="M24 45H556M24 202H556" stroke="#c7cbc4"/>
+  <text x="24" y="30" fill="#4b6a94" font-size="13" font-weight="700">Live product · Product operations</text>
+  <text x="24" y="84" fill="#17211f" font-size="25" font-weight="650" letter-spacing="-.5">Urban Road Product Information</text>
+  <text x="24" y="114" fill="#17211f" font-size="25" font-weight="650" letter-spacing="-.5">Management Platform</text>
+  <text x="24" y="151" fill="#596460" font-size="15">Supplier imports, validation, review, and channel-ready</text>
+  <text x="24" y="173" fill="#596460" font-size="15">exports held together in one governed workflow.</text>
+  <text x="24" y="231" fill="#4b6a94" font-size="17" font-weight="700">673 field mappings · 8 destinations</text>
+  <text x="556" y="230" text-anchor="end" fill="#b84421" font-size="14" font-weight="700">Read case study →</text>
 </svg>

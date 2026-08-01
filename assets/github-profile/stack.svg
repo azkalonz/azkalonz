@@ -1,39 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
   <title id="title">Mark Judaya technical toolkit</title>
-  <desc id="desc">Technologies across front end, back end, integrations, business platforms, and technical delivery.</desc>
-  <defs>
-    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
-      <path d="M48 0H0V48" fill="none" stroke="#63ff9b" stroke-opacity=".055"/>
-    </pattern>
-  </defs>
-  <rect width="1200" height="360" rx="16" fill="#050806"/>
-  <rect width="1200" height="360" rx="16" fill="url(#grid)"/>
-  <rect x=".5" y=".5" width="1199" height="359" rx="15.5" fill="none" stroke="#1d3a2c"/>
-  <g font-family="'JetBrains Mono','SFMono-Regular',Consolas,monospace">
-    <text x="38" y="47" fill="#63ff9b" font-size="13" letter-spacing="2.2">[ SYSTEM / TOOLKIT ]</text>
-    <text x="38" y="80" fill="#edf8f0" font-size="25" font-weight="700">TECHNICAL TOOLKIT</text>
-    <g transform="translate(38 110)">
-      <g>
-        <rect width="544" height="92" fill="#08110d" stroke="#3d7455"/>
-        <text x="18" y="30" fill="#63ff9b" font-size="12" letter-spacing="1.5">FRONT_END</text>
-        <text x="18" y="62" fill="#edf8f0" font-size="14">React · TypeScript · Inertia · Tailwind CSS</text>
-      </g>
-      <g transform="translate(562)">
-        <rect width="562" height="92" fill="#08110d" stroke="#3d7455"/>
-        <text x="18" y="30" fill="#63e6ff" font-size="12" letter-spacing="1.5">BACK_END + DATA</text>
-        <text x="18" y="62" fill="#edf8f0" font-size="14">Laravel · PHP · Node.js · PostgreSQL · Redis</text>
-      </g>
-      <g transform="translate(0 110)">
-        <rect width="544" height="92" fill="#08110d" stroke="#3d7455"/>
-        <text x="18" y="30" fill="#ffc857" font-size="12" letter-spacing="1.5">AUTOMATION + INTEGRATION</text>
-        <text x="18" y="62" fill="#edf8f0" font-size="14">REST APIs · Webhooks · n8n · CSV pipelines</text>
-      </g>
-      <g transform="translate(562 110)">
-        <rect width="562" height="92" fill="#08110d" stroke="#3d7455"/>
-        <text x="18" y="30" fill="#63ff9b" font-size="12" letter-spacing="1.5">BUSINESS_PLATFORMS</text>
-        <text x="18" y="62" fill="#edf8f0" font-size="14">Zoho · Salesforce · Mirakl · ERP workflows</text>
-      </g>
-    </g>
-    <text x="38" y="338" fill="#86a893" font-size="11" letter-spacing="1.2">PROCESS MAPPING · SOLUTION ARCHITECTURE · API PLANNING · TECHNICAL DOCUMENTATION</text>
+  <desc id="desc">Technologies used across front end, back end, integrations, and operational platforms.</desc>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      [fill="#eeeee8"] { fill:#131917; } [fill="#17211f"] { fill:#eeece4; }
+      [fill="#596460"] { fill:#a7b0ab; } [fill="#b84421"] { fill:#ff7a45; }
+      [fill="#22695f"] { fill:#73c1b2; } [fill="#4b6a94"] { fill:#8eadd5; }
+      [stroke="#c7cbc4"] { stroke:#39423d; }
+    }
+    text { font-family:"Source Sans 3 Variable","Segoe UI",Arial,sans-serif; }
+  </style>
+  <rect width="1200" height="360" fill="#eeeee8"/>
+  <text x="44" y="52" fill="#17211f" font-size="29" font-weight="650" letter-spacing="-.5">Technical toolkit</text>
+  <text x="1156" y="50" text-anchor="end" fill="#596460" font-size="15">Technology supports the workflow—not the other way around</text>
+  <path d="M44 78H1156M44 214H1156M600 106V322" stroke="#c7cbc4"/>
+  <g transform="translate(44 113)">
+    <text y="20" fill="#b84421" font-size="16" font-weight="700">Front end</text>
+    <text y="56" fill="#17211f" font-size="18">React · TypeScript · Inertia · Tailwind CSS</text>
+    <text y="84" fill="#596460" font-size="14">Responsive interfaces and maintainable product UI</text>
+  </g>
+  <g transform="translate(628 113)">
+    <text y="20" fill="#22695f" font-size="16" font-weight="700">Back end &amp; data</text>
+    <text y="56" fill="#17211f" font-size="18">Laravel · PHP · Node.js · PostgreSQL · Redis</text>
+    <text y="84" fill="#596460" font-size="14">APIs, data models, services, and background jobs</text>
+  </g>
+  <g transform="translate(44 249)">
+    <text y="20" fill="#4b6a94" font-size="16" font-weight="700">Automation &amp; integration</text>
+    <text y="56" fill="#17211f" font-size="18">REST APIs · Webhooks · n8n · CSV pipelines</text>
+    <text y="84" fill="#596460" font-size="14">Validation, migration, syncing, logging, and recovery</text>
+  </g>
+  <g transform="translate(628 249)">
+    <text y="20" fill="#17211f" font-size="16" font-weight="700">Business platforms</text>
+    <text y="56" fill="#17211f" font-size="18">Zoho · Salesforce · Mirakl · ERP workflows</text>
+    <text y="84" fill="#596460" font-size="14">Connected systems for customers, products, and orders</text>
   </g>
 </svg>

@@ -1,19 +1,46 @@
+/*
+THESIS: The page presents BuiltByMark.dev as a calm, direct practice for dependable operational software.
+OWN-WORLD: Quiet mineral and charcoal fields, one readable sans-serif family, restrained oxide action, and an operational pipeline that turns disconnected inputs into a dependable system.
+STORY: Visitors understand the offer through the pipeline, scan project outcomes, compare selected systems, learn how the work is approached, and start a conversation.
+FIRST VIEWPORT: A compact proposition and one primary action sit beside a scroll-responsive model of Mark's actual work.
+FORM: A calm operational index with one authored, explanatory motion sequence.
+*/
 import { Link } from "react-router-dom";
-import DeferredHalftonePortrait from "../components/DeferredHalftonePortrait";
+import ContactCta from "../components/ContactCta";
+import HeroPipeline from "../components/HeroPipeline";
+import HomeMotion from "../components/HomeMotion";
 import Icon from "../components/Icon";
+import ProjectIndex from "../components/ProjectIndex";
 import Seo from "../components/Seo";
 import projects from "../data/projects";
 import { services, site } from "../data/site";
 
-const recentProjects = projects
-  .filter((project) => project.featured)
-  .slice(0, 3);
+const featuredProjects = projects.filter((project) => project.featured);
+
+const method = [
+  {
+    title: "Map the process",
+    copy: "Identify who uses it, where the data comes from, which decisions matter, and where handoffs break down.",
+  },
+  {
+    title: "Plan for failures",
+    copy: "Decide how validation, duplicate checks, logging, recovery, and ownership should work before implementation.",
+  },
+  {
+    title: "Build it as one system",
+    copy: "Treat the interface, data, background jobs, APIs, and documentation as one piece of work.",
+  },
+  {
+    title: "Stay involved after launch",
+    copy: "Support production use, investigate issues, and extend the software as the business changes.",
+  },
+];
 
 const Home = () => (
   <>
     <Seo
-      title="Custom Software, Automation & Integrations"
-      description="Philippines-based full-stack developer building custom web applications, business automation, Zoho integrations, and reliable internal systems."
+      title="Custom Software, Integrations & Support"
+      description="Mark Judaya builds custom business software, integrations, and automation for teams managing orders, inventory, CRM, and product data."
       canonical="/"
       structuredData={[
         {
@@ -21,19 +48,20 @@ const Home = () => (
           "@type": "WebSite",
           "@id": `${site.url}/#website`,
           name: site.name,
-          alternateName: "Built by Mark",
+          alternateName: site.personName,
           url: site.url,
         },
         {
           "@context": "https://schema.org",
           "@type": "Person",
           "@id": `${site.url}/#mark-judaya`,
-          name: site.name,
+          name: site.personName,
           url: site.url,
           image: `${site.url}/avatar.webp`,
-          jobTitle: "Full-Stack Developer and Systems Specialist",
+          jobTitle: "Full-Stack Developer and IT Solutions Specialist",
           address: {
             "@type": "PostalAddress",
+            addressLocality: "Cebu",
             addressCountry: "PH",
           },
           sameAs: [
@@ -53,7 +81,7 @@ const Home = () => (
           "@context": "https://schema.org",
           "@type": "ProfessionalService",
           "@id": `${site.url}/#professional-service`,
-          name: "Mark Judaya IT Solutions",
+          name: site.name,
           url: site.url,
           email: site.email,
           founder: { "@id": `${site.url}/#mark-judaya` },
@@ -63,183 +91,150 @@ const Home = () => (
       ]}
     />
 
-    <div className="matrix-home">
-      <section className="matrix-hero" aria-labelledby="home-title">
-        <div className="matrix-hero__grid" aria-hidden="true" />
-        <div className="matrix-hero__status" aria-hidden="true">
-          <span>SYS.01</span>
-          <span className="matrix-status-signal">ONLINE</span>
-          <span>PHILIPPINES / REMOTE</span>
-        </div>
-
-        <div className="matrix-hero__copy">
-          <p className="matrix-kicker">
-            <span aria-hidden="true">&gt;_</span> Mark Judaya // Full-stack
-            developer
-          </p>
-          <h1 id="home-title" className="matrix-title">
-            I build systems that{" "}
-            <span className="matrix-title__glitch" data-text="automate">
-              automate
-            </span>{" "}
-            the work.
-          </h1>
-          <p className="matrix-lead">
-            Custom applications, business automation, and integrations
-            engineered to turn repetitive operations into reliable connected
-            workflows.
-          </p>
-
-          <div className="matrix-actions">
-            <Link
-              to="/contact"
-              className="matrix-button matrix-button--primary"
-            >
-              <span>Start a project</span>
-              <Icon name="arrow-up-right" />
-            </Link>
-            <a href="#recent-work" className="matrix-button">
-              <span>Recent work</span>
-              <Icon name="arrow-right" className="matrix-icon--down" />
-            </a>
-          </div>
-
-          <div className="matrix-pipeline" aria-label="Delivery workflow">
-            <span>
-              <i aria-hidden="true" />
-              Input
-            </span>
-            <b aria-hidden="true">············</b>
-            <span>
-              <i aria-hidden="true" />
-              Automate
-            </span>
-            <b aria-hidden="true">············</b>
-            <span>
-              <i aria-hidden="true" />
-              Output
-            </span>
-          </div>
-        </div>
-
-        <div className="matrix-hero__visual">
-          <div className="matrix-portrait">
-            <Link
-              className="matrix-portrait__link-overlay"
-              to="/about"
-              aria-label="Learn more about Mark Judaya"
-            />
-            <div className="matrix-portrait__header">
-              <span>PORTRAIT_STREAM.dat</span>
-              <span>LIVE</span>
-            </div>
-            <div className="matrix-portrait__screen">
-              <DeferredHalftonePortrait />
-              <div className="matrix-portrait__reticle" aria-hidden="true" />
-              <span className="matrix-portrait__axis matrix-portrait__axis--x">
-                X.1209842
-              </span>
-              <span className="matrix-portrait__axis matrix-portrait__axis--y">
-                Y.145995
-              </span>
-              <Link className="matrix-portrait__mobile-link" to="/about">
-                <span>About Me</span>
-                <Icon name="arrow-right" />
-              </Link>
-            </div>
-            <div className="matrix-portrait__footer" aria-hidden="true">
-              <span>PARTICLE FIELD: ACTIVE</span>
-              <span>OPEN ABOUT PROFILE</span>
+    <HomeMotion>
+      <section className="relay-hero" aria-labelledby="home-title">
+        <div className="section-shell relay-hero__grid">
+          <div className="relay-hero__copy">
+            <div className="relay-hero__intro-copy">
+              <h1 id="home-title">
+                I build software for the work your business runs on.
+              </h1>
+              <p className="relay-hero__lead">
+                Custom applications and integrations for orders, inventory,
+                customer records, product data, and the tools that need to stay
+                in sync.
+              </p>
+              <div className="hero-actions">
+                <Link to="/contact" className="button button--primary">
+                  Start a project <Icon name="arrow-right" />
+                </Link>
+                <a href="#selected-work" className="button button--quiet">
+                  View my work <Icon name="arrow-right" />
+                </a>
+              </div>
             </div>
           </div>
 
-          <div className="matrix-automation" aria-hidden="true">
-            <span>BUILD</span>
-            <i />
-            <span>CONNECT</span>
-            <i />
-            <span>SUPPORT</span>
-          </div>
-        </div>
+          <div className="relay-hero__stage">
+            <div className="relay-hero__motion-track">
+              <div className="relay-hero__stage-inner">
+                <HeroPipeline />
+              </div>
+            </div>
 
-        <div className="matrix-command" aria-hidden="true">
-          <span>mark@systems:~$</span> orchestrate --reliable --maintainable
-          <i />
+            <div className="proof-rail" aria-label="Selected project outcomes">
+              <div className="proof-rail__item">
+                <strong>2M+</strong>
+                <span>MIGRATED RECORDS</span>
+              </div>
+              <div className="proof-rail__item">
+                <strong>5M+</strong>
+                <span>AUTOMATION EXECUTIONS</span>
+              </div>
+              <div className="proof-rail__item">
+                <strong>40K+</strong>
+                <span>SYNCED LIVE ORDERS</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       <section
-        id="recent-work"
-        className="matrix-work"
-        aria-labelledby="recent-work-title"
+        id="selected-work"
+        className="home-work section-shell"
+        aria-labelledby="selected-work-title"
       >
-        <div className="matrix-section-heading">
-          <div>
-            <p>[ OUTPUT / RECENT ]</p>
-            <h2 id="recent-work-title">Recent work</h2>
-          </div>
-          <Link to="/projects" className="matrix-archive-link">
-            View archive <Icon name="arrow-right" />
-          </Link>
-        </div>
+        <header className="editorial-heading editorial-heading--plain">
+          <h2 id="selected-work-title">Selected work</h2>
+          <p>
+            Selected projects, with the problem, build, and safeguards behind
+            each one.
+          </p>
+        </header>
 
-        <div className="matrix-project-grid">
-          {recentProjects.map((project, index) => (
-            <Link
-              key={project.id}
-              to={`/projects/${project.id}`}
-              className={`matrix-project ${index === 0 ? "matrix-project--feature" : ""}`}
-              aria-label={`Read the ${project.title} case study`}
-            >
-              <div className="matrix-project__topline">
-                <span>CASE_{String(index + 1).padStart(2, "0")}</span>
-                <span>{project.projectType}</span>
-              </div>
+        <ProjectIndex projects={featuredProjects} />
 
-              {project.featuredPhoto ? (
-                <div className="matrix-project__media">
-                  <img
-                    src={project.featuredPhoto}
-                    alt=""
-                    loading="lazy"
-                    width="1280"
-                    height="720"
-                  />
-                  <span aria-hidden="true">VISUAL_FEED // 01</span>
-                </div>
-              ) : (
-                <div className="matrix-project__signal" aria-hidden="true">
-                  <span>{project.tags[0]}</span>
-                  <i />
-                  <b>
-                    {project.title
-                      .split(" ")
-                      .slice(0, 2)
-                      .map((word) => word[0])
-                      .join("")}
-                  </b>
-                </div>
-              )}
+        <Link to="/projects" className="index-link">
+          View all four case studies <Icon name="arrow-right" />
+        </Link>
+      </section>
 
-              <div className="matrix-project__body">
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
-                <div className="matrix-project__stack" aria-label="Technology">
-                  {project.stack.slice(0, 3).map((item) => (
-                    <span key={item}>{item}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="matrix-project__footer">
-                <span>Open case study</span>
-                <Icon name="arrow-up-right" />
-              </div>
+      <section className="capability-field" aria-labelledby="capability-title">
+        <div className="section-shell">
+          <header className="editorial-heading editorial-heading--compact">
+            <h2 id="capability-title">What I help teams solve</h2>
+            <Link to="/services" className="index-link">
+              Explore services <Icon name="arrow-right" />
             </Link>
-          ))}
+          </header>
+
+          <div className="service-ledger">
+            {services.map((service) => (
+              <Link
+                key={service.id}
+                to={`/services#${service.id}`}
+                className="service-ledger__row"
+              >
+                <h3>{service.title}</h3>
+                <p>{service.problem}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
-    </div>
+
+      <section
+        className="method-field section-shell"
+        aria-labelledby="method-title"
+      >
+        <header>
+          <h2 id="method-title">How I keep software reliable.</h2>
+          <p>
+            Good implementation is only part of it. I also plan for exceptions,
+            recovery, handover, and the people responsible after launch.
+          </p>
+        </header>
+        <ol className="method-relay">
+          {method.map((step) => (
+            <li key={step.title}>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.copy}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="home-about" aria-labelledby="home-about-title">
+        <div className="section-shell home-about__grid">
+          <div>
+            <h2 id="home-about-title">
+              You work directly with me—from scoping to production.
+            </h2>
+          </div>
+          <div>
+            <p>
+              I’m Mark Judaya, a full-stack developer and IT solutions
+              specialist in Cebu, Philippines. I work with business owners,
+              operations teams, and developers to understand the problem, build
+              the software, and support it after launch.
+            </p>
+            <Link to="/about" className="index-link">
+              More about how I work <Icon name="arrow-right" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <div className="section-shell home-contact">
+        <ContactCta
+          title="What isn’t working—or what do you need to build?"
+          copy="Send a short note about the current process, the tools involved, and what needs to change. That is enough to get started."
+        />
+      </div>
+    </HomeMotion>
   </>
 );
 

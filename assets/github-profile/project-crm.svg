@@ -1,15 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="580" height="250" viewBox="0 0 580 250" role="img" aria-labelledby="title desc">
   <title id="title">Salesforce to Zoho CRM Migration</title>
-  <desc id="desc">A staged migration of more than 220,000 CRM records with relationship preservation and validation.</desc>
-  <rect width="580" height="250" rx="14" fill="#08110d"/>
-  <rect x=".5" y=".5" width="579" height="249" rx="13.5" fill="none" stroke="#3d7455"/>
-  <path d="M0 48H580" stroke="#1d3a2c"/>
-  <g font-family="'JetBrains Mono','SFMono-Regular',Consolas,monospace">
-    <text x="22" y="30" fill="#63e6ff" font-size="11" letter-spacing="1.8">CASE_02 // DATA MIGRATION</text>
-    <text x="22" y="85" fill="#edf8f0" font-size="22" font-weight="700">SALESFORCE → ZOHO CRM</text>
-    <text x="22" y="118" fill="#a9c2b1" font-size="12">220,000+ records moved with relationships,</text>
-    <text x="22" y="139" fill="#a9c2b1" font-size="12">record IDs, traceability, and continuity.</text>
-    <text x="22" y="184" fill="#86a893" font-size="10">ZOHO CRM · SALESFORCE · CSV · DELUGE</text>
-    <text x="22" y="222" fill="#63ff9b" font-size="11">OPEN CASE STUDY  →</text>
-  </g>
+  <desc id="desc">More than 2 million records migrated with relationships and traceability preserved.</desc>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      [fill="#f8f7f1"] { fill:#1a211e; } [fill="#17211f"] { fill:#eeece4; }
+      [fill="#596460"] { fill:#a7b0ab; } [fill="#b84421"] { fill:#ff7a45; }
+      [fill="#4b6a94"] { fill:#8eadd5; } [stroke="#c7cbc4"] { stroke:#39423d; }
+    }
+    text { font-family:"Source Sans 3 Variable","Segoe UI",Arial,sans-serif; }
+  </style>
+  <rect width="580" height="250" rx="5" fill="#f8f7f1"/>
+  <path d="M24 45H556M24 202H556" stroke="#c7cbc4"/>
+  <text x="24" y="30" fill="#4b6a94" font-size="13" font-weight="700">Private case study · Data migration</text>
+  <text x="24" y="90" fill="#17211f" font-size="27" font-weight="650" letter-spacing="-.5">Salesforce to Zoho CRM Migration</text>
+  <text x="24" y="135" fill="#596460" font-size="15">A staged migration with relationships, source record IDs,</text>
+  <text x="24" y="157" fill="#596460" font-size="15">validation, and business continuity preserved.</text>
+  <text x="24" y="231" fill="#4b6a94" font-size="17" font-weight="700">2M+ records · 6 core modules</text>
+  <text x="556" y="230" text-anchor="end" fill="#b84421" font-size="14" font-weight="700">Read case study →</text>
 </svg>

@@ -4,27 +4,38 @@ type Theme = "light" | "dark";
 
 const themeKey = "theme";
 
-const getInitialTheme = (): Theme => {
-  if (typeof window === "undefined") return "light";
-  const stored = localStorage.getItem(themeKey);
-  if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+const getRenderedTheme = (): Theme => {
+  if (typeof document === "undefined") return "light";
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
 };
 
 export default function useTheme() {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [theme, setTheme] = useState<Theme>(getRenderedTheme);
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem(themeKey, theme);
-  }, [theme]);
+    const stored = localStorage.getItem(themeKey);
+    if (stored === "light" || stored === "dark") return;
 
-  const toggle = useCallback(
-    () => setTheme((value) => (value === "dark" ? "light" : "dark")),
-    [],
-  );
+    const preference = window.matchMedia("(prefers-color-scheme: dark)");
+    const applyPreference = (event: MediaQueryListEvent | MediaQueryList) => {
+      const nextTheme = event.matches ? "dark" : "light";
+      document.documentElement.classList.toggle("dark", event.matches);
+      setTheme(nextTheme);
+    };
+
+    preference.addEventListener("change", applyPreference);
+    return () => preference.removeEventListener("change", applyPreference);
+  }, []);
+
+  const toggle = useCallback(() => {
+    setTheme((current) => {
+      const nextTheme = current === "dark" ? "light" : "dark";
+      document.documentElement.classList.toggle("dark", nextTheme === "dark");
+      document.documentElement.style.colorScheme = nextTheme;
+      localStorage.setItem(themeKey, nextTheme);
+      return nextTheme;
+    });
+  }, []);
 
   return { toggle, isDark: theme === "dark" };
 }

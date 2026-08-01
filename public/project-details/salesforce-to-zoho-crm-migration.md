@@ -1,20 +1,10 @@
-## Overview
+## The problem
 
-This project involved a full-scale migration of CRM data from Salesforce to Zoho CRM. The goal was to ensure a seamless transition with zero data loss, minimal downtime, and long-term maintainability for future data associations.
+More than 2 million records had to move from Salesforce to Zoho CRM without losing module relationships or the source IDs needed for later attachment work. Salesforce also had to remain available during the initial import so day-to-day work could continue while the Zoho data was checked.
 
-Salesforce remained the active system during the initial migration to allow business operations to continue uninterrupted.
+## What moved
 
-## Objectives
-
-- Export all relevant Salesforce data for migration
-- Clean and transform data to ensure compatibility with Zoho CRM
-- Accurately map Salesforce fields to existing and custom Zoho fields
-- Preserve Salesforce record IDs for future attachment and data associations
-- Perform an initial import while Salesforce remained live
-
-## Scope of Migration
-
-The migration covered multiple core CRM modules with significant data volume:
+The migration covered six CRM modules:
 
 - Leads: 14,313
 - Contacts: 5,979
@@ -23,42 +13,22 @@ The migration covered multiple core CRM modules with significant data volume:
 - Products: 241
 - Tasks: 182,070
 
-## Implementation Details
+## How I prepared the data
 
-### 1. Salesforce Data Export
+- Exported each Salesforce module in a structured format
+- Removed duplicate and invalid records
+- Normalised dates and picklist values for Zoho CRM
+- Checked required fields before import
+- Mapped Salesforce fields to existing and custom Zoho fields
 
-All required Salesforce modules were exported in structured formats to support transformation, validation, and staged importing into Zoho CRM.
+## How I preserved relationships
 
-### 2. Data Cleaning and Transformation
+Salesforce record IDs were stored in Zoho CRM so records could be traced back to their source. Those IDs also support later attachment migration, reconciliation, and checks between related modules.
 
-Data was reviewed and prepared to ensure accuracy and compatibility:
+## How the import was staged
 
-- Removed duplicates and invalid records
-- Normalized data formats such as dates and picklist values
-- Ensured required fields met Zoho CRM validation rules
+The first full import ran while Salesforce remained the active CRM. This gave the team time to check the Zoho records, correct mapping issues, and prepare for the final changeover without pausing normal CRM work.
 
-### 3. Field Mapping and Zoho Setup
+## Result
 
-- Mapped Salesforce fields to corresponding Zoho CRM fields
-- Created custom fields in Zoho CRM where no direct equivalents existed
-- Validated relationships between modules to maintain referential integrity
-
-### 4. Record ID Preservation
-
-Salesforce record IDs were stored within Zoho CRM records to:
-
-- Simplify future attachment migration
-- Maintain traceability between systems
-- Support post-migration validation and reconciliation
-
-### 5. Initial Data Import
-
-The first full data import was performed while Salesforce remained the active CRM, allowing:
-
-- Business operations to continue without disruption
-- Data validation in Zoho CRM before final cutover
-- Iterative adjustments based on import results
-
-## Outcome
-
-The migration successfully transferred over 220,000 records across multiple CRM modules while maintaining data accuracy, relationships, and system continuity. The structured approach ensured a smooth transition and laid the groundwork for future automation and system enhancements within Zoho CRM.
+More than 2 million records moved across six CRM modules while Salesforce remained available for day-to-day work. Salesforce IDs and module relationships were retained for validation and later attachment migration.

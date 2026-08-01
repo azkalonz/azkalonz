@@ -75,9 +75,7 @@ const ProjectShowcaseCarousel = ({ screens }: ProjectShowcaseCarouselProps) => {
 
   if (!activeScreen) return null;
 
-  const counter = `${String(activeIndex + 1).padStart(2, "0")} / ${String(
-    screens.length,
-  ).padStart(2, "0")}`;
+  const counter = `Screen ${activeIndex + 1} of ${screens.length}`;
 
   return (
     <div className="showcase-carousel">
@@ -95,11 +93,11 @@ const ProjectShowcaseCarousel = ({ screens }: ProjectShowcaseCarouselProps) => {
             alt={activeScreen.alt}
             loading="lazy"
             decoding="async"
-            width="1280"
-            height="720"
+            width="3024"
+            height="1536"
           />
           <span className="showcase-carousel__expand">
-            EXPAND <Icon name="arrow-up-right" />
+            View full size <Icon name="arrow-up-right" />
           </span>
         </button>
 
@@ -126,7 +124,7 @@ const ProjectShowcaseCarousel = ({ screens }: ProjectShowcaseCarouselProps) => {
       </div>
 
       <div className="showcase-carousel__caption" aria-live="polite">
-        <span>SCREEN_{counter}</span>
+        <span className="sr-only">{counter}</span>
         <div>
           <strong>{activeScreen.title}</strong>
           <p>{activeScreen.description}</p>
@@ -151,10 +149,9 @@ const ProjectShowcaseCarousel = ({ screens }: ProjectShowcaseCarouselProps) => {
               alt=""
               loading="lazy"
               decoding="async"
-              width="160"
-              height="90"
+              width="315"
+              height="160"
             />
-            <span>{String(index + 1).padStart(2, "0")}</span>
           </button>
         ))}
       </div>
@@ -174,14 +171,14 @@ const ProjectShowcaseCarousel = ({ screens }: ProjectShowcaseCarouselProps) => {
         >
           <div className="showcase-lightbox__panel">
             <div className="showcase-lightbox__toolbar">
-              <span>SCREEN_{counter}</span>
+              <span>{activeScreen.title}</span>
               <button
                 ref={closeButtonRef}
                 type="button"
                 onClick={() => setLightboxOpen(false)}
                 aria-label="Close image viewer"
               >
-                CLOSE <Icon name="x" />
+                Close <Icon name="x" />
               </button>
             </div>
 
@@ -189,8 +186,8 @@ const ProjectShowcaseCarousel = ({ screens }: ProjectShowcaseCarouselProps) => {
               <img
                 src={activeScreen.src}
                 alt={activeScreen.alt}
-                width="1280"
-                height="720"
+                width="3024"
+                height="1536"
               />
               {screens.length > 1 && (
                 <>
