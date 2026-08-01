@@ -24,8 +24,8 @@ const Seo = ({
   ogTitle,
   ogDescription,
   ogType = "website",
-  socialImage = "/social-card.svg",
-  socialImageAlt = "Mark Judaya — custom software, automation, and integrations",
+  socialImage = "/social-card.png",
+  socialImageAlt = "BuiltByMark.dev — custom software, automation, and integrations",
   socialImageWidth = 1200,
   socialImageHeight = 630,
   canonical = "/",
@@ -70,12 +70,12 @@ const Seo = ({
       <meta name="twitter:image" content={socialImageUrl} />
       <meta
         name="theme-color"
-        content="#f6f5f1"
+        content="#eeeee8"
         media="(prefers-color-scheme: light)"
       />
       <meta
         name="theme-color"
-        content="#101514"
+        content="#131917"
         media="(prefers-color-scheme: dark)"
       />
 

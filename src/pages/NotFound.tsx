@@ -9,11 +9,9 @@ const NotFound = () => (
       noIndex
     />
     <section className="not-found section-shell">
-      <p className="eyebrow">404</p>
       <h1>This page has moved—or never existed.</h1>
       <p>
-        Use the main navigation, or return home to explore services and selected
-        work.
+        Use the main navigation, or return home to explore my services and work.
       </p>
       <Link to="/" className="button button--primary">
         Return home

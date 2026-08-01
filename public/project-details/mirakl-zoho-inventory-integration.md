@@ -1,53 +1,38 @@
-## Overview
+## The problem
 
-This project involved building an automated integration between Mirakl and Zoho Inventory to streamline marketplace order processing. The goal was to ensure timely order ingestion, status synchronization, and centralized incident tracking while reducing manual intervention.
+Marketplace orders were being handled across Mirakl and Zoho Inventory, with shipment updates, documents, and failed syncs requiring manual coordination. The integration needed to move orders on a schedule, avoid duplicates, and make failures visible to the support team.
 
-The integration was designed as a scheduled workflow to continuously sync data between systems and support end-to-end order lifecycle management.
+## What the integration does
 
-## Objectives
+### Import Mirakl orders
 
-- Automatically pull orders from Mirakl into Zoho Inventory
-- Process and accept pending marketplace orders
-- Sync shipment updates back to Mirakl
-- Handle document processing for orders
-- Track integration-related issues and exceptions in Zoho Desk
+- Fetches new and pending orders on a schedule
+- Processes orders in batches
+- Checks for an existing order before creating one in Zoho Inventory
+- Accepts eligible marketplace orders
 
-## Key Features
+### Return shipment updates
 
-### Scheduled Order Sync
+- Sends shipment and fulfilment updates back to Mirakl
+- Keeps marketplace order status aligned with Zoho Inventory
 
-- Implemented scheduled jobs to fetch new orders from Mirakl
-- Ensures near real-time synchronization without manual triggering
-- Handles batching and avoids duplicate order creation
+### Handle order documents
 
-### Order Acceptance Automation
+- Moves the documents required by the order process
+- Makes those files available to the teams working in Zoho
 
-- Automatically processes and accepts pending orders
-- Reduces manual workload and speeds up order fulfillment pipeline
+### Record failed syncs
 
-### Shipment Status Updates
+- Logs errors and exceptions in Zoho Desk
+- Gives the support team one place to review failed syncs and unusual cases
 
-- Syncs shipment and fulfillment updates back to Mirakl
-- Keeps marketplace order statuses aligned with Zoho Inventory
+## Technical implementation
 
-### Document Processing
+- Scheduled triggers start each import
+- REST APIs move order and shipment data between Mirakl and Zoho Inventory
+- Validation runs before records are created or updated
+- Zoho Desk stores errors and exceptions that need review
 
-- Handles order-related documents as part of the workflow
-- Ensures required files are available across systems for operations
+## Result
 
-### Incident Tracking (Zoho Desk)
-
-- Integrated with Zoho Desk for logging errors and exceptions
-- Enables visibility and faster resolution of integration issues
-- Supports structured tracking of failed syncs and edge cases
-
-## Technical Implementation
-
-- Automated workflows using scheduled triggers
-- API-based integration between Mirakl and Zoho Inventory
-- Error handling and logging routed through Zoho Desk
-- Data validation to ensure consistency across systems
-
-## Outcome
-
-The integration established a reliable and automated pipeline between Mirakl and Zoho Inventory, significantly improving order processing efficiency, reducing manual intervention, and enhancing visibility into operational issues through centralized incident tracking.
+New Mirakl orders are imported on a schedule, checked for duplicates, and created in Zoho Inventory. Shipment updates return to Mirakl, while failed syncs are recorded in Zoho Desk for review.

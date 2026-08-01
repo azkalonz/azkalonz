@@ -1,15 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="580" height="250" viewBox="0 0 580 250" role="img" aria-labelledby="title desc">
   <title id="title">Zoho Inventory ERP Integration</title>
-  <desc id="desc">A custom integration for eligible orders, fulfilment, production, shipping, add-ons, and invoice data.</desc>
-  <rect width="580" height="250" rx="14" fill="#08110d"/>
-  <rect x=".5" y=".5" width="579" height="249" rx="13.5" fill="none" stroke="#3d7455"/>
-  <path d="M0 48H580" stroke="#1d3a2c"/>
-  <g font-family="'JetBrains Mono','SFMono-Regular',Consolas,monospace">
-    <text x="22" y="30" fill="#63ff9b" font-size="11" letter-spacing="1.8">CASE_04 // ERP INTEGRATION</text>
-    <text x="22" y="85" fill="#edf8f0" font-size="22" font-weight="700">ZOHO INVENTORY → ERP</text>
-    <text x="22" y="118" fill="#a9c2b1" font-size="12">Automated fulfilment, production, shipping,</text>
-    <text x="22" y="139" fill="#a9c2b1" font-size="12">add-on, and invoice data across systems.</text>
-    <text x="22" y="184" fill="#86a893" font-size="10">ZOHO DELUGE · N8N · POSTMAN</text>
-    <text x="22" y="222" fill="#63ff9b" font-size="11">OPEN CASE STUDY  →</text>
-  </g>
+  <desc id="desc">An automated handoff of eligible order, shipping, production, add-on, and invoice data.</desc>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      [fill="#f8f7f1"] { fill:#1a211e; } [fill="#17211f"] { fill:#eeece4; }
+      [fill="#596460"] { fill:#a7b0ab; } [fill="#b84421"] { fill:#ff7a45; }
+      [fill="#4b6a94"] { fill:#8eadd5; } [stroke="#c7cbc4"] { stroke:#39423d; }
+    }
+    text { font-family:"Source Sans 3 Variable","Segoe UI",Arial,sans-serif; }
+  </style>
+  <rect width="580" height="250" rx="5" fill="#f8f7f1"/>
+  <path d="M24 45H556M24 202H556" stroke="#c7cbc4"/>
+  <text x="24" y="30" fill="#4b6a94" font-size="13" font-weight="700">Private case study · ERP integration</text>
+  <text x="24" y="90" fill="#17211f" font-size="27" font-weight="650" letter-spacing="-.5">Zoho Inventory ERP Integration</text>
+  <text x="24" y="135" fill="#596460" font-size="15">Eligible orders carry complete shipping, production, add-on,</text>
+  <text x="24" y="157" fill="#596460" font-size="15">invoice, and attached PDF data into the ERP.</text>
+  <text x="24" y="231" fill="#4b6a94" font-size="17" font-weight="700">Rule-filtered · Complete · Traceable</text>
+  <text x="556" y="230" text-anchor="end" fill="#b84421" font-size="14" font-weight="700">Read case study →</text>
 </svg>

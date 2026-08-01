@@ -5,80 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
     <link rel="icon" href="/favicon.svg" />
-    <title>Page not found | Mark Judaya</title>
+    <title>Page not found | BuiltByMark.dev</title>
     <style>
       :root {
-        color-scheme: light dark;
-        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        color-scheme: light;
+        --canvas: #eeeee8;
+        --paper: #f8f7f1;
+        --ink: #17211f;
+        --muted: #596460;
+        --line: #c7cbc4;
+        --relay: #b84421;
+        --relay-ink: #fffaf3;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
       }
       body {
-        display: grid;
-        min-height: 100vh;
-        place-items: center;
+        min-height: 100svh;
         margin: 0;
-        background: #f5f4ef;
-        color: #16211e;
+        background: var(--canvas);
+        color: var(--ink);
       }
       main {
-        width: min(100% - 2rem, 44rem);
+        width: min(calc(100% - 2rem), 70rem);
+        margin-inline: auto;
+        padding-block: clamp(1.5rem, 4vw, 3rem) clamp(4rem, 10vw, 8rem);
       }
-      span {
-        color: #11695c;
-        font-size: 0.75rem;
-        font-weight: 800;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
+      .brand {
+        display: inline-block;
+        color: var(--ink);
+        font-size: 1rem;
+        font-weight: 700;
+        text-decoration: none;
       }
       h1 {
-        max-width: 12ch;
-        margin: 1rem 0;
-        font:
-          500 clamp(3rem, 10vw, 5rem)/1 Georgia,
-          serif;
-        letter-spacing: -0.05em;
+        max-width: 14ch;
+        margin: clamp(4rem, 12vw, 9rem) 0 0;
+        font-size: clamp(2.25rem, 5vw, 3.25rem);
+        line-height: 1.02;
+        letter-spacing: -0.025em;
       }
       p {
         max-width: 36rem;
-        color: #5c6763;
-        line-height: 1.7;
+        margin: 1.5rem 0 0;
+        color: var(--muted);
+        line-height: 1.65;
       }
-      a {
+      .action {
         display: inline-block;
-        margin-top: 1rem;
-        border-radius: 0.55rem;
-        background: #11695c;
-        color: white;
-        padding: 0.8rem 1.15rem;
+        min-height: 3.25rem;
+        margin-top: 2rem;
+        border-radius: 0.2rem;
+        background: var(--relay);
+        color: var(--relay-ink);
+        padding: 0.85rem 1.15rem;
         font-weight: 700;
         text-decoration: none;
       }
       a:focus-visible {
-        outline: 3px solid #d48b31;
+        outline: 3px solid #1e67bf;
         outline-offset: 3px;
       }
       @media (prefers-color-scheme: dark) {
-        body {
-          background: #0e1513;
-          color: #edf1ec;
+        :root {
+          color-scheme: dark;
+          --canvas: #131917;
+          --paper: #1a211e;
+          --ink: #eeece4;
+          --muted: #a7b0ab;
+          --line: #39423d;
+          --relay: #ff7a45;
+          --relay-ink: #171d1a;
         }
-        p {
-          color: #aab4b0;
-        }
-        span {
-          color: #70bba9;
+        a:focus-visible {
+          outline-color: #f4b45f;
         }
       }
     </style>
   </head>
   <body>
     <main>
-      <span>Error 404</span>
-      <h1>This page is not here.</h1>
+      <a class="brand" href="/">BuiltByMark.dev</a>
+      <h1>This page isn’t available.</h1>
       <p>
-        The link may be outdated, or the page may have moved. Return home to
-        explore services and selected work.
+        The link may be outdated, or the page may have moved. Return home to see
+        services and work.
       </p>
-      <a href="/">Return home</a>
+      <a class="action" href="/">Return home</a>
     </main>
   </body>
 </html>

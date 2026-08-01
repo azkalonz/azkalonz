@@ -1,41 +1,36 @@
 import { Link } from "react-router-dom";
 import { site } from "../data/site";
-import BrandMark from "./BrandMark";
-import Icon from "./Icon";
 
 const Footer = () => (
   <footer className="site-footer">
-    <div className="site-footer__inner">
+    <div className="section-shell site-footer__top">
       <div className="site-footer__brand">
         <Link
           to="/"
           className="brand brand--footer"
-          aria-label="Mark Judaya, home"
+          aria-label={`${site.name}, home`}
         >
-          <BrandMark />
-          <span className="brand__text">
-            <strong>Mark Judaya</strong>
-          </span>
+          <strong className="brand__wordmark">{site.name}</strong>
         </Link>
         <p>
-          I build, connect, improve, and support the technology growing
-          businesses rely on.
+          Custom software, integrations, and support for the tools your business
+          depends on.
         </p>
       </div>
 
       <div>
-        <h2 className="footer-heading">Explore</h2>
+        <h2>Explore</h2>
         <nav className="footer-links" aria-label="Footer navigation">
+          <Link to="/projects">Work</Link>
           <Link to="/services">Services</Link>
-          <Link to="/projects">Selected work</Link>
           <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>
         </nav>
       </div>
 
       <div>
-        <h2 className="footer-heading">Connect</h2>
-        <div className="footer-links">
+        <h2>Connect</h2>
+        <nav className="footer-links" aria-label="Professional links">
           <a href={`mailto:${site.email}`}>Email</a>
           <a href={site.socials.linkedin} target="_blank" rel="noreferrer">
             LinkedIn
@@ -46,20 +41,14 @@ const Footer = () => (
           <a href={site.socials.fiverr} target="_blank" rel="noreferrer">
             Fiverr
           </a>
-        </div>
+        </nav>
       </div>
     </div>
 
-    <div className="site-footer__base">
-      <p>© {new Date().getFullYear()} Mark Judaya. All rights reserved.</p>
-      <a
-        href={site.bookingUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="footer-call-link"
-      >
-        Book a call <Icon name="arrow-up-right" />
-      </a>
+    <div className="section-shell site-footer__base">
+      <p>
+        © {new Date().getFullYear()} {site.name} · Cebu, Philippines
+      </p>
     </div>
   </footer>
 );

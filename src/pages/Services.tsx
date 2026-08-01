@@ -8,14 +8,14 @@ import { faqs, services, site } from "../data/site";
 const Services = () => (
   <>
     <Seo
-      title="Custom Software Development & Automation Services"
-      description="Custom web applications, business automation, Zoho and API integrations, technical consulting, and ongoing software support for growing teams."
+      title="Custom Software, Integrations & Support"
+      description="Custom web applications, Zoho and API integrations, technical planning, and software support from Mark Judaya."
       canonical="/services"
       structuredData={[
         {
           "@context": "https://schema.org",
           "@type": "ItemList",
-          name: "Custom software development and automation services",
+          name: "Custom software development and integration services",
           itemListElement: services.map((service, index) => ({
             "@type": "ListItem",
             position: index + 1,
@@ -27,7 +27,7 @@ const Services = () => (
               provider: {
                 "@type": "Person",
                 "@id": `${site.url}/#mark-judaya`,
-                name: site.name,
+                name: site.personName,
                 url: site.url,
               },
               areaServed: "Worldwide",
@@ -55,38 +55,41 @@ const Services = () => (
       ]}
     />
 
-    <header className="page-hero page-hero--listing section-shell">
-      <p className="eyebrow">Services</p>
-      <h1>Custom software, automation, integrations, and technical support.</h1>
-      <p>
-        I help growing businesses turn operational needs into dependable web
-        applications, connected systems, and practical improvement plans—from
-        full-stack development through long-term support.
-      </p>
-      <div className="hero__actions">
-        <Link to="/contact" className="button button--primary">
-          Discuss your project{" "}
-          <Icon name="arrow-right" className="button__icon" />
-        </Link>
-        <Link to="/projects" className="button button--secondary">
-          See relevant work
-        </Link>
+    <header className="page-hero services-hero section-shell">
+      <div className="page-hero__grid">
+        <h1>Custom software, integrations, and support.</h1>
+        <p>
+          I help teams replace spreadsheet handoffs, repeated data entry, and
+          fragile software with tools built around the way they actually work.
+        </p>
+        <div className="hero-actions">
+          <Link to="/contact" className="button button--primary">
+            Tell me about your project <Icon name="arrow-right" />
+          </Link>
+          <Link to="/projects" className="button button--quiet">
+            View my work
+          </Link>
+        </div>
       </div>
     </header>
 
     <nav
-      className="service-jump section-shell"
+      className="service-index section-shell"
       aria-label="Services on this page"
     >
-      {services.map((service) => (
-        <a key={service.id} href={`#${service.id}`}>
-          <span>{service.number}</span>
-          {service.shortTitle}
-        </a>
-      ))}
+      <span className="service-index__label" aria-hidden="true">
+        Services
+      </span>
+      <div className="service-index__links">
+        {services.map((service) => (
+          <a key={service.id} href={`#${service.id}`}>
+            {service.shortTitle}
+          </a>
+        ))}
+      </div>
     </nav>
 
-    <div className="service-details section-shell">
+    <div className="service-records section-shell">
       {services.map((service) => {
         const relatedProjects = projects
           .filter((project) => service.relatedProjectIds.includes(project.id))
@@ -95,92 +98,68 @@ const Services = () => (
         return (
           <section
             id={service.id}
-            className="service-detail"
+            className="service-record"
             key={service.id}
             aria-labelledby={`${service.id}-title`}
           >
-            <div className="service-detail__intro">
-              <span className="service-detail__number">{service.number}</span>
-              <p className="eyebrow">{service.shortTitle}</p>
+            <header>
               <h2 id={`${service.id}-title`}>{service.title}</h2>
-              <p className="service-detail__summary">{service.summary}</p>
+              <p className="service-record__summary">{service.summary}</p>
               <Link
                 to={`/contact?service=${encodeURIComponent(service.title)}`}
-                className="button button--secondary"
+                className="button button--quiet"
               >
-                Discuss this service{" "}
-                <Icon name="arrow-right" className="button__icon" />
+                Ask about this service <Icon name="arrow-right" />
               </Link>
-            </div>
+            </header>
 
-            <div className="service-detail__content">
-              <div className="service-answer">
-                <h3>The problem it solves</h3>
+            <div className="service-record__body">
+              <div className="service-fact">
+                <h3>When this helps</h3>
                 <p>{service.problem}</p>
               </div>
-              <div className="service-answer">
-                <h3>Who it suits</h3>
+              <div className="service-fact">
+                <h3>Who I work with</h3>
                 <p>{service.fit}</p>
               </div>
-              <div className="service-answer service-answer--wide">
-                <h3>Common deliverables</h3>
-                <ul className="check-list">
+              <div className="service-fact service-fact--wide">
+                <h3>What I can help with</h3>
+                <ul>
                   {service.deliverables.map((item) => (
-                    <li key={item}>
-                      <Icon name="check" />
-                      {item}
-                    </li>
+                    <li key={item}>{item}</li>
                   ))}
                 </ul>
               </div>
-              <div className="service-answer service-answer--wide">
-                <h3>How I approach it</h3>
+              <div className="service-fact service-fact--wide">
+                <h3>How I work</h3>
                 <p>{service.approach}</p>
               </div>
-              <div className="service-answer">
-                <h3>Relevant technology</h3>
-                <div className="tag-list">
-                  {service.technologies.map((item) => (
-                    <span key={item}>{item}</span>
-                  ))}
-                </div>
-              </div>
-              <div className="service-answer">
-                <h3>Related work</h3>
-                <div className="related-links">
+
+              {relatedProjects.length > 0 && (
+                <div className="related-work">
+                  <h3>Related case studies</h3>
                   {relatedProjects.map((project) => (
                     <Link key={project.id} to={`/projects/${project.id}`}>
                       <span>{project.title}</span>
-                      <Icon name="arrow-right" />
+                      <Icon name="arrow-up-right" />
                     </Link>
                   ))}
                 </div>
-              </div>
+              )}
             </div>
           </section>
         );
       })}
     </div>
 
-    <section
-      className="section-shell page-section"
-      aria-labelledby="services-faq-title"
-    >
-      <div className="section-heading">
-        <div>
-          <p className="eyebrow">Frequently asked questions</p>
-          <h2 id="services-faq-title" className="section-title">
-            What to know before starting.
-          </h2>
-        </div>
-      </div>
+    <section className="faq-field section-shell" aria-labelledby="faq-title">
+      <header>
+        <h2 id="faq-title">Before we start</h2>
+      </header>
       <div className="faq-list">
         {faqs.map((faq) => (
           <details key={faq.question}>
-            <summary>
-              {faq.question}
-              <span aria-hidden="true">+</span>
-            </summary>
+            <summary>{faq.question}</summary>
             <p>{faq.answer}</p>
           </details>
         ))}
@@ -188,11 +167,7 @@ const Services = () => (
     </section>
 
     <div className="section-shell page-section page-section--cta">
-      <ContactCta
-        eyebrow="Not sure where it fits?"
-        title="Start with the operating problem, not the service label."
-        copy="Tell me what your team is trying to change. I can help identify whether the next step is discovery, an application build, an integration, or a focused improvement."
-      />
+      <ContactCta />
     </div>
   </>
 );

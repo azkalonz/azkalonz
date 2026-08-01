@@ -4,23 +4,43 @@ import Icon from "../components/Icon";
 import Seo from "../components/Seo";
 import { site } from "../data/site";
 
+const principles = [
+  {
+    title: "Define the problem first",
+    copy: "Write down the goal, users, constraints, handoffs, and edge cases before choosing a technical approach.",
+  },
+  {
+    title: "Plan for errors and handover",
+    copy: "Decide how validation, recovery, audit history, documentation, and ownership should work after launch.",
+  },
+  {
+    title: "Leave room to change",
+    copy: "Use a structure that can absorb the next improvement without forcing a rebuild.",
+  },
+];
+
 const About = () => (
   <>
     <Seo
       title="Full-Stack Developer & Systems Specialist"
-      description="Meet Mark Judaya, a Philippines-based full-stack developer specializing in custom software, business automation, systems integration, and Zoho."
+      description="Mark Judaya is a Cebu-based full-stack developer who builds custom software, integrations, automation, and internal business tools."
       canonical="/about"
       structuredData={[
         {
           "@context": "https://schema.org",
-          "@type": "ProfilePage",
+          "@type": "AboutPage",
+          name: "About Mark Judaya",
+          url: `${site.url}/about`,
           mainEntity: {
             "@type": "Person",
             "@id": `${site.url}/#mark-judaya`,
-            name: site.name,
-            url: site.url,
-            image: `${site.url}/avatar.webp`,
-            jobTitle: "Full-Stack Developer and Systems Specialist",
+            name: site.personName,
+            jobTitle: "Full-Stack Developer and IT Solutions Specialist",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Cebu",
+              addressCountry: "PH",
+            },
             sameAs: [
               site.socials.linkedin,
               site.socials.github,
@@ -41,7 +61,7 @@ const About = () => (
             {
               "@type": "ListItem",
               position: 2,
-              name: "About Mark Judaya",
+              name: "About",
               item: `${site.url}/about`,
             },
           ],
@@ -51,149 +71,115 @@ const About = () => (
 
     <header className="about-hero section-shell">
       <div className="about-hero__copy">
-        <p className="eyebrow">About</p>
         <h1>
-          Full-stack development for the systems behind day-to-day operations.
+          I turn complicated business processes into software teams can run and
+          maintain.
         </h1>
-        <p className="about-hero__lead">
-          I’m Mark Judaya, a full-stack developer and systems specialist based
-          in the Philippines. I help businesses understand a technical problem,
-          shape a practical solution, build it, and keep it useful as the work
-          evolves.
+        <p>
+          I’m a full-stack developer and IT solutions specialist based in Cebu,
+          Philippines. I build internal applications, integrations, and
+          automation for teams whose work has outgrown spreadsheets or
+          disconnected tools.
         </p>
       </div>
-      <div className="about-hero__portrait">
-        <img src="/avatar.webp" alt="Mark Judaya" width="480" height="480" />
-        <div>
-          <strong>Mark Judaya</strong>
-          <span>
-            Full-stack development · Systems integration · Technical support
-          </span>
-        </div>
-      </div>
+      <figure className="about-portrait">
+        <img
+          src="/avatar.webp"
+          alt="Mark Judaya"
+          width="800"
+          height="800"
+          fetchPriority="high"
+        />
+        <figcaption>
+          <span>Cebu, Philippines</span>
+          Working with clients and teams remotely
+        </figcaption>
+      </figure>
     </header>
 
-    <section
-      className="about-story section-shell"
-      aria-labelledby="approach-title"
-    >
-      <div className="about-story__label">
-        <span>01</span>
-        <p>What I bring</p>
-      </div>
-      <div className="about-story__content">
-        <h2 id="approach-title">
-          A broad technical view, with a practical centre.
-        </h2>
-        <div className="prose-columns">
-          <p>
-            My work covers front-end interfaces, back-end services, data models,
-            background jobs, APIs, automation, and business platforms. That
-            range is useful when a problem crosses system boundaries—as business
-            problems usually do.
-          </p>
-          <p>
-            Automation and Zoho remain important specialties, but they sit
-            inside a wider capability: building and improving the technology
-            behind day-to-day operations. Recent work includes a full product
-            information platform, large CRM data migration, marketplace order
-            automation, and ERP integration.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section
-      className="about-story section-shell"
-      aria-labelledby="problem-solving-title"
-    >
-      <div className="about-story__label">
-        <span>02</span>
-        <p>How I think</p>
-      </div>
-      <div className="about-story__content">
-        <h2 id="problem-solving-title">
-          Understand the workflow before choosing the solution.
-        </h2>
-        <p className="about-story__lead">
-          I look for the decisions, handoffs, exceptions, and information that
-          make a process work. The technology should make those things clearer
-          and more reliable—not hide them behind unnecessary complexity.
-        </p>
-        <div className="value-grid">
-          <article>
-            <Icon name="compass" />
-            <h3>Clarify first</h3>
-            <p>
-              Make the goal, users, constraints, and edge cases explicit before
-              committing to a build.
-            </p>
-          </article>
-          <article>
-            <Icon name="layers" />
-            <h3>Design for operations</h3>
-            <p>
-              Account for validation, recovery, auditability, and the people
-              responsible for the system after launch.
-            </p>
-          </article>
-          <article>
-            <Icon name="code" />
-            <h3>Build for change</h3>
-            <p>
-              Use maintainable structure and documentation so the next
-              improvement does not require starting again.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section
-      className="about-story section-shell"
-      aria-labelledby="collaboration-title"
-    >
-      <div className="about-story__label">
-        <span>03</span>
-        <p>Collaboration</p>
-      </div>
-      <div className="about-story__content about-story__content--split">
+    <section className="about-scope" aria-labelledby="about-scope-title">
+      <div className="section-shell about-scope__grid">
         <div>
-          <h2 id="collaboration-title">
-            Direct, clear, and comfortable across technical levels.
+          <h2 id="about-scope-title">
+            I work across the whole system.
           </h2>
-          <p className="about-story__lead">
-            I can work with a business owner who needs the technical choices
-            explained plainly or alongside a product and development team that
-            wants implementation detail. Either way, I keep decisions visible
-            and avoid promising outcomes the system cannot guarantee.
+        </div>
+        <div className="about-scope__copy">
+          <p>
+            I work on front-end interfaces, back-end services, data models,
+            background jobs, APIs, automation, CRM and inventory platforms,
+            migrations, and ongoing support. The aim is simple: make a difficult
+            process easier to run and maintain.
           </p>
-          <Link to="/contact" className="button button--primary">
-            Discuss working together{" "}
-            <Icon name="arrow-right" className="button__icon" />
+          <p>
+            Recent work includes a product information platform, a large CRM
+            migration, marketplace order automation, and an ERP integration.
+            Some projects are public. For private projects, the case studies
+            focus on the process and engineering decisions without exposing
+            client data.
+          </p>
+          <Link to="/projects" className="index-link">
+            See selected work <Icon name="arrow-right" />
           </Link>
         </div>
-        <aside className="profile-links" aria-label="Professional profiles">
+      </div>
+    </section>
+
+    <section
+      className="thinking-field section-shell"
+      aria-labelledby="thinking-title"
+    >
+      <header>
+        <h2 id="thinking-title">
+          Start with how the work happens today.
+        </h2>
+        <p>
+          I look at the decisions, exceptions, data, and handoffs that keep the
+          process moving. Then I choose technology that makes those parts easier
+          to understand and manage.
+        </p>
+      </header>
+      <ol className="principle-list">
+        {principles.map((principle) => (
+          <li key={principle.title}>
+            <h3>{principle.title}</h3>
+            <p>{principle.copy}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section
+      className="collaboration-field"
+      aria-labelledby="collaboration-title"
+    >
+      <div className="section-shell collaboration-field__grid">
+        <div>
+          <h2 id="collaboration-title">
+            I work directly with you.
+          </h2>
+          <p>
+            I can explain technical choices plainly to a business owner or work
+            through implementation details with product, operations, and
+            development teams. We agree on documentation, communication, and
+            handover before the work begins.
+          </p>
+          <Link to="/contact" className="button button--primary">
+            Tell me about your project <Icon name="arrow-right" />
+          </Link>
+        </div>
+        <aside className="profile-index" aria-label="Professional profiles">
           <h3>Professional profiles</h3>
           <a href={site.socials.linkedin} target="_blank" rel="noreferrer">
-            <span>
-              <Icon name="linkedin" />
-              LinkedIn
-            </span>
+            <span>LinkedIn</span>
             <Icon name="arrow-up-right" />
           </a>
           <a href={site.socials.github} target="_blank" rel="noreferrer">
-            <span>
-              <Icon name="github" />
-              GitHub
-            </span>
+            <span>GitHub</span>
             <Icon name="arrow-up-right" />
           </a>
           <a href={site.socials.fiverr} target="_blank" rel="noreferrer">
-            <span>
-              <Icon name="fiverr" />
-              Fiverr
-            </span>
+            <span>Fiverr</span>
             <Icon name="arrow-up-right" />
           </a>
         </aside>

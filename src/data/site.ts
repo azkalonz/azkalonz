@@ -1,6 +1,7 @@
 export const site = {
-  name: "Mark Judaya",
-  title: "IT Solutions Developer",
+  name: "BuiltByMark.dev",
+  personName: "Mark Judaya",
+  title: "Custom Software Developer",
   url: "https://builtbymark.dev",
   email: "markjosephjudaya@gmail.com",
   bookingUrl: "https://calendar.app.google/MtqQgN54P647GRcx7",
@@ -13,7 +14,6 @@ export const site = {
 
 export type Service = {
   id: string;
-  number: string;
   title: string;
   shortTitle: string;
   summary: string;
@@ -28,14 +28,13 @@ export type Service = {
 export const services: Service[] = [
   {
     id: "application-development",
-    number: "01",
     title: "Web & Mobile Application Development",
     shortTitle: "Applications",
     summary:
-      "Custom applications, internal tools, dashboards, and responsive product experiences built around real operating needs.",
+      "I build internal tools, customer portals, dashboards, and web applications around the way your team works.",
     problem:
-      "Off-the-shelf tools no longer match the way your team works, or a product idea needs a dependable technical path from scope to launch.",
-    fit: "Growing businesses, product teams, and operations teams that need a focused build without assembling a large development team.",
+      "Off-the-shelf software no longer fits your process, or a new product needs a clear path from scope to launch.",
+    fit: "Growing businesses, product teams, and operations teams that need a focused build without hiring a full development team.",
     deliverables: [
       "Business web applications and portals",
       "Internal tools and administrative dashboards",
@@ -44,7 +43,7 @@ export const services: Service[] = [
       "Existing application improvements",
     ],
     approach:
-      "I clarify the workflow first, shape the smallest useful release, and build the interface, data model, and supporting services as one maintainable system.",
+      "I map the process, choose the smallest useful first release, and build the interface, data, and supporting services together.",
     technologies: [
       "React",
       "TypeScript",
@@ -59,23 +58,22 @@ export const services: Service[] = [
   },
   {
     id: "automation-integrations",
-    number: "02",
     title: "Automation & Systems Integration",
     shortTitle: "Integrations",
     summary:
-      "Reliable workflows that connect the platforms you already use and reduce repetitive handoffs between people and systems.",
+      "I connect CRMs, ERPs, marketplaces, and spreadsheets so data moves without repeated entry.",
     problem:
-      "Information is re-entered, copied between spreadsheets, or trapped in disconnected CRMs, ERPs, marketplaces, and business tools.",
-    fit: "Teams with recurring operational work, inconsistent data flow, or a platform ecosystem that needs dependable orchestration.",
+      "People are re-entering the same information, copying it between spreadsheets, or working around disconnected business tools.",
+    fit: "Teams dealing with repeated admin, inconsistent data, or several platforms that need to exchange information.",
     deliverables: [
       "Workflow and process automation",
       "API and third-party integrations",
       "CRM, ERP, and marketplace connections",
-      "Zoho customization and Deluge functions",
-      "Data migration and synchronization",
+      "Zoho customisation and Deluge functions",
+      "Data migration and synchronisation",
     ],
     approach:
-      "I map the data and failure paths before implementation, then build validation, duplicate protection, logging, and recovery into the workflow.",
+      "I map the data and failure cases first, then add validation, duplicate checks, logging, and recovery.",
     technologies: [
       "REST APIs",
       "Zoho CRM",
@@ -94,14 +92,13 @@ export const services: Service[] = [
   },
   {
     id: "consulting",
-    number: "03",
     title: "IT Consulting & Technical Advisory",
     shortTitle: "Consulting",
     summary:
-      "Practical technical direction for teams that know the business problem but need help choosing the right system, scope, or sequence.",
+      "I turn a business problem into clear requirements, platform choices, and a staged delivery plan.",
     problem:
-      "The goal is clear, but the requirements, platform choice, integration plan, or delivery risks are not.",
-    fit: "Founders, operations leaders, and product owners who need a technical partner to turn a business need into an actionable plan.",
+      "You know what needs to improve, but not what to build, which platform to use, or where the main delivery risks are.",
+    fit: "Founders, operations leaders, and product owners who need help turning a business need into a plan they can review and fund.",
     deliverables: [
       "Technical discovery and requirements clarification",
       "Workflow and application audits",
@@ -110,7 +107,7 @@ export const services: Service[] = [
       "Modernization roadmaps",
     ],
     approach:
-      "I translate the current process into clear requirements, surface constraints early, and recommend a staged plan that your team can evaluate and maintain.",
+      "I document the current process, make constraints visible, and recommend a sequence your team can review before committing to a build.",
     technologies: [
       "Process mapping",
       "Solution architecture",
@@ -122,14 +119,13 @@ export const services: Service[] = [
   },
   {
     id: "support-maintenance",
-    number: "04",
     title: "IT Support, Maintenance & Improvements",
     shortTitle: "Support",
     summary:
-      "Hands-on help to diagnose problems, improve existing applications, and keep important workflows useful after launch.",
+      "I diagnose and improve existing applications and integrations, then document what changed.",
     problem:
-      "An application or integration is fragile, outdated, hard to change, or creating recurring operational issues.",
-    fit: "Businesses that need continued development help or targeted support for systems they already depend on.",
+      "A tool is breaking, outdated, difficult to change, or causing the same issue repeatedly.",
+    fit: "Teams that need ongoing development or focused help with software they already depend on.",
     deliverables: [
       "Application troubleshooting and bug fixing",
       "Feature enhancements and usability improvements",
@@ -138,7 +134,7 @@ export const services: Service[] = [
       "Documentation and handover support",
     ],
     approach:
-      "I start by reproducing the issue and understanding its operational impact, then prioritize the smallest safe improvement and document what changed.",
+      "I reproduce the issue, assess its effect on the work, make the smallest safe fix, and document it.",
     technologies: [
       "Issue investigation",
       "Performance review",
@@ -186,17 +182,17 @@ export const faqs = [
   {
     question: "What kinds of projects do you take on?",
     answer:
-      "I focus on custom applications, internal business systems, integrations, automation, technical planning, and improvements to existing software. A short discovery call is usually enough to confirm whether the work is a good fit.",
+      "I focus on custom applications, internal business tools, integrations, automation, technical planning, and improvements to existing software. Send a short summary or book a call to check whether your project is a good fit.",
   },
   {
     question: "Can you improve an application that already exists?",
     answer:
-      "Yes. I can investigate bugs, improve a workflow or interface, add features, update dependencies, and make an existing application easier to maintain without assuming it needs to be rebuilt.",
+      "Yes. I can investigate bugs, improve a process or interface, add features, update dependencies, and make an existing application easier to maintain without assuming it needs to be rebuilt.",
   },
   {
     question: "Can you connect with the tools we already use?",
     answer:
-      "That is a core part of my work. I have delivered API-based workflows across CRM, inventory, ERP, marketplace, and support platforms, including Zoho, Salesforce, and Mirakl.",
+      "Yes. I have built API integrations across CRM, inventory, ERP, marketplace, and support platforms, including Zoho, Salesforce, and Mirakl.",
   },
   {
     question: "Do you provide ongoing support?",
@@ -211,6 +207,6 @@ export const faqs = [
   {
     question: "How does a project begin?",
     answer:
-      "Start with a short summary of the current situation, the outcome you need, and any constraints. I will use that context to recommend the next useful step, which may be discovery, an audit, or a scoped implementation.",
+      "Send a short summary of the current situation, the result you need, and any constraints. I’ll recommend whether to start with discovery, an audit, or a scoped build.",
   },
 ];

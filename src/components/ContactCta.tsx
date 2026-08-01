@@ -2,28 +2,24 @@ import { Link } from "react-router-dom";
 import Icon from "./Icon";
 
 type ContactCtaProps = {
-  eyebrow?: string;
   title?: string;
   copy?: string;
 };
 
 const ContactCta = ({
-  eyebrow = "Start a conversation",
-  title = "Have a system to build, connect, improve, or support?",
-  copy = "Share what is happening now and what you need to work better. I’ll help you identify a practical next step.",
+  title = "Have a software project in mind?",
+  copy = "Tell me what you’re working with and what needs to change. I’ll reply with a clear next step.",
 }: ContactCtaProps) => (
-  <section className="cta-band" aria-labelledby="contact-cta-title">
+  <section className="cta-field" aria-labelledby="contact-cta-title">
     <div>
-      <p className="eyebrow eyebrow--light">{eyebrow}</p>
-      <h2 id="contact-cta-title" className="cta-band__title">
-        {title}
-      </h2>
-      <p className="cta-band__copy">{copy}</p>
+      <h2 id="contact-cta-title">{title}</h2>
     </div>
-    <Link to="/contact" className="button button--light">
-      Tell me about your project
-      <Icon name="arrow-right" className="button__icon" />
-    </Link>
+    <div>
+      <p>{copy}</p>
+      <Link to="/contact" className="button button--primary">
+        Tell me about your project <Icon name="arrow-right" />
+      </Link>
+    </div>
   </section>
 );
 

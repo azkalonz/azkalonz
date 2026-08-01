@@ -13,7 +13,9 @@ const Projects = lazy(() => import("./pages/Projects"));
 const Services = lazy(() => import("./pages/Services"));
 
 const App = () => (
-  <BrowserRouter>
+  <BrowserRouter
+    future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+  >
     <ScrollToTop />
     <MainLayout>
       <Suspense fallback={<RouteLoader />}>

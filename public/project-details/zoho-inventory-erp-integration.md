@@ -1,68 +1,33 @@
-## Overview
+## The problem
 
-This project focused on building a custom integration between Zoho Inventory and a third-party ERP system to automate order synchronization. The integration was designed to reduce manual handling, improve order accuracy, and ensure downstream systems receive complete and reliable order data.
+Orders in Zoho Inventory had to reach a third-party ERP with the shipping, production, add-on, and invoice details needed by sales, fulfilment, and production teams. The ERP API had limited documentation, so its order and attachment behaviour also had to be tested directly.
 
-The solution handles conditional order processing, detailed data syncing, and document attachment despite limited third-party API documentation.
+## What the integration sends
 
-## Objectives
+Each eligible order can include:
 
-- Automatically push orders from Zoho Inventory to a third-party ERP
-- Filter incoming orders based on despatch location
-- Ensure all relevant order, shipping, and production data is captured and synced
-- Reduce manual packing and data entry processes
-- Attach invoice documents to synced orders
-
-## Key Features
-
-### Order Filtering and Control
-
-- Orders are filtered based on despatch location before syncing
-- Only eligible orders are sent to the ERP, preventing incorrect routing
-
-### Order Data Synchronization
-
-The integration syncs the following order details:
-
-- Order number and reference
-- Order status and custom fields
+- Order number, reference, status, and custom fields
 - Order notes
 - Expected despatch and shipment dates
+- Shipping and recipient contact details
+- Item add-ons
+- Palletise Order and Urgent Production flags
+- Invoice PDFs
 
-### Automated Order Packing
+## Routing and packing
 
-- Order items are automatically packed during the sync process
-- Ensures consistency between Zoho Inventory and the ERP system
+Despatch-location rules decide which orders enter the integration. Eligible items are packed during the sync before the complete order record is sent to the ERP.
 
-### Shipping Information Sync
+## Invoice attachments
 
-- Full shipping details are synchronized
-- Includes recipient contact information such as phone numbers
+Invoice PDFs are attached to the ERP order through the available `/orders/attachment` endpoint. This required additional testing and coordination because the third-party API documentation was limited.
 
-### Order Item Add-ons
+## Technical implementation
 
-- Order item add-ons are displayed in the ERP order details
-- Provides better visibility for production and fulfillment teams
+- Zoho Deluge handles business rules and API calls
+- n8n manages workflow automation and API requests
+- Postman was used to test endpoints and validate payloads
 
-### Production and Logistics Data Capture
+## Result
 
-The integration ensures critical operational data is captured and synced:
-
-- Palletise Order flag
-- Urgent Production indicator
-- Invoice PDF availability
-
-### Invoice PDF Attachment
-
-- Invoice PDFs are automatically attached to synced orders
-- Implemented using the available `/orders/attachment` endpoint
-- Required additional coordination due to limited API documentation
-
-## Technical Implementation
-
-- Built using Zoho Deluge for business logic and orchestration
-- n8n used for workflow automation and API handling
-- Postman used for API testing and payload validation
-
-## Outcome
-
-The integration successfully automated order flow from Zoho Inventory to the ERP system, improved data accuracy, and reduced manual intervention across sales, fulfillment, and production workflows.
+Eligible orders now move from Zoho Inventory to the ERP with shipping details, production flags, add-ons, and invoice PDFs. Despatch-location rules prevent ineligible orders from entering the integration.

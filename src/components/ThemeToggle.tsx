@@ -1,20 +1,20 @@
 import useTheme from "../hooks/useTheme";
+import Icon from "./Icon";
 
 const ThemeToggle = () => {
   const { isDark, toggle } = useTheme();
+  const label = isDark ? "Switch to light theme" : "Switch to dark theme";
 
   return (
     <button
       type="button"
       onClick={toggle}
-      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+      aria-label={label}
       aria-pressed={isDark}
       className="theme-toggle"
+      title={label}
     >
-      <span className="theme-toggle__track" aria-hidden="true">
-        <span className="theme-toggle__thumb" />
-      </span>
-      <span className="theme-toggle__label">{isDark ? "Dark" : "Light"}</span>
+      <Icon name={isDark ? "sun" : "moon"} />
     </button>
   );
 };

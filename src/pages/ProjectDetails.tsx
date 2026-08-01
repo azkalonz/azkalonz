@@ -5,7 +5,7 @@ import ContactCta from "../components/ContactCta";
 import Icon from "../components/Icon";
 import ProjectShowcaseCarousel from "../components/ProjectShowcaseCarousel";
 import Seo from "../components/Seo";
-import TechLogo from "../components/TechLogo";
+import WorkflowDiagram from "../components/WorkflowDiagram";
 import projects from "../data/projects";
 import { services, site } from "../data/site";
 
@@ -44,11 +44,10 @@ const ProjectDetails = () => {
           noIndex
         />
         <section className="not-found section-shell">
-          <p className="eyebrow">404</p>
           <h1>That case study is not here.</h1>
           <p>The link may be outdated, or the project may have moved.</p>
           <Link to="/projects" className="button button--primary">
-            View selected work
+            View my work
           </Link>
         </section>
       </>
@@ -79,7 +78,7 @@ const ProjectDetails = () => {
             creator: {
               "@type": "Person",
               "@id": `${site.url}/#mark-judaya`,
-              name: site.name,
+              name: site.personName,
               url: site.url,
             },
             url: `${site.url}/projects/${project.id}`,
@@ -117,20 +116,14 @@ const ProjectDetails = () => {
       <article className="case-study">
         <header className="case-hero section-shell">
           <Link to="/projects" className="back-link">
-            <Icon name="arrow-right" /> Back to selected work
+            <Icon name="arrow-right" /> Work
           </Link>
+
           <div className="case-hero__grid">
             <div className="case-hero__main">
-              <div className="project-card__meta">
-                <span>{project.projectType}</span>
-                <span aria-hidden="true">•</span>
-                <span>
-                  {project.dateStarted} — {project.dateFinished}
-                </span>
-              </div>
               <h1>{project.title}</h1>
               <p className="case-hero__lead">{project.description}</p>
-              <div className="hero__actions">
+              <div className="hero-actions">
                 {project.links?.live && (
                   <a
                     href={project.links.live}
@@ -138,8 +131,7 @@ const ProjectDetails = () => {
                     rel="noreferrer"
                     className="button button--primary"
                   >
-                    Open project overview{" "}
-                    <Icon name="arrow-up-right" className="button__icon" />
+                    Open project overview <Icon name="arrow-up-right" />
                   </a>
                 )}
                 {project.links?.repo && (
@@ -147,88 +139,85 @@ const ProjectDetails = () => {
                     href={project.links.repo}
                     target="_blank"
                     rel="noreferrer"
-                    className="button button--secondary"
+                    className="button button--quiet"
                   >
-                    View repository{" "}
-                    <Icon name="arrow-up-right" className="button__icon" />
+                    View repository <Icon name="arrow-up-right" />
                   </a>
                 )}
               </div>
             </div>
-            <aside className="case-hero__meta" aria-label="Project overview">
-              <div className="case-services" aria-label="Services">
-                <span className="case-services__label">Services</span>
+
+            <aside
+              className="case-hero__meta"
+              aria-label="Project responsibility"
+            >
+              <div>
+                <span>Role</span>
+                <p>{project.role}</p>
+              </div>
+              <div>
+                <span>Services</span>
                 <ul>
                   {project.services.map((service) => (
                     <li key={service}>{service}</li>
                   ))}
                 </ul>
               </div>
-              <p className="case-role">
-                <span>Role</span>
-                {project.role}
-              </p>
+              <div>
+                <span>Timeline</span>
+                <p>
+                  {project.dateStarted} — {project.dateFinished}
+                </p>
+              </div>
             </aside>
           </div>
         </header>
+
+        <section
+          className="case-operating-model"
+          aria-labelledby="workflow-title"
+        >
+          <div className="section-shell case-operating-model__grid">
+            <div>
+              <h2 id="workflow-title">How the data moves—and what can fail.</h2>
+              <p className="case-operating-model__intro">{project.context}</p>
+            </div>
+            <WorkflowDiagram
+              steps={project.workflow}
+              title="Project flow"
+            />
+            <div className="reliability-record">
+              <h3>How failures are handled</h3>
+              <ul>
+                {project.reliability.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
 
         {project.featuredPhoto && !project.showcase && (
           <figure className="case-media section-shell">
             <img
               src={project.featuredPhoto}
               alt={
-                project.featuredPhotoAlt ??
-                `Featured interface from ${project.title}`
+                project.featuredPhotoAlt ?? `Interface from ${project.title}`
               }
               width="1280"
               height="720"
             />
             {project.featuredPhotoCaption && (
-              <figcaption>
-                <span aria-hidden="true">SCREEN_00</span>
-                {project.featuredPhotoCaption}
-              </figcaption>
+              <figcaption>{project.featuredPhotoCaption}</figcaption>
             )}
           </figure>
         )}
 
-        <section
-          className="case-summary section-shell"
-          aria-label="Case study summary"
-        >
-          <div className="case-summary__outcome">
-            <span>Outcome</span>
-            <p>{project.outcome}</p>
-          </div>
-          <details>
-            <summary>Context</summary>
-            <p>{project.context}</p>
-          </details>
-          <details>
-            <summary>Problem</summary>
-            <p>{project.problem}</p>
-          </details>
-        </section>
-
         {project.showcase && (
           <section
             className="case-showcase section-shell"
-            aria-labelledby="product-showcase-title"
+            aria-label="Product screenshots"
           >
-            <header className="case-showcase__heading">
-              <div>
-                <p className="eyebrow">Product tour</p>
-                <h2 id="product-showcase-title">
-                  One workflow, from source data to channel-ready output.
-                </h2>
-              </div>
-              <p>
-                The interface keeps catalogue governance, operational status,
-                and system structure visible without separating them from the
-                work they control.
-              </p>
-            </header>
-
             <ProjectShowcaseCarousel screens={project.showcase} />
           </section>
         )}
@@ -237,11 +226,9 @@ const ProjectDetails = () => {
           <aside className="case-sidebar">
             <div>
               <span>Technology</span>
-              <ul className="case-tech-logos">
+              <ul className="technology-list">
                 {project.stack.map((item) => (
-                  <li key={item}>
-                    <TechLogo name={item} />
-                  </li>
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
             </div>
@@ -266,19 +253,18 @@ const ProjectDetails = () => {
             )}
 
             {project.fiverrUrl && (
-              <div className="case-contact-card">
+              <div className="case-contact-record">
                 <div>
-                  <span>Need a similar integration?</span>
+                  <span>Similar service</span>
                   <p>{project.fiverrMessage}</p>
                 </div>
                 <a
                   href={project.fiverrUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-link"
+                  className="index-link"
                 >
-                  <Icon name="fiverr" className="case-fiverr-icon" />
-                  View this service on Fiverr <Icon name="arrow-up-right" />
+                  View Fiverr service <Icon name="arrow-up-right" />
                 </a>
               </div>
             )}
@@ -288,9 +274,8 @@ const ProjectDetails = () => {
 
       <div className="section-shell page-section page-section--cta">
         <ContactCta
-          eyebrow="Discuss a related project"
-          title="Need to solve a similar workflow or system problem?"
-          copy="Share the current process, the tools involved, and what needs to improve. I’ll help you identify a practical next step."
+          title="Working on something similar?"
+          copy="Tell me how the work happens today, which tools are involved, and what needs to change."
         />
       </div>
     </>

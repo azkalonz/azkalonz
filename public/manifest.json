@@ -1,11 +1,11 @@
 {
-  "name": "Mark Judaya — IT Solutions Developer",
-  "short_name": "Mark Judaya",
-  "description": "Custom web applications, business automation, Zoho integrations, and reliable internal systems for growing teams.",
+  "name": "BuiltByMark.dev — Custom Software Developer",
+  "short_name": "BuiltByMark.dev",
+  "description": "Custom business software, Zoho and API integrations, automation, and support from Mark Judaya.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f5f4ef",
-  "theme_color": "#10241f",
+  "background_color": "#eeeee8",
+  "theme_color": "#17211f",
   "orientation": "portrait-or-landscape",
   "icons": [
     {
