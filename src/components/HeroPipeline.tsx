@@ -18,14 +18,17 @@ const HeroPipeline = () => {
 
   useLayoutEffect(() => {
     const root = rootRef.current;
-    if (
-      !root ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
+    if (!root) {
       return;
     }
 
     const hero = root.closest<HTMLElement>(".relay-hero") ?? root;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      root.removeAttribute("data-pipeline-motion");
+      return;
+    }
+
+    root.dataset.pipelineMotion = "pending";
     hero.dataset.pipelineMotion = "pending";
 
     let cancelled = false;
@@ -649,6 +652,7 @@ const HeroPipeline = () => {
               3.8,
             );
 
+          root.dataset.pipelineMotion = "active";
           hero.dataset.pipelineMotion = "active";
         }, root);
 
@@ -661,6 +665,7 @@ const HeroPipeline = () => {
         };
       })
       .catch(() => {
+        root.removeAttribute("data-pipeline-motion");
         hero.removeAttribute("data-pipeline-motion");
       });
 
@@ -671,7 +676,11 @@ const HeroPipeline = () => {
   }, []);
 
   return (
-    <figure ref={rootRef} className="hero-pipeline">
+    <figure
+      ref={rootRef}
+      className="hero-pipeline"
+      data-pipeline-motion="pending"
+    >
       <figcaption className="sr-only">
         Orders, inventory, customer data, and product data are mapped, connected,
         and protected against failures before they become one dependable system.
