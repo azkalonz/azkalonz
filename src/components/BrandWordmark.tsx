@@ -7,10 +7,7 @@ const BrandWordmark = () => {
 
   useLayoutEffect(() => {
     const root = rootRef.current;
-    if (
-      !root ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
+    if (!root) {
       return;
     }
 

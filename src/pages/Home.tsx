@@ -7,7 +7,7 @@ FORM: A calm operational index with one authored, explanatory motion sequence.
 */
 import { Link } from "react-router-dom";
 import ContactCta from "../components/ContactCta";
-import HeroPipeline from "../components/HeroPipeline";
+import HeroScene from "../components/HeroScene";
 import HomeMotion from "../components/HomeMotion";
 import Icon from "../components/Icon";
 import ProjectIndex from "../components/ProjectIndex";
@@ -94,33 +94,29 @@ const Home = () => (
     <HomeMotion>
       <section className="relay-hero" aria-labelledby="home-title">
         <div className="section-shell relay-hero__grid">
-          <div className="relay-hero__copy">
-            <div className="relay-hero__intro-copy">
-              <h1 id="home-title">
-                I build software for the work your business runs on.
-              </h1>
-              <p className="relay-hero__lead">
-                Custom applications and integrations for orders, inventory,
-                customer records, product data, and the tools that need to stay
-                in sync.
-              </p>
-              <div className="hero-actions">
-                <Link to="/contact" className="button button--primary">
-                  Start a project <Icon name="arrow-right" />
-                </Link>
-                <a href="#selected-work" className="button button--quiet">
-                  View my work <Icon name="arrow-right" />
-                </a>
-              </div>
-            </div>
-          </div>
-
           <div className="relay-hero__stage">
-            <div className="relay-hero__motion-track">
-              <div className="relay-hero__stage-inner">
-                <HeroPipeline />
+            <HeroScene>
+              <div className="relay-hero__intro-copy">
+                <h1 id="home-title">
+                  Built for
+                  <br />
+                  real work.
+                </h1>
+                <p className="relay-hero__lead">
+                  Custom applications and integrations for orders, inventory,
+                  customer records, product data, and the systems that keep your
+                  business moving.
+                </p>
+                <div className="hero-actions">
+                  <Link to="/contact" className="button button--primary">
+                    Start a project <Icon name="arrow-right" />
+                  </Link>
+                  <a href="#selected-work" className="button button--quiet">
+                    View my work <Icon name="arrow-right" />
+                  </a>
+                </div>
               </div>
-            </div>
+            </HeroScene>
 
             <div className="proof-rail" aria-label="Selected project outcomes">
               <div className="proof-rail__item">

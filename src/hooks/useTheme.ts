@@ -80,10 +80,7 @@ export default function useTheme() {
     localStorage.setItem(themeKey, nextTheme);
     flushSync(() => setTheme(nextTheme));
 
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (!origin || reduceMotion) {
+    if (!origin) {
       paintTheme(nextTheme);
       return;
     }
@@ -117,14 +114,8 @@ export default function useTheme() {
     snapshot.setAttribute("tabindex", "-1");
     snapshot.setAttribute("scrolling", "no");
     snapshot.style.zIndex = String(1000 + sequence);
-    snapshot.style.setProperty(
-      "--theme-ripple-x",
-      `${xPercent.toFixed(4)}%`,
-    );
-    snapshot.style.setProperty(
-      "--theme-ripple-y",
-      `${yPercent.toFixed(4)}%`,
-    );
+    snapshot.style.setProperty("--theme-ripple-x", `${xPercent.toFixed(4)}%`);
+    snapshot.style.setProperty("--theme-ripple-y", `${yPercent.toFixed(4)}%`);
     snapshot.style.setProperty(
       "--theme-ripple-button-radius",
       `${Math.max(bounds.width, bounds.height) * 0.75}px`,

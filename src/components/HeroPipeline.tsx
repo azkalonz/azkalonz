@@ -1,4 +1,9 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, type CSSProperties } from "react";
+import {
+  getHeroSceneTriggerEnd,
+  getHeroSceneTriggerStart,
+  HERO_SCENE_SCRUB,
+} from "./heroSceneMotion";
 
 const operationalInputs = [
   "Orders",
@@ -13,6 +18,26 @@ const engineeringWork = [
   "Plan for failures",
 ];
 
+const HERO_PIPELINE_ENTRY_DELAY = 2;
+const HERO_PIPELINE_OUTPUT_VIEWPORT_X = 0.2;
+const HERO_PIPELINE_CORE_HIT_AT = 0.82;
+const HERO_PIPELINE_OUTPUT_HIT_AT = 0.96;
+const HERO_PIPELINE_VIEWBOX_WIDTH = 760;
+const HERO_PIPELINE_MERGE_X = 360;
+const HERO_PIPELINE_STAGE_GAP = 260;
+const HERO_PIPELINE_CORE_SPAN = 166.25;
+const HERO_PIPELINE_CORE_X = HERO_PIPELINE_MERGE_X + HERO_PIPELINE_STAGE_GAP;
+const HERO_PIPELINE_CORE_EXIT_X =
+  HERO_PIPELINE_CORE_X + HERO_PIPELINE_CORE_SPAN;
+const HERO_PIPELINE_OUTPUT_X =
+  HERO_PIPELINE_CORE_EXIT_X + HERO_PIPELINE_STAGE_GAP;
+const HERO_PIPELINE_CORE_LEFT = `${
+  (HERO_PIPELINE_CORE_X / HERO_PIPELINE_VIEWBOX_WIDTH) * 100
+}%`;
+const HERO_PIPELINE_OUTPUT_LEFT = `${
+  (HERO_PIPELINE_OUTPUT_X / HERO_PIPELINE_VIEWBOX_WIDTH) * 100
+}%`;
+
 const HeroPipeline = () => {
   const rootRef = useRef<HTMLElement | null>(null);
 
@@ -23,10 +48,6 @@ const HeroPipeline = () => {
     }
 
     const hero = root.closest<HTMLElement>(".relay-hero") ?? root;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      root.removeAttribute("data-pipeline-motion");
-      return;
-    }
 
     root.dataset.pipelineMotion = "pending";
     hero.dataset.pipelineMotion = "pending";
@@ -91,7 +112,7 @@ const HeroPipeline = () => {
           const outputJunctions = root.querySelectorAll(
             '[data-pipeline-node="output"]',
           );
-          const core = root.querySelector("[data-pipeline-core]");
+          const core = root.querySelector<HTMLElement>("[data-pipeline-core]");
           const coreSurface = root.querySelector(
             "[data-pipeline-core] > [data-pipeline-surface]",
           );
@@ -99,7 +120,9 @@ const HeroPipeline = () => {
             "[data-pipeline-core] > [data-pipeline-cover]",
           );
           const coreSteps = root.querySelectorAll("[data-pipeline-step]");
-          const output = root.querySelector("[data-pipeline-output]");
+          const output = root.querySelector<HTMLElement>(
+            "[data-pipeline-output]",
+          );
           const outputSurface = root.querySelector(
             "[data-pipeline-output] > [data-pipeline-surface]",
           );
@@ -109,6 +132,12 @@ const HeroPipeline = () => {
           const canvas = root.querySelector<HTMLElement>(
             ".hero-pipeline__canvas",
           );
+          const gridPlane = hero.querySelector<HTMLElement>(
+            ".hero-scene__grid-plane",
+          );
+          const cameraTargets = [canvas, gridPlane].filter(
+            (target): target is HTMLElement => target !== null,
+          );
           const motionStage = hero.querySelector<HTMLElement>(
             ".relay-hero__motion-track",
           );
@@ -117,9 +146,8 @@ const HeroPipeline = () => {
           );
           const motionTrigger = motionStage ?? hero;
           const proofRail = hero.querySelector<HTMLElement>(".proof-rail");
-          const proofItems = hero.querySelectorAll<HTMLElement>(
-            ".proof-rail__item",
-          );
+          const proofItems =
+            hero.querySelectorAll<HTMLElement>(".proof-rail__item");
           const proofNumbers = hero.querySelectorAll<HTMLElement>(
             ".proof-rail__item strong",
           );
@@ -135,22 +163,13 @@ const HeroPipeline = () => {
             });
           });
 
-          const triggerStart = () =>
-            window.innerWidth <= 900
-              ? "top+=88 top+=68"
-              : "top+=96 top+=76";
-          const triggerEnd = () => {
-            const holdRatio = window.innerWidth <= 900 ? 0.3 : 0.4;
-            const stickyHeight = stickyStage?.offsetHeight ?? window.innerHeight;
-            const endOffset = Math.max(
-              0,
-              stickyHeight - window.innerHeight + window.innerHeight * holdRatio,
-            );
-            return `bottom bottom+=${Math.round(endOffset)}`;
-          };
-
-          const setHitProgress = (element: Element | null, progress: number) => {
-            if (!(element instanceof HTMLElement || element instanceof SVGElement)) {
+          const setHitProgress = (
+            element: Element | null,
+            progress: number,
+          ) => {
+            if (!(
+              element instanceof HTMLElement || element instanceof SVGElement
+            )) {
               return;
             }
             element.style.setProperty(
@@ -159,8 +178,77 @@ const HeroPipeline = () => {
             );
           };
 
+          const getViewportBounds = () => {
+            const viewport = window.visualViewport;
+            const left = viewport?.offsetLeft ?? 0;
+            const width =
+              viewport?.width ?? document.documentElement.clientWidth;
+
+            return { left, right: left + width, center: left + width / 2 };
+          };
+
+          const getVisibilityProgress = (element: Element | null) => {
+            if (!(element instanceof HTMLElement)) return 0;
+
+            const bounds = element.getBoundingClientRect();
+            const revealDistance = Math.max(1, bounds.width * 0.36);
+
+            return gsap.utils.clamp(
+              0,
+              1,
+              (getViewportBounds().right - bounds.left) / revealDistance,
+            );
+          };
+
+          const renderPipelineStage = (
+            element: Element | null,
+            junction: Element | null,
+            surface: Element | null,
+            cover: Element | null,
+            shapes: NodeListOf<Element>,
+            copies: NodeListOf<Element>,
+            traceProgress: number,
+          ) => {
+            const lightingProgress = Number(traceProgress >= 1);
+            const visibilityProgress = getVisibilityProgress(element);
+
+            setHitProgress(element, lightingProgress);
+            setHitProgress(junction, lightingProgress);
+            gsap.set(surface, { opacity: visibilityProgress });
+            gsap.set(cover, { opacity: 1 - visibilityProgress });
+            gsap.set(shapes, {
+              opacity: 1 - visibilityProgress,
+              scaleX: 1 - visibilityProgress,
+            });
+            gsap.set(copies, {
+              opacity: visibilityProgress,
+              y: 6 * (1 - visibilityProgress),
+            });
+          };
+
+          const getCameraXForTarget = (
+            element: HTMLElement | null,
+            viewportX: number,
+            align: "center" | "left",
+          ) => {
+            if (!canvas || !element) return 0;
+
+            const currentCameraX =
+              Number.parseFloat(String(gsap.getProperty(canvas, "x"))) || 0;
+            const bounds = element.getBoundingClientRect();
+            const targetX =
+              align === "center" ? bounds.left + bounds.width / 2 : bounds.left;
+
+            return currentCameraX + viewportX - targetX;
+          };
+
+          const mapJourney = (start: number, end: number, progress: number) =>
+            gsap.utils.clamp(0, 1, (progress - start) / (end - start));
+
           const renderRouteProgress = (progress: number) => {
             const journeyProgress = gsap.utils.clamp(0, 1, progress);
+            let coreTraceProgress = 0;
+            let outputTraceProgress = 0;
 
             flowLayouts.forEach(
               ({ sourceFlows, convergenceFlow, outputFlow }) => {
@@ -181,10 +269,7 @@ const HeroPipeline = () => {
                     gsap.utils.clamp(0, 1, drawProgress / 0.03),
                   );
                   path.style.strokeDashoffset = String(1 - drawProgress);
-                  setHitProgress(
-                    sourceNodes.item(index),
-                    drawProgress / 0.08,
-                  );
+                  setHitProgress(sourceNodes.item(index), drawProgress / 0.08);
                   setHitProgress(
                     sourceJunctions.item(index),
                     drawProgress / 0.08,
@@ -192,15 +277,19 @@ const HeroPipeline = () => {
                   return drawProgress;
                 };
 
-                drawRoute(0, 0, 0.7);
-                drawRoute(1, 0.1, 0.74);
-                drawRoute(2, 0.14, 0.78);
-                drawRoute(3, 0.18, 0.82);
+                drawRoute(0, 0, 0.62);
+                drawRoute(1, 0.1, 0.65);
+                drawRoute(2, 0.14, 0.68);
+                drawRoute(3, 0.18, 0.7);
 
                 const convergenceProgress = gsap.utils.clamp(
                   0,
                   1,
-                  (journeyProgress - 0.7) / 0.12,
+                  (journeyProgress - 0.7) / (HERO_PIPELINE_CORE_HIT_AT - 0.7),
+                );
+                coreTraceProgress = Math.max(
+                  coreTraceProgress,
+                  convergenceProgress,
                 );
                 if (convergenceFlow) {
                   convergenceFlow.style.opacity = String(
@@ -210,75 +299,96 @@ const HeroPipeline = () => {
                     1 - convergenceProgress,
                   );
                 }
-                const coreHitProgress =
-                  (convergenceProgress - 0.82) / 0.18;
-                setHitProgress(core, coreHitProgress);
-                setHitProgress(coreJunctions.item(0), coreHitProgress);
-
                 if (outputFlow) {
                   const drawProgress = gsap.utils.clamp(
                     0,
                     1,
-                    (journeyProgress - 0.91) / 0.07,
+                    (journeyProgress - 0.84) /
+                      (HERO_PIPELINE_OUTPUT_HIT_AT - 0.84),
+                  );
+                  outputTraceProgress = Math.max(
+                    outputTraceProgress,
+                    drawProgress,
                   );
                   outputFlow.style.opacity = String(
                     gsap.utils.clamp(0, 1, drawProgress / 0.03),
                   );
                   outputFlow.style.strokeDashoffset = String(1 - drawProgress);
-                  const outputHitProgress = (drawProgress - 0.88) / 0.12;
-                  setHitProgress(output, outputHitProgress);
-                  setHitProgress(outputJunctions.item(0), outputHitProgress);
                 }
               },
             );
 
-            if (window.innerWidth <= 900 && canvas) {
-              const rootFontSize = Number.parseFloat(
-                getComputedStyle(document.documentElement).fontSize,
+            if (cameraTargets.length) {
+              const compact = window.innerWidth <= 900;
+              const cameraStart = compact ? 0.42 : 0.32;
+              const viewportCenterX = getViewportBounds().center;
+              const coreCenterX = getCameraXForTarget(
+                core,
+                viewportCenterX,
+                "center",
               );
-              const worldWidth = 56 * rootFontSize;
-              const mobileZoom = 1.45;
-              const coreX =
-                window.innerWidth * 0.08 - worldWidth * 0.55 * mobileZoom;
-              const outputX =
-                window.innerWidth * 0.3 - worldWidth * 1.05 * mobileZoom;
-              const firstRouteCameraStart =
-                0.06 + (0.7 - 0.06) * 0.6;
-              const coreCameraProgress = gsap.utils.clamp(
-                0,
-                1,
-                (journeyProgress - firstRouteCameraStart) /
-                  (0.88 - firstRouteCameraStart),
+              const outputCenterX = getCameraXForTarget(
+                output,
+                viewportCenterX,
+                "center",
               );
-              const outputCameraProgress = gsap.utils.clamp(
-                0,
-                1,
-                (journeyProgress - 0.91) / 0.09,
+              const outputRestX = getCameraXForTarget(
+                output,
+                window.innerWidth * HERO_PIPELINE_OUTPUT_VIEWPORT_X,
+                "left",
               );
-              const coreCameraX = gsap.utils.interpolate(
-                0,
-                coreX,
-                coreCameraProgress,
-              );
-              gsap.set(canvas, {
-                x: gsap.utils.interpolate(
-                  coreCameraX,
-                  outputX,
-                  outputCameraProgress,
-                ),
-              });
-            }
-          };
+              let cameraX: number;
 
-          const routeTrigger = ScrollTrigger.create({
-            trigger: motionTrigger,
-            start: triggerStart,
-            end: triggerEnd,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => renderRouteProgress(self.progress),
-            onRefresh: (self) => renderRouteProgress(self.progress),
-          });
-          renderRouteProgress(routeTrigger.progress);
+              if (journeyProgress <= HERO_PIPELINE_CORE_HIT_AT) {
+                cameraX = gsap.utils.interpolate(
+                  0,
+                  coreCenterX,
+                  mapJourney(
+                    cameraStart,
+                    HERO_PIPELINE_CORE_HIT_AT,
+                    journeyProgress,
+                  ),
+                );
+              } else if (journeyProgress <= HERO_PIPELINE_OUTPUT_HIT_AT) {
+                cameraX = gsap.utils.interpolate(
+                  coreCenterX,
+                  outputCenterX,
+                  mapJourney(
+                    HERO_PIPELINE_CORE_HIT_AT,
+                    HERO_PIPELINE_OUTPUT_HIT_AT,
+                    journeyProgress,
+                  ),
+                );
+              } else {
+                cameraX = gsap.utils.interpolate(
+                  outputCenterX,
+                  outputRestX,
+                  mapJourney(HERO_PIPELINE_OUTPUT_HIT_AT, 1, journeyProgress),
+                );
+              }
+
+              gsap.set(cameraTargets, { x: cameraX });
+            }
+
+            renderPipelineStage(
+              core,
+              coreJunctions.item(0),
+              coreSurface,
+              coreCover,
+              coreTextShapes,
+              coreTextCopies,
+              coreTraceProgress,
+            );
+            renderPipelineStage(
+              output,
+              outputJunctions.item(0),
+              outputSurface,
+              outputCover,
+              outputTextShapes,
+              outputTextCopies,
+              outputTraceProgress,
+            );
+          };
 
           gsap.set(sourceNodes, {
             opacity: 1,
@@ -308,238 +418,108 @@ const HeroPipeline = () => {
           });
           gsap.set(outputSurface, { opacity: 0 });
           gsap.set(outputCover, { opacity: 1 });
-          gsap.set(canvas, { x: 0 });
-          renderRouteProgress(routeTrigger.progress);
-
-          const introCopy = hero.querySelector(".relay-hero__intro-copy");
-          const themeTarget = motionStage ?? hero;
-          const updateChapterTheme = (progress: number) => {
-            const darkProgress = gsap.utils.clamp(0, 1, progress);
-            themeTarget.style.setProperty(
-              "--pipeline-dark-progress",
-              String(darkProgress),
-            );
-            if (darkProgress >= 0.5) {
-              themeTarget.dataset.pipelineTheme = "dark";
-            } else {
-              themeTarget.removeAttribute("data-pipeline-theme");
-            }
-          };
-
-          ScrollTrigger.create({
-            trigger: motionTrigger,
-            start: () =>
-              window.innerWidth <= 900
-                ? "top+=560 top+=68"
-                : "top+=680 top+=76",
-            end: () =>
-              window.innerWidth <= 900
-                ? "top+=1320 top+=68"
-                : "top+=1500 top+=76",
-            invalidateOnRefresh: true,
-            onUpdate: (self) => updateChapterTheme(self.progress),
-            onRefresh: (self) => updateChapterTheme(self.progress),
-          });
-
-          if (window.innerWidth > 900 && canvas) {
-            const focusTimeline = gsap.timeline({
-              scrollTrigger: {
-                trigger: motionTrigger,
-                start: "top top+=76",
-                end: "top+=700 top+=76",
-                scrub: 1,
-                invalidateOnRefresh: true,
-              },
-            });
-
-            focusTimeline
-              .to(
-                root,
-                {
-                  width: "92%",
-                  marginLeft: "54%",
-                  duration: 0.72,
-                  ease: "none",
-                },
-                0,
-              )
-              .to(
-                canvas,
-                {
-                  width: "100%",
-                  duration: 0.72,
-                  ease: "none",
-                },
-                0,
-              )
-              .to(
-                introCopy,
-                { opacity: 0, y: -24, duration: 0.28, ease: "power2.inOut" },
-                0.72,
-              );
-          } else if (introCopy) {
-            const mobileHandoff = gsap.timeline({
-              scrollTrigger: {
-                trigger: motionTrigger,
-                start: "top top+=68",
-                end: "top+=600 top+=68",
-                scrub: 0.85,
-                invalidateOnRefresh: true,
-              },
-            });
-
-            mobileHandoff
-              .fromTo(
-                root,
-                { xPercent: 108 },
-                { xPercent: 0, duration: 1, ease: "none" },
-                0,
-              )
-              .fromTo(
-                introCopy,
-                { xPercent: 0, opacity: 1 },
-                {
-                  xPercent: -112,
-                  opacity: 0,
-                  duration: 1,
-                  ease: "none",
-                },
-                0,
-              );
-          }
+          gsap.set(cameraTargets, { x: 0 });
+          renderRouteProgress(0);
 
           const timeline = gsap.timeline({
             defaults: { ease: "none" },
             scrollTrigger: {
               trigger: motionTrigger,
-              start: triggerStart,
-              end: triggerEnd,
-              scrub: 1.15,
+              start: getHeroSceneTriggerStart,
+              end: () => getHeroSceneTriggerEnd(stickyStage),
+              scrub: HERO_SCENE_SCRUB,
               invalidateOnRefresh: true,
             },
           });
+          const pipelineTimeline = gsap.timeline({
+            defaults: { ease: "none" },
+          });
+          timeline.add(pipelineTimeline, HERO_PIPELINE_ENTRY_DELAY);
 
-          if (window.innerWidth > 900) {
-            timeline.to(
-              root,
-              {
-                marginLeft: 0,
-                duration: 3.3,
-                ease: "none",
-              },
-              1.45,
-            );
-          }
+          const routeProgress = { value: 0 };
+          pipelineTimeline.to(
+            routeProgress,
+            {
+              value: 1,
+              duration: 4.75,
+              ease: "none",
+            },
+            0,
+          );
 
-          if (canvas) {
-            const rootFontSize = Number.parseFloat(
-              getComputedStyle(document.documentElement).fontSize,
-            );
-            const isMobile = window.innerWidth <= 900;
-            const worldWidthRem = isMobile ? 56 : 96;
-            const worldWidth = worldWidthRem * rootFontSize;
-            const mobileZoom = 1.45;
-            const desktopZoom = 1.18;
-            const outputLeftRatio = 1.05;
+          if (cameraTargets.length) {
+            pipelineTimeline
+              .to(
+                cameraTargets,
+                {
+                  width: () => `${window.innerWidth <= 900 ? 56 : 96}rem`,
+                  duration: 3.3,
+                  ease: "none",
+                },
+                1.45,
+              )
+              .to(
+                cameraTargets,
+                {
+                  scale: () => (window.innerWidth <= 900 ? 1.45 : 1.18),
+                  transformOrigin: "0% 50%",
+                  duration: 1.8,
+                  ease: "power2.inOut",
+                },
+                1.15,
+              );
 
-            if (isMobile) {
-              timeline
-                .to(
-                  canvas,
+            if (proofRail && proofItems.length) {
+              const proofTimeline = gsap.timeline({
+                scrollTrigger: {
+                  trigger: proofRail,
+                  start: "top 88%",
+                  end: "bottom 62%",
+                  scrub: 0.75,
+                },
+              });
+
+              proofTimeline
+                .fromTo(
+                  proofItems,
+                  { scaleY: 0.06, transformOrigin: "50% 100%" },
                   {
-                    width: `${worldWidthRem}rem`,
-                    duration: 1.45,
-                    ease: "none",
+                    scaleY: 1,
+                    stagger: 0.12,
+                    duration: 0.72,
+                    ease: "power3.inOut",
                   },
-                  1.45,
+                  0,
                 )
-                .to(
-                  canvas,
+                .fromTo(
+                  proofNumbers,
+                  { clipPath: "inset(100% 0 0 0)", opacity: 0, y: 14 },
                   {
-                    scale: mobileZoom,
-                    transformOrigin: "0% 50%",
-                    duration: 1.5,
-                    ease: "power2.inOut",
+                    clipPath: "inset(0% 0 0 0)",
+                    opacity: 1,
+                    y: 0,
+                    stagger: 0.12,
+                    duration: 0.42,
+                    ease: "power3.out",
                   },
-                  1.05,
-                );
-            } else {
-              timeline
-                .to(
-                  canvas,
-                  {
-                    width: `${worldWidthRem}rem`,
-                    x: () =>
-                      window.innerWidth * 0.4 -
-                      worldWidth * outputLeftRatio * desktopZoom,
-                    duration: 3.3,
-                    ease: "none",
-                  },
-                  1.45,
+                  0.42,
                 )
-                .to(
-                  canvas,
+                .fromTo(
+                  proofCopy,
+                  { opacity: 0, y: 8 },
                   {
-                    scale: desktopZoom,
-                    transformOrigin: "0% 50%",
-                    duration: 1.8,
-                    ease: "power2.inOut",
+                    opacity: 1,
+                    y: 0,
+                    stagger: 0.12,
+                    duration: 0.38,
+                    ease: "power2.out",
                   },
-                  1.25,
+                  0.5,
                 );
             }
-
-          if (proofRail && proofItems.length) {
-            const proofTimeline = gsap.timeline({
-              scrollTrigger: {
-                trigger: proofRail,
-                start: "top 88%",
-                end: "bottom 62%",
-                scrub: 0.75,
-              },
-            });
-
-            proofTimeline
-              .fromTo(
-                proofItems,
-                { scaleY: 0.06, transformOrigin: "50% 100%" },
-                {
-                  scaleY: 1,
-                  stagger: 0.12,
-                  duration: 0.72,
-                  ease: "power3.inOut",
-                },
-                0,
-              )
-              .fromTo(
-                proofNumbers,
-                { clipPath: "inset(100% 0 0 0)", opacity: 0, y: 14 },
-                {
-                  clipPath: "inset(0% 0 0 0)",
-                  opacity: 1,
-                  y: 0,
-                  stagger: 0.12,
-                  duration: 0.42,
-                  ease: "power3.out",
-                },
-                0.42,
-              )
-              .fromTo(
-                proofCopy,
-                { opacity: 0, y: 8 },
-                {
-                  opacity: 1,
-                  y: 0,
-                  stagger: 0.12,
-                  duration: 0.38,
-                  ease: "power2.out",
-                },
-                0.5,
-              );
-          }
           }
 
-          timeline
+          pipelineTimeline
             .fromTo(
               sourceTextShapes,
               { opacity: 1, scaleX: 1 },
@@ -572,103 +552,17 @@ const HeroPipeline = () => {
                 ease: "power2.out",
               },
               0.12,
-            )
-            .fromTo(
-              coreTextShapes,
-              { opacity: 1, scaleX: 1 },
-              {
-                opacity: 0,
-                scaleX: 0,
-                stagger: 0.1,
-                duration: 0.2,
-                ease: "power2.inOut",
-              },
-              2.58,
-            )
-            .to(
-              coreCover,
-              {
-                opacity: 0,
-                duration: 0.24,
-                ease: "power2.out",
-              },
-              2.68,
-            )
-            .to(
-              coreSurface,
-              {
-                opacity: 1,
-                duration: 0.24,
-                ease: "power2.out",
-              },
-              2.68,
-            )
-            .to(
-              coreTextCopies,
-              {
-                opacity: 1,
-                y: 0,
-                stagger: 0.1,
-                duration: 0.24,
-                ease: "power2.out",
-              },
-              2.68,
             );
 
-          timeline
-            .fromTo(
-              outputTextShapes,
-              { opacity: 1, scaleX: 1 },
-              {
-                opacity: 0,
-                scaleX: 0,
-                stagger: 0.12,
-                duration: 0.2,
-                ease: "power2.inOut",
-              },
-              3.7,
-            )
-            .to(
-              outputCover,
-              {
-                opacity: 0,
-                duration: 0.25,
-                ease: "power2.out",
-              },
-              3.8,
-            )
-            .to(
-              outputSurface,
-              {
-                opacity: 1,
-                duration: 0.25,
-                ease: "power2.out",
-              },
-              3.8,
-            )
-            .to(
-              outputTextCopies,
-              {
-                opacity: 1,
-                y: 0,
-                stagger: 0.12,
-                duration: 0.25,
-                ease: "power2.out",
-              },
-              3.8,
-            );
+          pipelineTimeline.eventCallback("onUpdate", () =>
+            renderRouteProgress(routeProgress.value),
+          );
 
           root.dataset.pipelineMotion = "active";
           hero.dataset.pipelineMotion = "active";
         }, root);
 
-        revert = () => {
-          const themeTarget =
-            hero.querySelector<HTMLElement>(".relay-hero__motion-track") ?? hero;
-          themeTarget.removeAttribute("data-pipeline-theme");
-          themeTarget.style.removeProperty("--pipeline-dark-progress");
-          context.revert();
-        };
+        revert = () => context.revert();
       })
       .catch(() => {
         root.removeAttribute("data-pipeline-motion");
@@ -678,6 +572,8 @@ const HeroPipeline = () => {
     return () => {
       cancelled = true;
       revert();
+      root.removeAttribute("data-pipeline-motion");
+      hero.removeAttribute("data-pipeline-motion");
     };
   }, []);
 
@@ -686,10 +582,17 @@ const HeroPipeline = () => {
       ref={rootRef}
       className="hero-pipeline"
       data-pipeline-motion="pending"
+      style={
+        {
+          "--pipeline-output-left": HERO_PIPELINE_OUTPUT_LEFT,
+          "--pipeline-core-left": HERO_PIPELINE_CORE_LEFT,
+        } as CSSProperties
+      }
     >
       <figcaption className="sr-only">
-        Orders, inventory, customer data, and product data are mapped, connected,
-        and protected against failures before they become one dependable system.
+        Orders, inventory, customer data, and product data are mapped,
+        connected, and protected against failures before they become one
+        dependable system.
       </figcaption>
 
       <div className="hero-pipeline__canvas" aria-hidden="true">
@@ -703,8 +606,10 @@ const HeroPipeline = () => {
             <path d="M120 166H260C320 166 320 210 360 210" />
             <path d="M120 254H260C320 254 320 210 360 210" />
             <path d="M170 342H260C320 342 320 210 360 210" />
-            <path d="M360 210H418" />
-            <path d="M590 210H790" />
+            <path d={`M${HERO_PIPELINE_MERGE_X} 210H${HERO_PIPELINE_CORE_X}`} />
+            <path
+              d={`M${HERO_PIPELINE_CORE_EXIT_X} 210H${HERO_PIPELINE_OUTPUT_X}`}
+            />
           </g>
           <g className="hero-pipeline__flows" data-pipeline-flows>
             <path
@@ -727,38 +632,32 @@ const HeroPipeline = () => {
               pathLength="1"
               d="M170 342H260C320 342 320 210 360 210"
             />
-            <path data-pipeline-flow pathLength="1" d="M360 210H418" />
-            <path data-pipeline-flow pathLength="1" d="M590 210H790" />
+            <path
+              data-pipeline-flow
+              pathLength="1"
+              d={`M${HERO_PIPELINE_MERGE_X} 210H${HERO_PIPELINE_CORE_X}`}
+            />
+            <path
+              data-pipeline-flow
+              pathLength="1"
+              d={`M${HERO_PIPELINE_CORE_EXIT_X} 210H${HERO_PIPELINE_OUTPUT_X}`}
+            />
           </g>
           <g className="hero-pipeline__nodes">
+            <circle data-pipeline-node="source" cx="170" cy="78" r="5" />
+            <circle data-pipeline-node="source" cx="120" cy="166" r="5" />
+            <circle data-pipeline-node="source" cx="120" cy="254" r="5" />
+            <circle data-pipeline-node="source" cx="170" cy="342" r="5" />
             <circle
-              data-pipeline-node="source"
-              cx="170"
-              cy="78"
-              r="5"
-            />
-            <circle
-              data-pipeline-node="source"
-              cx="120"
-              cy="166"
-              r="5"
-            />
-            <circle
-              data-pipeline-node="source"
-              cx="120"
-              cy="254"
-              r="5"
-            />
-            <circle
-              data-pipeline-node="source"
-              cx="170"
-              cy="342"
+              data-pipeline-node="core"
+              cx={HERO_PIPELINE_CORE_X}
+              cy="210"
               r="5"
             />
             <circle
               className="hero-pipeline__output-node"
               data-pipeline-node="output"
-              cx="790"
+              cx={HERO_PIPELINE_OUTPUT_X}
               cy="210"
               r="5"
             />

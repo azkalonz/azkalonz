@@ -9,10 +9,7 @@ const HomeMotion = ({ children }: HomeMotionProps) => {
 
   useLayoutEffect(() => {
     const root = rootRef.current;
-    if (
-      !root ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
+    if (!root) {
       return;
     }
 
@@ -144,11 +141,13 @@ const HomeMotion = ({ children }: HomeMotionProps) => {
                   autoAlpha: 1,
                   scale: 1,
                   duration: 0.7,
-                  ease: "expo.out",
+                  ease: "none",
                   scrollTrigger: {
                     trigger: row,
                     start: "top 96%",
-                    once: true,
+                    end: "top 68%",
+                    scrub: 0.45,
+                    invalidateOnRefresh: true,
                   },
                 },
               );
@@ -166,11 +165,13 @@ const HomeMotion = ({ children }: HomeMotionProps) => {
                   opacity: 1,
                   x: 0,
                   duration: 0.58,
-                  ease: "expo.out",
+                  ease: "none",
                   scrollTrigger: {
                     trigger: step,
                     start: "top 96%",
-                    once: true,
+                    end: "top 68%",
+                    scrub: 0.45,
+                    invalidateOnRefresh: true,
                   },
                 },
               );
