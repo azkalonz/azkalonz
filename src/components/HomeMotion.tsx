@@ -56,14 +56,16 @@ const HomeMotion = ({ children }: HomeMotionProps) => {
 
             if (projectIndex && projects.length > 0) {
               const firstTop = projects[0].offsetTop;
+              const stackLeft =
+                (projectIndex.clientWidth - projects[0].offsetWidth) / 2;
               const stackOffset = projectIndex.clientWidth <= 600 ? 28 : 16;
 
               projects.forEach((project, index) => {
                 gsap.set(project, {
+                  x: stackLeft - project.offsetLeft,
                   y: firstTop - project.offsetTop + index * stackOffset,
                   scale: 1 - index * 0.018,
                   zIndex: projects.length - index,
-                  "--stack-surface-opacity": 1,
                   "--stack-shadow-opacity": 0.12,
                   transformOrigin: "50% 0%",
                 });
@@ -84,6 +86,7 @@ const HomeMotion = ({ children }: HomeMotionProps) => {
                 workTimeline.to(
                   project,
                   {
+                    x: 0,
                     y: 0,
                     scale: 1,
                     duration: 0.72,
@@ -95,7 +98,6 @@ const HomeMotion = ({ children }: HomeMotionProps) => {
                 workTimeline.to(
                   project,
                   {
-                    "--stack-surface-opacity": 0,
                     "--stack-shadow-opacity": 0,
                     duration: 0.34,
                     ease: "power1.inOut",

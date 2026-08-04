@@ -129,6 +129,7 @@ const HeroPipeline = () => {
 
           flows.forEach((path) => {
             gsap.set(path, {
+              opacity: 0,
               strokeDasharray: 1,
               strokeDashoffset: 1,
             });
@@ -136,8 +137,8 @@ const HeroPipeline = () => {
 
           const triggerStart = () =>
             window.innerWidth <= 900
-              ? "top+=600 top+=68"
-              : "top+=700 top+=76";
+              ? "top+=88 top+=68"
+              : "top+=96 top+=76";
           const triggerEnd = () => {
             const holdRatio = window.innerWidth <= 900 ? 0.3 : 0.4;
             const stickyHeight = stickyStage?.offsetHeight ?? window.innerHeight;
@@ -159,11 +160,7 @@ const HeroPipeline = () => {
           };
 
           const renderRouteProgress = (progress: number) => {
-            const journeyProgress = gsap.utils.clamp(
-              0,
-              1,
-              (progress - 0.26) / 0.74,
-            );
+            const journeyProgress = gsap.utils.clamp(0, 1, progress);
 
             flowLayouts.forEach(
               ({ sourceFlows, convergenceFlow, outputFlow }) => {
@@ -180,6 +177,9 @@ const HeroPipeline = () => {
                     1,
                     (journeyProgress - start) / (end - start),
                   );
+                  path.style.opacity = String(
+                    gsap.utils.clamp(0, 1, drawProgress / 0.03),
+                  );
                   path.style.strokeDashoffset = String(1 - drawProgress);
                   setHitProgress(
                     sourceNodes.item(index),
@@ -192,7 +192,7 @@ const HeroPipeline = () => {
                   return drawProgress;
                 };
 
-                drawRoute(0, 0.06, 0.7);
+                drawRoute(0, 0, 0.7);
                 drawRoute(1, 0.1, 0.74);
                 drawRoute(2, 0.14, 0.78);
                 drawRoute(3, 0.18, 0.82);
@@ -203,6 +203,9 @@ const HeroPipeline = () => {
                   (journeyProgress - 0.7) / 0.12,
                 );
                 if (convergenceFlow) {
+                  convergenceFlow.style.opacity = String(
+                    gsap.utils.clamp(0, 1, convergenceProgress / 0.03),
+                  );
                   convergenceFlow.style.strokeDashoffset = String(
                     1 - convergenceProgress,
                   );
@@ -217,6 +220,9 @@ const HeroPipeline = () => {
                     0,
                     1,
                     (journeyProgress - 0.91) / 0.07,
+                  );
+                  outputFlow.style.opacity = String(
+                    gsap.utils.clamp(0, 1, drawProgress / 0.03),
                   );
                   outputFlow.style.strokeDashoffset = String(1 - drawProgress);
                   const outputHitProgress = (drawProgress - 0.88) / 0.12;
