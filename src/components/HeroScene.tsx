@@ -1,39 +1,85 @@
-import { useId, useLayoutEffect, useRef, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import HeroPipeline from "./HeroPipeline";
 import {
-  createHeroSceneFrame,
+  createHeroCameraFrame,
   getHeroSceneTriggerEnd,
   getHeroSceneTriggerStart,
-  heroAttachedEmbers,
-  heroFlightEmbers,
   HERO_SCENE_SCRUB,
-  type HeroEmberRectFrame,
 } from "./heroSceneMotion";
+import {
+  createHeroTileCssTransform,
+  createHeroTileSvgTransform,
+  createHeroTileTransformOrigin,
+  getHeroTileFrame,
+  getHeroTilePhaseCompletion,
+  getHeroTileVisibility,
+  HERO_TILE_TRANSITION_CHANGE_EVENT,
+  readAppliedHeroTileTransition,
+  type HeroTileCell,
+  type HeroTileFrame,
+} from "../transition/heroTileTransition";
 
 type HeroSceneProps = {
   children: ReactNode;
+  outro: ReactNode;
 };
 
-const HeroScene = ({ children }: HeroSceneProps) => {
+const HERO_CURTAIN_CELL_COUNT = 528;
+const HERO_CURTAIN_DESKTOP_COLUMNS = 24;
+const HERO_CURTAIN_COMPACT_COLUMNS = 10;
+const HERO_CURTAIN_COMPACT_CELL_COUNT = 240;
+const heroCurtainCells = Array.from(
+  { length: HERO_CURTAIN_CELL_COUNT },
+  (_, index) => index,
+);
+
+const HeroScene = ({ children, outro }: HeroSceneProps) => {
+  const [tileTransitionRevision, setTileTransitionRevision] = useState(0);
   const sceneId = useId().replaceAll(":", "");
-  const clipPathId = `hero-wall-${sceneId}`;
+  const copyClipId = `hero-copy-clip-${sceneId}`;
+  const proofClipId = `hero-proof-clip-${sceneId}`;
   const trackRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<HTMLDivElement | null>(null);
   const gridScrollRef = useRef<HTMLDivElement | null>(null);
-  const clipPathRef = useRef<SVGPathElement | null>(null);
-  const attachedEmbersRef = useRef<HTMLDivElement | null>(null);
-  const flightEmbersRef = useRef<HTMLDivElement | null>(null);
-  const foregroundRef = useRef<HTMLDivElement | null>(null);
+  const curtainRef = useRef<HTMLDivElement | null>(null);
+  const copyClipRef = useRef<SVGClipPathElement | null>(null);
+  const proofClipRef = useRef<SVGClipPathElement | null>(null);
+  const copyRef = useRef<HTMLDivElement | null>(null);
   const worldScrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+
+    const refreshTransition = () =>
+      setTileTransitionRevision((revision) => revision + 1);
+    window.addEventListener(
+      HERO_TILE_TRANSITION_CHANGE_EVENT,
+      refreshTransition,
+    );
+
+    return () =>
+      window.removeEventListener(
+        HERO_TILE_TRANSITION_CHANGE_EVENT,
+        refreshTransition,
+      );
+  }, []);
 
   useLayoutEffect(() => {
     const track = trackRef.current;
     const scene = sceneRef.current;
     const gridScroll = gridScrollRef.current;
-    const clipPath = clipPathRef.current;
-    const attachedEmbers = attachedEmbersRef.current;
-    const flightEmbers = flightEmbersRef.current;
-    const foreground = foregroundRef.current;
+    const curtain = curtainRef.current;
+    const copyClip = copyClipRef.current;
+    const proofClip = proofClipRef.current;
+    const copy = copyRef.current;
     const worldScroll = worldScrollRef.current;
     const siteHeader = document.querySelector<HTMLElement>(".site-header");
 
@@ -41,28 +87,28 @@ const HeroScene = ({ children }: HeroSceneProps) => {
       !track ||
       !scene ||
       !gridScroll ||
-      !clipPath ||
-      !attachedEmbers ||
-      !flightEmbers ||
-      !foreground ||
+      !curtain ||
+      !copyClip ||
+      !proofClip ||
+      !copy ||
       !worldScroll
     ) {
       return;
     }
 
-    const collectEmbers = (root: HTMLElement) =>
-      new Map(
-        Array.from(
-          root.querySelectorAll<HTMLElement>("[data-hero-ember]"),
-        ).flatMap((element) => {
-          const id = element.dataset.heroEmber;
-          return id ? [[id, element] as const] : [];
-        }),
-      );
-    const attachedEmberElements = collectEmbers(attachedEmbers);
-    const flightEmberElements = collectEmbers(flightEmbers);
-    const emberSignatures = new Map<string, string>();
-    let lastClipPathData = "";
+    const tileTransition = readAppliedHeroTileTransition(scene);
+    scene.dataset.heroTileTransition = tileTransition.id;
+
+    const allCurtainCells = Array.from(
+      curtain.querySelectorAll<HTMLElement>("[data-hero-curtain-cell]"),
+    );
+    const allCopyClipCells = Array.from(
+      copyClip.querySelectorAll<SVGRectElement>("[data-hero-copy-clip-cell]"),
+    );
+    const allProofClipCells = Array.from(
+      proofClip.querySelectorAll<SVGRectElement>("[data-hero-proof-clip-cell]"),
+    );
+    let exitProgress = 0;
 
     const setNavigationBlend = (progress: number) => {
       if (!siteHeader) return;
@@ -71,55 +117,27 @@ const HeroScene = ({ children }: HeroSceneProps) => {
       siteHeader.style.setProperty("--hero-nav-blend", progress.toFixed(4));
     };
 
-    const renderEmbers = (
-      frames: readonly HeroEmberRectFrame[],
-      elements: ReadonlyMap<string, HTMLElement>,
-    ) => {
-      frames.forEach((frame) => {
-        const element = elements.get(frame.id);
-        if (!element) return;
+    const setCopyInert = (isInert: boolean) => {
+      if (copy.inert === isInert) return;
 
-        const signature = frame.visible
-          ? `${frame.x.toFixed(2)}:${frame.y.toFixed(2)}:${frame.size.toFixed(2)}`
-          : "hidden";
-        if (emberSignatures.get(frame.id) === signature) return;
-
-        emberSignatures.set(frame.id, signature);
-        element.style.visibility = frame.visible ? "visible" : "hidden";
-        if (!frame.visible) return;
-
-        element.style.width = `${frame.size}px`;
-        element.style.height = `${frame.size}px`;
-        element.style.transform = `translate3d(${frame.x}px, ${frame.y}px, 0)`;
-      });
+      copy.inert = isInert;
+      if (isInert && copy.contains(document.activeElement)) {
+        (document.activeElement as HTMLElement | null)?.blur();
+      }
     };
 
-    const render = (progress: number) => {
-      const frame = createHeroSceneFrame(progress, window.innerWidth <= 900, {
-        width: scene.clientWidth,
-        height: scene.clientHeight,
-      });
+    const renderCamera = (progress: number) => {
+      const frame = createHeroCameraFrame(progress, window.innerWidth <= 900);
 
-      scene.style.setProperty("--hero-wall-clip", frame.wallClipPath);
-      if (frame.wallClipPathData !== lastClipPathData) {
-        clipPath.setAttribute("d", frame.wallClipPathData);
-        lastClipPathData = frame.wallClipPathData;
-      }
-      foreground.style.clipPath = `url("#${clipPathId}")`;
-      foreground.style.setProperty(
-        "-webkit-clip-path",
-        `url("#${clipPathId}")`,
-      );
       gridScroll.style.transform = `translate3d(${frame.gridX}vw, 0, 0)`;
       worldScroll.style.transform = `translate3d(${frame.worldX}vw, 0, 0)`;
       worldScroll.style.setProperty(
         "--pipeline-dark-progress",
         frame.useDarkPalette ? "1" : "0",
       );
-      foreground.inert = frame.foregroundInert;
-      renderEmbers(frame.attachedEmbers, attachedEmberElements);
-      renderEmbers(frame.flightEmbers, flightEmberElements);
-      setNavigationBlend(frame.navigationBlend);
+      if (exitProgress <= 0) {
+        setNavigationBlend(frame.navigationBlend);
+      }
 
       if (frame.useDarkPalette) {
         worldScroll.dataset.pipelineTheme = "dark";
@@ -129,36 +147,55 @@ const HeroScene = ({ children }: HeroSceneProps) => {
     };
 
     const clearScene = () => {
+      scene.removeAttribute("data-hero-scene-motion");
+      scene.removeAttribute("data-hero-copy-clip-active");
+      scene.removeAttribute("data-hero-proof-clip-active");
+      scene.removeAttribute("data-hero-tile-transition");
       worldScroll.removeAttribute("data-pipeline-theme");
       worldScroll.style.removeProperty("--pipeline-dark-progress");
-      foreground.inert = false;
-      scene.removeAttribute("data-hero-scene-motion");
-      scene.style.removeProperty("--hero-wall-clip");
-      clipPath.removeAttribute("d");
-      foreground.style.removeProperty("clip-path");
-      foreground.style.removeProperty("-webkit-clip-path");
       siteHeader?.removeAttribute("data-hero-scene-active");
       siteHeader?.style.removeProperty("--hero-nav-blend");
       gridScroll.style.removeProperty("transform");
       worldScroll.style.removeProperty("transform");
-      [
-        ...attachedEmberElements.values(),
-        ...flightEmberElements.values(),
-      ].forEach((ember) => {
-        ember.style.removeProperty("visibility");
-        ember.style.removeProperty("width");
-        ember.style.removeProperty("height");
-        ember.style.removeProperty("transform");
+      setCopyInert(false);
+      copy.style.removeProperty("opacity");
+      copy.style.removeProperty("visibility");
+      copy.style.removeProperty("transform");
+      allCurtainCells.forEach((cell) => {
+        cell.style.removeProperty("opacity");
+        cell.style.removeProperty("transform");
+        cell.style.removeProperty("transform-origin");
       });
-      emberSignatures.clear();
-      lastClipPathData = "";
+      allCopyClipCells.forEach((cell) => {
+        cell.removeAttribute("x");
+        cell.removeAttribute("y");
+        cell.removeAttribute("width");
+        cell.removeAttribute("height");
+        cell.removeAttribute("transform");
+        cell.style.removeProperty("transform");
+        cell.style.removeProperty("transform-origin");
+      });
+      allProofClipCells.forEach((cell) => {
+        cell.removeAttribute("x");
+        cell.removeAttribute("y");
+        cell.removeAttribute("width");
+        cell.removeAttribute("height");
+        cell.removeAttribute("transform");
+        cell.style.removeProperty("transform");
+        cell.style.removeProperty("transform-origin");
+      });
     };
 
-    render(0);
-
+    renderCamera(0);
     scene.dataset.heroSceneMotion = "pending";
+
     let cancelled = false;
     let revert = clearScene;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      scene.dataset.heroSceneMotion = "active";
+      return clearScene;
+    }
 
     void Promise.all([import("gsap"), import("gsap/ScrollTrigger")])
       .then(([gsapModule, scrollTriggerModule]) => {
@@ -173,68 +210,346 @@ const HeroScene = ({ children }: HeroSceneProps) => {
           gsap.to(progressState, {
             value: 1,
             ease: "none",
-            onUpdate: () => render(progressState.value),
+            onUpdate: () => renderCamera(progressState.value),
             scrollTrigger: {
               trigger: track,
               start: getHeroSceneTriggerStart,
               end: () => getHeroSceneTriggerEnd(scene),
               scrub: HERO_SCENE_SCRUB,
               invalidateOnRefresh: true,
-              onRefresh: (self) => render(self.progress),
+              onRefresh: (self) => {
+                progressState.value = self.progress;
+                renderCamera(self.progress);
+              },
             },
           });
-
-          if (siteHeader) {
-            ScrollTrigger.create({
-              trigger: track,
-              start: "bottom bottom",
-              end: "bottom top",
-              invalidateOnRefresh: true,
-              onEnter: () => setNavigationBlend(1),
-              onEnterBack: () => setNavigationBlend(0),
-              onUpdate: (self) => {
-                if (self.isActive || self.progress > 0) {
-                  setNavigationBlend(1 - self.progress);
-                }
-              },
-              onLeave: () => setNavigationBlend(0),
-              onLeaveBack: () => render(progressState.value),
-            });
-          }
 
           scene.dataset.heroSceneMotion = "active";
         }, scene);
 
+        const motionMedia = gsap.matchMedia();
+        motionMedia.add(
+          {
+            desktop: "(min-width: 901px)",
+            compact: "(max-width: 900px)",
+            reduceMotion: "(prefers-reduced-motion: reduce)",
+          },
+          (mediaContext) => {
+            const conditions = mediaContext.conditions as
+              { compact?: boolean; reduceMotion?: boolean } | undefined;
+            if (conditions?.reduceMotion) return;
+
+            const compact = Boolean(conditions?.compact);
+            const columns = compact
+              ? HERO_CURTAIN_COMPACT_COLUMNS
+              : HERO_CURTAIN_DESKTOP_COLUMNS;
+            const cellCount = compact
+              ? HERO_CURTAIN_COMPACT_CELL_COUNT
+              : HERO_CURTAIN_CELL_COUNT;
+            const curtainCells = allCurtainCells.slice(0, cellCount);
+            const copyClipCells = allCopyClipCells.slice(0, cellCount);
+            const inactiveCopyClipCells = allCopyClipCells.slice(cellCount);
+            const proofClipCells = allProofClipCells.slice(0, cellCount);
+            const inactiveProofClipCells = allProofClipCells.slice(cellCount);
+            const rowCount = Math.ceil(cellCount / columns);
+            let clipCellSize = scene.clientWidth / columns;
+            let visibleRowCount = Math.min(
+              rowCount,
+              Math.ceil(scene.clientHeight / clipCellSize),
+            );
+            let tileCells: HeroTileCell[] = [];
+
+            const syncTileModel = () => {
+              clipCellSize = scene.clientWidth / columns;
+              visibleRowCount = Math.min(
+                rowCount,
+                Math.ceil(scene.clientHeight / clipCellSize),
+              );
+              tileCells = curtainCells.map((_, index) => ({
+                index,
+                row: Math.floor(index / columns),
+                column: index % columns,
+                columns,
+                visibleRows: visibleRowCount,
+                cellSize: clipCellSize,
+                compact,
+              }));
+            };
+
+            const getClipCellX = (index: number) =>
+              (index % columns) * clipCellSize;
+            const getClipCellY = (index: number) =>
+              Math.floor(index / columns) * clipCellSize;
+            const syncClipGeometry = (
+              activeCells: SVGRectElement[],
+              inactiveCells: SVGRectElement[],
+            ) => {
+              const maskCellSize = clipCellSize * tileTransition.overscan;
+              const maskCellInset = (maskCellSize - clipCellSize) / 2;
+
+              activeCells.forEach((cell, index) => {
+                cell.setAttribute(
+                  "x",
+                  String(getClipCellX(index) - maskCellInset),
+                );
+                cell.setAttribute(
+                  "y",
+                  String(getClipCellY(index) - maskCellInset),
+                );
+                cell.setAttribute("width", String(maskCellSize));
+                cell.setAttribute("height", String(maskCellSize));
+              });
+              inactiveCells.forEach((cell) => {
+                cell.setAttribute("x", "0");
+                cell.setAttribute("y", "0");
+                cell.setAttribute("width", "0");
+                cell.setAttribute("height", "0");
+                cell.removeAttribute("transform");
+              });
+            };
+            const syncCopyClipGeometry = () =>
+              syncClipGeometry(copyClipCells, inactiveCopyClipCells);
+            const syncProofClipGeometry = () =>
+              syncClipGeometry(proofClipCells, inactiveProofClipCells);
+            const renderedRevealFrames = Array<string | null>(
+              copyClipCells.length,
+            ).fill(null);
+            const renderedProofFrames = Array<string | null>(
+              proofClipCells.length,
+            ).fill(null);
+            const getFrameSignature = (frame: HeroTileFrame) =>
+              [
+                frame.scaleX,
+                frame.scaleY,
+                frame.translateX,
+                frame.translateY,
+                frame.rotation,
+                frame.originX,
+                frame.originY,
+                frame.opacity,
+              ]
+                .map((value) => value.toFixed(4))
+                .join("|");
+            const applyClipFrame = (
+              cell: SVGRectElement,
+              index: number,
+              frame: HeroTileFrame,
+            ) => {
+              // SVG clip paths only respond to geometry, so fold the tile's
+              // opacity into its aperture. This closes every mask completely
+              // at rest instead of leaving a grid of tiny squares or slivers.
+              const aperture = Math.sqrt(frame.opacity);
+              const clipFrame = {
+                ...frame,
+                scaleX: frame.scaleX * aperture,
+                scaleY: frame.scaleY * aperture,
+              };
+
+              if (
+                clipFrame.scaleX >= 0.9999 &&
+                clipFrame.scaleY >= 0.9999 &&
+                Math.abs(clipFrame.translateX) < 0.001 &&
+                Math.abs(clipFrame.translateY) < 0.001 &&
+                Math.abs(clipFrame.rotation) < 0.001
+              ) {
+                cell.removeAttribute("transform");
+                return;
+              }
+
+              cell.setAttribute(
+                "transform",
+                createHeroTileSvgTransform(
+                  clipFrame,
+                  getClipCellX(index),
+                  getClipCellY(index),
+                  clipCellSize,
+                ),
+              );
+            };
+            const renderRevealTiles = (progress: number, force = false) => {
+              copyClipCells.forEach((clipCell, index) => {
+                const tileCell = tileCells[index];
+                const curtainCell = curtainCells[index];
+                if (!tileCell || !curtainCell) return;
+
+                const visibility = getHeroTileVisibility(
+                  progress,
+                  tileTransition.reveal,
+                  tileCell,
+                  "hide",
+                );
+                const frame = getHeroTileFrame(
+                  visibility,
+                  tileTransition.reveal.effect,
+                  tileCell,
+                );
+                const signature = getFrameSignature(frame);
+
+                if (!force && renderedRevealFrames[index] === signature) {
+                  return;
+                }
+                renderedRevealFrames[index] = signature;
+
+                curtainCell.style.transformOrigin =
+                  createHeroTileTransformOrigin(frame);
+                curtainCell.style.transform = createHeroTileCssTransform(
+                  frame,
+                  tileTransition.overscan,
+                );
+                curtainCell.style.opacity = frame.opacity.toFixed(4);
+                applyClipFrame(clipCell, index, frame);
+              });
+
+              setCopyInert(
+                progress >= getHeroTilePhaseCompletion(tileTransition.reveal),
+              );
+            };
+            const renderProofClip = (progress: number, force = false) => {
+              proofClipCells.forEach((cell, index) => {
+                const tileCell = tileCells[index];
+                if (!tileCell) return;
+
+                const visibility = getHeroTileVisibility(
+                  progress,
+                  tileTransition.exit,
+                  tileCell,
+                  "show",
+                );
+                const frame = getHeroTileFrame(
+                  visibility,
+                  tileTransition.exit.effect,
+                  tileCell,
+                );
+                const signature = getFrameSignature(frame);
+
+                if (!force && renderedProofFrames[index] === signature) {
+                  return;
+                }
+                renderedProofFrames[index] = signature;
+                applyClipFrame(cell, index, frame);
+              });
+            };
+
+            const copyClipProgress = { value: 0 };
+            const proofClipProgress = { value: 0 };
+            const syncTileGeometry = () => {
+              syncTileModel();
+              syncCopyClipGeometry();
+              syncProofClipGeometry();
+              renderedRevealFrames.fill(null);
+              renderedProofFrames.fill(null);
+              renderRevealTiles(copyClipProgress.value, true);
+              renderProofClip(proofClipProgress.value, true);
+            };
+
+            syncTileGeometry();
+
+            const revealTimeline = gsap.timeline({
+              scrollTrigger: {
+                trigger: track,
+                start: getHeroSceneTriggerStart,
+                end: () => getHeroSceneTriggerEnd(scene),
+                scrub: HERO_SCENE_SCRUB,
+                invalidateOnRefresh: true,
+                onRefresh: (self) => {
+                  copyClipProgress.value = self.progress;
+                  syncTileGeometry();
+                },
+              },
+            });
+
+            revealTimeline.to(
+              copyClipProgress,
+              {
+                value: 1,
+                duration: 1,
+                ease: "none",
+                onUpdate: () => renderRevealTiles(copyClipProgress.value),
+              },
+              0,
+            );
+
+            scene.dataset.heroCopyClipActive = "true";
+            scene.dataset.heroProofClipActive = "true";
+
+            const exitTimeline = gsap.timeline({
+              scrollTrigger: {
+                trigger: track,
+                start: () => getHeroSceneTriggerEnd(scene),
+                end: "bottom bottom",
+                scrub: HERO_SCENE_SCRUB,
+                invalidateOnRefresh: true,
+                onRefresh: (self) => {
+                  proofClipProgress.value = self.progress;
+                  syncTileGeometry();
+                },
+                onEnter: () => {
+                  exitProgress = 0;
+                  setNavigationBlend(1);
+                },
+                onEnterBack: () => {
+                  exitProgress = 1;
+                  setNavigationBlend(0);
+                },
+                onUpdate: (self) => {
+                  if (self.isActive || self.progress > 0) {
+                    exitProgress = self.progress;
+                    setNavigationBlend(1 - self.progress);
+                  }
+                },
+                onLeave: () => {
+                  exitProgress = 1;
+                  setNavigationBlend(0);
+                },
+                onLeaveBack: () => {
+                  exitProgress = 0;
+                  renderCamera(progressState.value);
+                },
+              },
+            });
+
+            exitTimeline.to(
+              proofClipProgress,
+              {
+                value: 1,
+                duration: 1,
+                ease: "none",
+                onUpdate: () => renderProofClip(proofClipProgress.value),
+              },
+              0,
+            );
+
+            const clipResizeObserver =
+              typeof ResizeObserver === "undefined"
+                ? null
+                : new ResizeObserver(() => {
+                    syncTileGeometry();
+                  });
+            clipResizeObserver?.observe(scene);
+
+            return () => clipResizeObserver?.disconnect();
+          },
+        );
+
         revert = () => {
+          motionMedia.revert();
           context.revert();
           clearScene();
         };
       })
       .catch(() => {
-        scene.removeAttribute("data-hero-scene-motion");
+        clearScene();
       });
 
     return () => {
       cancelled = true;
       revert();
     };
-  }, [clipPathId]);
+  }, [tileTransitionRevision]);
 
   return (
     <div ref={trackRef} className="relay-hero__motion-track">
       <div ref={sceneRef} className="relay-hero__stage-inner">
-        <svg
-          className="hero-scene__clip-definitions"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <defs>
-            <clipPath id={clipPathId} clipPathUnits="objectBoundingBox">
-              <path ref={clipPathRef} fillRule="evenodd" clipRule="evenodd" />
-            </clipPath>
-          </defs>
-        </svg>
-
         <div
           ref={gridScrollRef}
           className="hero-scene__grid-scroll"
@@ -250,42 +565,71 @@ const HeroScene = ({ children }: HeroSceneProps) => {
         </div>
 
         <div
-          ref={flightEmbersRef}
-          className="hero-scene__ember-flight"
-          aria-hidden="true"
+          ref={copyRef}
+          className="relay-hero__copy"
+          style={
+            {
+              "--hero-copy-clip": `url(#${copyClipId})`,
+            } as CSSProperties
+          }
         >
-          {heroFlightEmbers.map((ember) => (
-            <span
-              key={ember.id}
-              className={`hero-scene__ember hero-scene__ember--${ember.tone}`}
-              data-hero-ember={ember.id}
-            />
-          ))}
+          {children}
         </div>
 
-        <div ref={foregroundRef} className="hero-scene__foreground">
-          <div className="hero-scene__wall" data-hero-wall aria-hidden="true" />
-          <div
-            ref={attachedEmbersRef}
-            className="hero-scene__ember-texture"
-            aria-hidden="true"
-          >
-            {heroAttachedEmbers.map((ember) => (
-              <span
-                key={ember.id}
-                className={`hero-scene__ember hero-scene__ember--${ember.tone}`}
-                data-hero-ember={ember.id}
-              />
-            ))}
-          </div>
-
-          <div className="relay-hero__copy">{children}</div>
-        </div>
+        <svg
+          className="hero-scene__clip-defs"
+          width="0"
+          height="0"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <defs>
+            <clipPath
+              ref={copyClipRef}
+              id={copyClipId}
+              clipPathUnits="userSpaceOnUse"
+            >
+              {heroCurtainCells.map((cell) => (
+                <rect key={cell} data-hero-copy-clip-cell />
+              ))}
+            </clipPath>
+            <clipPath
+              ref={proofClipRef}
+              id={proofClipId}
+              clipPathUnits="userSpaceOnUse"
+            >
+              {heroCurtainCells.map((cell) => (
+                <rect key={cell} data-hero-proof-clip-cell />
+              ))}
+            </clipPath>
+          </defs>
+        </svg>
 
         <div ref={worldScrollRef} className="hero-scene__world-scroll">
           <div className="hero-scene__world-pointer">
             <HeroPipeline />
           </div>
+        </div>
+
+        <div
+          ref={curtainRef}
+          className="hero-scene__curtain"
+          aria-hidden="true"
+        >
+          {heroCurtainCells.map((cell) => (
+            <span key={cell} data-hero-curtain-cell />
+          ))}
+        </div>
+
+        <div
+          className="hero-scene__outro"
+          style={
+            {
+              "--hero-proof-clip": `url(#${proofClipId})`,
+            } as CSSProperties
+          }
+        >
+          {outro}
         </div>
       </div>
     </div>

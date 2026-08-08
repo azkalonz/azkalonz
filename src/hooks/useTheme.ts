@@ -13,11 +13,23 @@ const getRenderedTheme = (): Theme => {
   return document.documentElement.classList.contains("dark") ? "dark" : "light";
 };
 
+const getThemeCanvas = (theme: Theme) => {
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(`--theme-${theme}-canvas`)
+    .trim();
+  const metaValue = document
+    .getElementById(`theme-color-${theme}`)
+    ?.getAttribute("content")
+    ?.trim();
+
+  return value || metaValue || "transparent";
+};
+
 const paintTheme = (theme: Theme) => {
   const root = document.documentElement;
   root.classList.toggle("dark", theme === "dark");
   root.style.colorScheme = theme;
-  root.style.backgroundColor = theme === "dark" ? "#131917" : "#eeeee8";
+  root.style.backgroundColor = getThemeCanvas(theme);
 };
 
 const handoffTheme = (theme: Theme, sequence: number) => {
@@ -126,8 +138,14 @@ export default function useTheme() {
     );
 
     const bodyClone = document.body.cloneNode(true) as HTMLBodyElement;
+    const cloneExclusions = [".theme-snapshot-ripple", "script"];
+
+    if (import.meta.env.DEV) {
+      cloneExclusions.push("[data-dev-theme-toolbar-root]");
+    }
+
     bodyClone
-      .querySelectorAll(".theme-snapshot-ripple, script")
+      .querySelectorAll(cloneExclusions.join(", "))
       .forEach((element) => element.remove());
 
     const styleAssets = Array.from(
@@ -136,7 +154,7 @@ export default function useTheme() {
       .map((element) => element.outerHTML)
       .join("");
     const themeClass = nextTheme === "dark" ? ' class="dark"' : "";
-    const themeColor = nextTheme === "dark" ? "#131917" : "#eeeee8";
+    const themeColor = getThemeCanvas(nextTheme);
 
     snapshot.srcdoc = `<!doctype html>
       <html${themeClass} style="color-scheme:${nextTheme};background:${themeColor}">

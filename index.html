@@ -20,7 +20,18 @@
       name="robots"
       content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
     />
-    <meta name="theme-color" content="#eeeee8" />
+    <meta
+      id="theme-color-light"
+      name="theme-color"
+      content="__APPLIED_THEME_LIGHT_CANVAS__"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      id="theme-color-dark"
+      name="theme-color"
+      content="__APPLIED_THEME_DARK_CANVAS__"
+      media="(prefers-color-scheme: dark)"
+    />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="BuiltByMark.dev" />
     <meta
@@ -75,6 +86,12 @@
     <script>
       (function () {
         try {
+          var lightCanvas = document
+            .getElementById("theme-color-light")
+            .getAttribute("content");
+          var darkCanvas = document
+            .getElementById("theme-color-dark")
+            .getAttribute("content");
           var storedTheme = localStorage.getItem("theme");
           var dark =
             storedTheme === "dark" ||
@@ -83,10 +100,11 @@
           if (dark) document.documentElement.classList.add("dark");
           document.documentElement.style.colorScheme = dark ? "dark" : "light";
           document.documentElement.style.backgroundColor = dark
-            ? "#131917"
-            : "#eeeee8";
+            ? darkCanvas
+            : lightCanvas;
         } catch (error) {
-          document.documentElement.style.backgroundColor = "#eeeee8";
+          document.documentElement.style.backgroundColor =
+            "__APPLIED_THEME_LIGHT_CANVAS__";
         }
       })();
     </script>

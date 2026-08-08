@@ -1,5 +1,6 @@
 import { site } from "../data/site";
 import { Helmet } from "../lib/helmet";
+import appliedTheme from "../../themes/current-theme.json";
 
 type StructuredData = Record<string, unknown>;
 
@@ -70,12 +71,12 @@ const Seo = ({
       <meta name="twitter:image" content={socialImageUrl} />
       <meta
         name="theme-color"
-        content="#eeeee8"
+        content={appliedTheme.light.canvas}
         media="(prefers-color-scheme: light)"
       />
       <meta
         name="theme-color"
-        content="#131917"
+        content={appliedTheme.dark.canvas}
         media="(prefers-color-scheme: dark)"
       />
 

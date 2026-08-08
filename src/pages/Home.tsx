@@ -1,6 +1,6 @@
 /*
 THESIS: The page presents BuiltByMark.dev as a calm, direct practice for dependable operational software.
-OWN-WORLD: Quiet mineral and charcoal fields, one readable sans-serif family, restrained oxide action, and an operational pipeline that turns disconnected inputs into a dependable system.
+OWN-WORLD: A themeable editorial system that can shift palette and typographic voice while the operational pipeline continues turning disconnected inputs into a dependable system.
 STORY: Visitors understand the offer through the pipeline, scan project outcomes, compare selected systems, learn how the work is approached, and start a conversation.
 FIRST VIEWPORT: A compact proposition and one primary action sit beside a scroll-responsive model of Mark's actual work.
 FORM: A calm operational index with one authored, explanatory motion sequence.
@@ -95,7 +95,51 @@ const Home = () => (
       <section className="relay-hero" aria-labelledby="home-title">
         <div className="section-shell relay-hero__grid">
           <div className="relay-hero__stage">
-            <HeroScene>
+            <HeroScene
+              outro={
+                <div
+                  className="proof-rail"
+                  aria-label="Selected project outcomes"
+                >
+                  <div className="proof-rail__item">
+                    <div className="proof-rail__metric">
+                      <strong>2M+</strong>
+                      <span className="proof-rail__label">
+                        Migrated records
+                      </span>
+                    </div>
+                    <p className="proof-rail__description">
+                      Records moved between CRM systems with relationships
+                      preserved for validation.
+                    </p>
+                  </div>
+                  <div className="proof-rail__item">
+                    <div className="proof-rail__metric">
+                      <strong>5M+</strong>
+                      <span className="proof-rail__label">
+                        Automation executions
+                      </span>
+                    </div>
+                    <p className="proof-rail__description">
+                      Recurring business processes handled through connected
+                      applications and integrations.
+                    </p>
+                  </div>
+                  <div className="proof-rail__item">
+                    <div className="proof-rail__metric">
+                      <strong>40K+</strong>
+                      <span className="proof-rail__label">
+                        Synced live orders
+                      </span>
+                    </div>
+                    <p className="proof-rail__description">
+                      Live order data carried between commerce, inventory, and
+                      fulfilment operations.
+                    </p>
+                  </div>
+                </div>
+              }
+            >
               <div className="relay-hero__intro-copy">
                 <h1 id="home-title">
                   Built for
@@ -117,21 +161,6 @@ const Home = () => (
                 </div>
               </div>
             </HeroScene>
-
-            <div className="proof-rail" aria-label="Selected project outcomes">
-              <div className="proof-rail__item">
-                <strong>2M+</strong>
-                <span>MIGRATED RECORDS</span>
-              </div>
-              <div className="proof-rail__item">
-                <strong>5M+</strong>
-                <span>AUTOMATION EXECUTIONS</span>
-              </div>
-              <div className="proof-rail__item">
-                <strong>40K+</strong>
-                <span>SYNCED LIVE ORDERS</span>
-              </div>
-            </div>
           </div>
         </div>
       </section>

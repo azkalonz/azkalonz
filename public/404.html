@@ -9,6 +9,7 @@
     <style>
       :root {
         color-scheme: light;
+        /* applied-theme-light:start */
         --canvas: #eeeee8;
         --paper: #f8f7f1;
         --ink: #17211f;
@@ -16,7 +17,25 @@
         --line: #c7cbc4;
         --relay: #b84421;
         --relay-ink: #fffaf3;
-        font-family: Arial, Helvetica, sans-serif;
+        --focus: #1e67bf;
+        --font-body:
+          "Source Sans 3 Variable", "Segoe UI", ui-sans-serif, system-ui,
+          sans-serif;
+        --font-display:
+          "Source Sans 3 Variable", "Segoe UI", ui-sans-serif, system-ui,
+          sans-serif;
+        --body-weight: 400;
+        --body-leading: 1.62;
+        --body-tracking: 0;
+        --display-weight: 650;
+        --display-tracking: -0.025em;
+        --display-transform: none;
+        --display-style: normal;
+        --h1-leading: 0.98;
+        --control-weight: 720;
+        --control-tracking: 0;
+        /* applied-theme-light:end */
+        font-family: var(--font-body);
       }
       * {
         box-sizing: border-box;
@@ -26,6 +45,9 @@
         margin: 0;
         background: var(--canvas);
         color: var(--ink);
+        font-weight: var(--body-weight);
+        letter-spacing: var(--body-tracking);
+        line-height: var(--body-leading);
       }
       main {
         width: min(calc(100% - 2rem), 70rem);
@@ -42,15 +64,19 @@
       h1 {
         max-width: 14ch;
         margin: clamp(4rem, 12vw, 9rem) 0 0;
+        font-family: var(--font-display);
         font-size: clamp(2.25rem, 5vw, 3.25rem);
-        line-height: 1.02;
-        letter-spacing: -0.025em;
+        font-style: var(--display-style);
+        font-weight: var(--display-weight);
+        letter-spacing: var(--display-tracking);
+        line-height: var(--h1-leading);
+        text-transform: var(--display-transform);
       }
       p {
         max-width: 36rem;
         margin: 1.5rem 0 0;
         color: var(--muted);
-        line-height: 1.65;
+        line-height: var(--body-leading);
       }
       .action {
         display: inline-block;
@@ -60,16 +86,18 @@
         background: var(--relay);
         color: var(--relay-ink);
         padding: 0.85rem 1.15rem;
-        font-weight: 700;
+        font-weight: var(--control-weight);
+        letter-spacing: var(--control-tracking);
         text-decoration: none;
       }
       a:focus-visible {
-        outline: 3px solid #1e67bf;
+        outline: 3px solid var(--focus);
         outline-offset: 3px;
       }
       @media (prefers-color-scheme: dark) {
         :root {
           color-scheme: dark;
+          /* applied-theme-dark:start */
           --canvas: #131917;
           --paper: #1a211e;
           --ink: #eeece4;
@@ -77,9 +105,8 @@
           --line: #39423d;
           --relay: #ff7a45;
           --relay-ink: #171d1a;
-        }
-        a:focus-visible {
-          outline-color: #f4b45f;
+          --focus: #f4b45f;
+          /* applied-theme-dark:end */
         }
       }
     </style>

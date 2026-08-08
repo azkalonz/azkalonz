@@ -145,15 +145,6 @@ const HeroPipeline = () => {
             ".relay-hero__stage-inner",
           );
           const motionTrigger = motionStage ?? hero;
-          const proofRail = hero.querySelector<HTMLElement>(".proof-rail");
-          const proofItems =
-            hero.querySelectorAll<HTMLElement>(".proof-rail__item");
-          const proofNumbers = hero.querySelectorAll<HTMLElement>(
-            ".proof-rail__item strong",
-          );
-          const proofCopy = hero.querySelectorAll<HTMLElement>(
-            ".proof-rail__item span",
-          );
 
           flows.forEach((path) => {
             gsap.set(path, {
@@ -468,55 +459,6 @@ const HeroPipeline = () => {
                 },
                 1.15,
               );
-
-            if (proofRail && proofItems.length) {
-              const proofTimeline = gsap.timeline({
-                scrollTrigger: {
-                  trigger: proofRail,
-                  start: "top 88%",
-                  end: "bottom 62%",
-                  scrub: 0.75,
-                },
-              });
-
-              proofTimeline
-                .fromTo(
-                  proofItems,
-                  { scaleY: 0.06, transformOrigin: "50% 100%" },
-                  {
-                    scaleY: 1,
-                    stagger: 0.12,
-                    duration: 0.72,
-                    ease: "power3.inOut",
-                  },
-                  0,
-                )
-                .fromTo(
-                  proofNumbers,
-                  { clipPath: "inset(100% 0 0 0)", opacity: 0, y: 14 },
-                  {
-                    clipPath: "inset(0% 0 0 0)",
-                    opacity: 1,
-                    y: 0,
-                    stagger: 0.12,
-                    duration: 0.42,
-                    ease: "power3.out",
-                  },
-                  0.42,
-                )
-                .fromTo(
-                  proofCopy,
-                  { opacity: 0, y: 8 },
-                  {
-                    opacity: 1,
-                    y: 0,
-                    stagger: 0.12,
-                    duration: 0.38,
-                    ease: "power2.out",
-                  },
-                  0.5,
-                );
-            }
           }
 
           pipelineTimeline

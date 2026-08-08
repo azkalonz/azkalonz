@@ -1,0 +1,24 @@
+{
+  "id": "ledger-diagonal",
+  "label": "Ledger Diagonal",
+  "description": "A measured diagonal transfer that carries each square down and left.",
+  "overscan": 1.05,
+  "reveal": {
+    "order": "ledger-diagonal",
+    "effect": "diagonal-drift",
+    "start": 0.02,
+    "staggerSpan": 0.55,
+    "tileDuration": 0.17,
+    "texture": 0.003,
+    "easing": "in-out"
+  },
+  "exit": {
+    "order": "ledger-diagonal",
+    "effect": "diagonal-drift",
+    "start": 0.05,
+    "staggerSpan": 0.64,
+    "tileDuration": 0.18000000000000002,
+    "texture": 0.003,
+    "easing": "out"
+  }
+}
