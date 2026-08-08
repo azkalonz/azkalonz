@@ -12,6 +12,18 @@
     <link rel="apple-touch-icon" href="../favicon.svg" />
     <link rel="manifest" href="../manifest.json" />
     <meta name="author" content="Mark Judaya" />
+    <meta
+      id="theme-color-light"
+      name="theme-color"
+      content="#eeeee8"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      id="theme-color-dark"
+      name="theme-color"
+      content="#131917"
+      media="(prefers-color-scheme: dark)"
+    />
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -51,6 +63,12 @@
     <script>
       (function () {
         try {
+          var lightCanvas = document
+            .getElementById("theme-color-light")
+            .getAttribute("content");
+          var darkCanvas = document
+            .getElementById("theme-color-dark")
+            .getAttribute("content");
           var storedTheme = localStorage.getItem("theme");
           var dark =
             storedTheme === "dark" ||
@@ -59,10 +77,11 @@
           if (dark) document.documentElement.classList.add("dark");
           document.documentElement.style.colorScheme = dark ? "dark" : "light";
           document.documentElement.style.backgroundColor = dark
-            ? "#131917"
-            : "#eeeee8";
+            ? darkCanvas
+            : lightCanvas;
         } catch (error) {
-          document.documentElement.style.backgroundColor = "#eeeee8";
+          document.documentElement.style.backgroundColor =
+            "#eeeee8";
         }
       })();
     </script>
