@@ -4,8 +4,8 @@ import App from "./App.tsx";
 import { HelmetProvider } from "./lib/helmet";
 
 import "@fontsource-variable/source-sans-3";
+import "@xyflow/react/dist/base.css";
 import "virtual:applied-theme.css";
-import "virtual:applied-tile-transition.css";
 import "./index.css";
 
 const renderApp = () => {

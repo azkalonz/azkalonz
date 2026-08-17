@@ -5,7 +5,7 @@ primary_target: "route:/"
 related_targets:
   [
     "src/pages/Home.tsx",
-    "src/components/HeroPipeline.tsx",
+    "src/components/HeroSystemScreen.tsx",
     "src/components/HomeMotion.tsx",
   ]
 ---
@@ -15,7 +15,7 @@ related_targets:
 - **Scope and mode:** `/` portfolio homepage; Experience with a persuasive decision path.
 - **Audience and job:** Business and technical decision-makers deciding whether Mark can understand an operational problem, build the software, connect surrounding systems, and support it after launch.
 - **Primary action:** Start a project. Selected case studies and verified proof provide the reason to act.
-- **Direction:** Operational Index. A calm, direct record gains one meaningful visual system: an operational pipeline that makes Mark's role legible without technical theater.
-- **First viewport:** A compact value proposition and direct action share one uninterrupted page canvas with a model showing orders, inventory, customer data, and product data moving through workflow understanding, integration, and protected handoffs.
-- **Memorable moment:** The hero remains in view as placeholder bars resolve into operational labels and four precisely aligned routes trace into one shared junction. Three empty colored rails then expand into proof records before their numbers surface; Selected Work follows as a solid paper stack whose buried records remain hidden until they clear, settle, and smoothly shed their surfaces and shadows.
-- **Constraints:** Preserve truthful project and service content, routes, analytics, SEO, contact paths, keyboard access, responsive evidence, system theme preference, and reduced motion. Do not imply AI specialization or invent proof.
+- **Direction:** Operational Index. A calm, direct record gains one meaningful visual system: a three-act operational artifact that makes Mark's application, integration, and supporting AI work legible without technical theater.
+- **First viewport:** On wide screens, a compact value proposition and direct action share one page canvas with the service reel. On narrow screens, the proposition and actions lead at the top and the same artifact follows immediately below through closer framing.
+- **Memorable moment:** One order-operations interface visibly reorganizes inside restrained desktop/tablet browser chrome before becoming a native phone frame, without duplicating the underlying application. Its top sheet then lifts toward the viewer and disappears; while hidden it is recycled to the rear as the Shopify workflow and AI-assisted review advance through the aligned stack. The workflow carries one transaction through integration and recovery; the review asks what happened and cites visible event sources through an explicitly illustrative chart-and-table report. Previous moves the current top back and settles the prior sheet inward from the foreground, so neither direction shows a card traveling from the front to the bottom of the deck. Three static resolved records echo the artifact's quiet rear keylines and step into a generous mobile sheet stack before Selected Work becomes a solid paper stack whose buried records remain hidden until they clear, settle, and smoothly shed their surfaces and shadows.
+- **Constraints:** Preserve truthful project and service content, routes, analytics, SEO, contact paths, responsive evidence, system theme preference, and reduced motion. Reel playback must remain keyboard and touch operable, expose pause plus previous/next scene controls without relying on hover, and keep all three opaque scene sheets legible as one top surface plus two restrained aligned rear edges. Do not imply AI specialization or invent proof.

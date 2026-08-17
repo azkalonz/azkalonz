@@ -1,7 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import DevThemeToolbar from "./DevThemeToolbar";
-import { applyStoredTileTransitionPreview } from "./tileTransitionPreview";
 import { applyStoredThemePreview } from "./themePreview";
 import "./themePreview.css";
 
@@ -12,8 +11,7 @@ declare global {
 }
 
 export const mountThemePreview = () => {
-  applyStoredThemePreview();
-  applyStoredTileTransitionPreview();
+  void applyStoredThemePreview();
 
   window.__builtByMarkThemePreviewRoot?.unmount();
   document.querySelector("[data-dev-theme-toolbar-root]")?.remove();

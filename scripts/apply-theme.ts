@@ -160,12 +160,72 @@ const validateTypography = (theme: AppliedTheme) => {
   return issues;
 };
 
+const primaryFontFamily = (fontStack: string) =>
+  fontStack.match(/^\s*["']?([^,"']+)/)?.[1]?.trim();
+
+const validateThemeMetadata = (theme: AppliedTheme) => {
+  if (!theme.fontStylesheet) return [];
+
+  const issues: string[] = [];
+  let stylesheet: URL;
+  try {
+    stylesheet = new URL(theme.fontStylesheet);
+  } catch {
+    return [`${theme.id}: fontStylesheet must be a valid URL`];
+  }
+
+  if (
+    stylesheet.protocol !== "https:" ||
+    stylesheet.hostname !== "fonts.googleapis.com" ||
+    stylesheet.pathname !== "/css2"
+  ) {
+    issues.push(
+      `${theme.id}: fontStylesheet must use the Google Fonts CSS2 API`,
+    );
+  }
+
+  const families = stylesheet.searchParams.getAll("family");
+  if (families.length < 1 || families.length > 2) {
+    issues.push(`${theme.id}: fontStylesheet must request one or two families`);
+  }
+  if (stylesheet.searchParams.get("display") !== "swap") {
+    issues.push(`${theme.id}: fontStylesheet must use display=swap`);
+  }
+
+  const requestedFamilies = families.map((family) => family.split(":")[0]);
+  const usedFamilies = new Set(
+    [
+      theme.typography.fontBody,
+      theme.typography.fontDisplay,
+      theme.typography.fontData,
+    ]
+      .map(primaryFontFamily)
+      .filter((family): family is string => Boolean(family)),
+  );
+  usedFamilies.forEach((family) => {
+    if (!requestedFamilies.includes(family)) {
+      issues.push(`${theme.id}: ${family} is not requested by fontStylesheet`);
+    }
+  });
+
+  return issues;
+};
+
 const validateCatalog = () => {
+  const ids = themeCatalog.map((theme) => theme.id);
+  const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
   const issues = themeCatalog.flatMap((theme) => [
     ...validateMode(theme, "light"),
     ...validateMode(theme, "dark"),
     ...validateTypography(theme),
+    ...validateThemeMetadata(theme),
   ]);
+
+  if (duplicateIds.length) {
+    issues.unshift(
+      `Duplicate theme IDs: ${[...new Set(duplicateIds)].join(", ")}`,
+    );
+  }
 
   if (issues.length) {
     throw new Error(`Theme contrast validation failed:\n${issues.join("\n")}`);
@@ -287,6 +347,22 @@ const updateStandalone404 = (source: string, theme: AppliedTheme) =>
       `$1\n${renderStandaloneTheme(theme.dark, theme.typography, "          ", false)}\n          $2`,
     );
 
+const updateStandaloneFont = (source: string, theme: AppliedTheme) => {
+  const stylesheet = theme.fontStylesheet?.replaceAll("&", "&amp;");
+  const links = stylesheet
+    ? [
+        '<link rel="preconnect" href="https://fonts.googleapis.com" />',
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />',
+        `<link rel="stylesheet" href="${stylesheet}" />`,
+      ].join("\n    ")
+    : "";
+
+  return source.replace(
+    /(<!-- applied-theme-font:start -->)[\s\S]*?(<!-- applied-theme-font:end -->)/,
+    `$1${links ? `\n    ${links}\n    ` : "\n    "}$2`,
+  );
+};
+
 const writeIfChanged = async (filePath: string, content: string) => {
   const current = await readFile(filePath, "utf8");
   if (current === content) return false;
@@ -316,7 +392,10 @@ const applyTheme = async (theme: AppliedTheme) => {
 
   const results = await Promise.all([
     writeIfChanged(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`),
-    writeIfChanged(notFoundPath, updateStandalone404(notFoundSource, theme)),
+    writeIfChanged(
+      notFoundPath,
+      updateStandaloneFont(updateStandalone404(notFoundSource, theme), theme),
+    ),
     writeIfChanged(designPath, updateDesignFrontmatter(designSource, theme)),
   ]);
 

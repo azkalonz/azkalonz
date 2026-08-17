@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { site } from "../data/site";
 import BrandWordmark from "./BrandWordmark";
 import Icon from "./Icon";
@@ -13,8 +13,82 @@ const links = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const location = useLocation();
+  const headerRef = useRef<HTMLElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setOpen(false);
+      setIsHidden(false);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [location.key]);
+
+  useEffect(() => {
+    let frame = 0;
+    let lastY = Math.max(window.scrollY, 0);
+    let downwardTravel = 0;
+    let upwardTravel = 0;
+
+    const updateScrollState = () => {
+      const y = Math.max(window.scrollY, 0);
+      const delta = y - lastY;
+
+      if (y <= 8) {
+        downwardTravel = 0;
+        upwardTravel = 0;
+        setIsScrolled(false);
+        setIsHidden(false);
+      } else {
+        setIsScrolled(true);
+
+        if (delta > 0) {
+          downwardTravel += delta;
+          upwardTravel = 0;
+
+          const headerHasFocus = headerRef.current?.contains(
+            document.activeElement,
+          );
+          if (
+            !open &&
+            !headerHasFocus &&
+            y > 96 &&
+            downwardTravel >= 12
+          ) {
+            setIsHidden(true);
+            downwardTravel = 0;
+          }
+        } else if (delta < 0) {
+          upwardTravel -= delta;
+          downwardTravel = 0;
+
+          if (upwardTravel >= 8) {
+            setIsHidden(false);
+            upwardTravel = 0;
+          }
+        }
+      }
+
+      lastY = y;
+      frame = 0;
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(updateScrollState);
+    };
+
+    updateScrollState();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [open]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -43,7 +117,13 @@ const Navbar = () => {
   }, [open]);
 
   return (
-    <header className="site-header">
+    <header
+      ref={headerRef}
+      className={`site-header${isScrolled ? " site-header--scrolled" : ""}${
+        isHidden ? " site-header--hidden" : ""
+      }`}
+      onFocusCapture={() => setIsHidden(false)}
+    >
       <div className="site-header__inner">
         <Link
           to="/"
@@ -84,7 +164,13 @@ const Navbar = () => {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-            onClick={() => setOpen((value) => !value)}
+            onClick={() =>
+              setOpen((value) => {
+                const next = !value;
+                if (next) setIsHidden(false);
+                return next;
+              })
+            }
           >
             <Icon name={open ? "x" : "menu"} />
           </button>

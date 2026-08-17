@@ -1,19 +1,160 @@
 /*
 THESIS: The page presents BuiltByMark.dev as a calm, direct practice for dependable operational software.
-OWN-WORLD: A themeable editorial system that can shift palette and typographic voice while the operational pipeline continues turning disconnected inputs into a dependable system.
-STORY: Visitors understand the offer through the pipeline, scan project outcomes, compare selected systems, learn how the work is approached, and start a conversation.
-FIRST VIEWPORT: A compact proposition and one primary action sit beside a scroll-responsive model of Mark's actual work.
-FORM: A calm operational index with one authored, explanatory motion sequence.
+OWN-WORLD: A themeable editorial system that can shift palette and typographic voice while one bounded service reel connects responsive application work, dependable integrations, and source-grounded AI assistance.
+STORY: Visitors understand the offer through the responsive app, workflow, and AI review reel, scan project outcomes, compare selected systems, learn how the work is approached, and start a conversation.
+FIRST VIEWPORT: Wide screens pair the proposition with the service reel; narrow screens lead with the copy and actions, then show the same artifact through closer framing immediately below.
+FORM: A calm operational index with one authored three-act service sequence.
 */
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { Link } from "react-router-dom";
 import ContactCta from "../components/ContactCta";
-import HeroScene from "../components/HeroScene";
+import { HeroSceneBar, HeroSceneGrid } from "../components/HeroSceneChrome";
 import HomeMotion from "../components/HomeMotion";
 import Icon from "../components/Icon";
 import ProjectIndex from "../components/ProjectIndex";
+import ResponsiveAppScene from "../components/ResponsiveAppScene";
 import Seo from "../components/Seo";
+import {
+  getHeroScreenLayout,
+  getResponsiveAppCameraPlan,
+  type ResponsiveAppViewport,
+} from "../components/responsiveAppGeometry";
 import projects from "../data/projects";
 import { services, site } from "../data/site";
+
+const LazyHeroSystemScreen = lazy(
+  () => import("../components/HeroSystemScreen"),
+);
+
+const HeroSystemScreenFallback = () => {
+  const flowRef = useRef<HTMLDivElement | null>(null);
+  const [viewport, setViewport] = useState<ResponsiveAppViewport>();
+  const [layout, setLayout] = useState<"compact" | "medium" | "desktop">(
+    "desktop",
+  );
+
+  useLayoutEffect(() => {
+    const flow = flowRef.current;
+    if (!flow) return;
+
+    const updateViewport = () => {
+      const width = flow.clientWidth;
+      const height = flow.clientHeight;
+      if (width <= 0 || height <= 0) return;
+
+      const nextLayout = getHeroScreenLayout(window.innerWidth);
+      setLayout(nextLayout);
+      setViewport(
+        getResponsiveAppCameraPlan(width, height, nextLayout).desktop,
+      );
+    };
+
+    updateViewport();
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", updateViewport);
+      return () => window.removeEventListener("resize", updateViewport);
+    }
+
+    const resizeObserver = new ResizeObserver(updateViewport);
+    resizeObserver.observe(flow);
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  return (
+    <figure
+      className="hero-system-screen hero-system-screen--placeholder"
+      data-workflow-layout={layout}
+      data-workflow-motion="pending"
+      data-active-scene="app"
+      data-playback-paused="false"
+      data-deck-transitioning="false"
+      aria-hidden="true"
+    >
+      <div className="hero-system-screen__frame">
+        <section
+          className="hero-system-screen__card"
+          data-hero-card="app"
+          data-deck-depth="top"
+        >
+          <HeroSceneBar scene="app" />
+          <div ref={flowRef} className="hero-system-screen__flow">
+            <ResponsiveAppScene initialViewport={viewport} />
+          </div>
+        </section>
+        <section
+          className="hero-system-screen__card"
+          data-hero-card="workflow"
+          data-deck-depth="middle"
+        >
+          <HeroSceneBar scene="workflow" />
+          <div className="hero-system-screen__flow">
+            <HeroSceneGrid />
+          </div>
+        </section>
+        <section
+          className="hero-system-screen__card"
+          data-hero-card="ai"
+          data-deck-depth="back"
+        >
+          <HeroSceneBar scene="ai" />
+          <div className="hero-system-screen__flow">
+            <HeroSceneGrid />
+          </div>
+        </section>
+      </div>
+    </figure>
+  );
+};
+
+const ResponsiveHeroSystemScreen = () => {
+  const [loadAnimation, setLoadAnimation] = useState(false);
+
+  useEffect(() => {
+    let idleHandle = 0;
+    let timerHandle = 0;
+
+    const queueAnimationImport = () => {
+      if (typeof window.requestIdleCallback === "function") {
+        idleHandle = window.requestIdleCallback(() => setLoadAnimation(true), {
+          timeout: 1800,
+        });
+      } else {
+        setLoadAnimation(true);
+      }
+    };
+
+    const requestLoad = () => {
+      timerHandle = globalThis.setTimeout(queueAnimationImport, 650);
+    };
+
+    if (document.readyState === "complete") requestLoad();
+    else window.addEventListener("load", requestLoad, { once: true });
+
+    return () => {
+      window.removeEventListener("load", requestLoad);
+      if (idleHandle && typeof window.cancelIdleCallback === "function") {
+        window.cancelIdleCallback(idleHandle);
+      }
+      if (timerHandle) window.clearTimeout(timerHandle);
+    };
+  }, []);
+
+  if (!loadAnimation) return <HeroSystemScreenFallback />;
+
+  return (
+    <Suspense fallback={<HeroSystemScreenFallback />}>
+      <LazyHeroSystemScreen />
+    </Suspense>
+  );
+};
 
 const featuredProjects = projects.filter((project) => project.featured);
 
@@ -95,73 +236,79 @@ const Home = () => (
       <section className="relay-hero" aria-labelledby="home-title">
         <div className="section-shell relay-hero__grid">
           <div className="relay-hero__stage">
-            <HeroScene
-              outro={
-                <div
-                  className="proof-rail"
-                  aria-label="Selected project outcomes"
-                >
-                  <div className="proof-rail__item">
-                    <div className="proof-rail__metric">
-                      <strong>2M+</strong>
-                      <span className="proof-rail__label">
-                        Migrated records
-                      </span>
-                    </div>
-                    <p className="proof-rail__description">
-                      Records moved between CRM systems with relationships
-                      preserved for validation.
-                    </p>
-                  </div>
-                  <div className="proof-rail__item">
-                    <div className="proof-rail__metric">
-                      <strong>5M+</strong>
-                      <span className="proof-rail__label">
-                        Automation executions
-                      </span>
-                    </div>
-                    <p className="proof-rail__description">
-                      Recurring business processes handled through connected
-                      applications and integrations.
-                    </p>
-                  </div>
-                  <div className="proof-rail__item">
-                    <div className="proof-rail__metric">
-                      <strong>40K+</strong>
-                      <span className="proof-rail__label">
-                        Synced live orders
-                      </span>
-                    </div>
-                    <p className="proof-rail__description">
-                      Live order data carried between commerce, inventory, and
-                      fulfilment operations.
-                    </p>
-                  </div>
-                </div>
-              }
-            >
-              <div className="relay-hero__intro-copy">
-                <h1 id="home-title">
-                  Built for
-                  <br />
-                  real work.
-                </h1>
-                <p className="relay-hero__lead">
-                  Custom applications and integrations for orders, inventory,
-                  customer records, product data, and the systems that keep your
-                  business moving.
-                </p>
-                <div className="hero-actions">
-                  <Link to="/contact" className="button button--primary">
-                    Start a project <Icon name="arrow-right" />
-                  </Link>
-                  <a href="#selected-work" className="button button--quiet">
-                    View my work <Icon name="arrow-right" />
-                  </a>
-                </div>
+            <div className="relay-hero__intro-copy">
+              <h1 id="home-title">
+                Built for
+                <br />
+                real work.
+              </h1>
+              <p className="relay-hero__lead">
+                Custom applications and integrations for orders, inventory,
+                customer records, product data, and the systems that keep your
+                business moving.
+              </p>
+              <div className="hero-actions">
+                <Link to="/contact" className="button button--primary">
+                  Start a project <Icon name="arrow-right" />
+                </Link>
+                <a href="#selected-work" className="button button--quiet">
+                  View my work <Icon name="arrow-right" />
+                </a>
               </div>
-            </HeroScene>
+            </div>
+            <ResponsiveHeroSystemScreen />
           </div>
+        </div>
+      </section>
+
+      <section
+        className="section-shell proof-rail"
+        aria-labelledby="proof-rail-title"
+      >
+        <header className="proof-rail__header">
+          <h2 id="proof-rail-title">What the systems handled.</h2>
+          <p>
+            Selected outcomes from applications and integrations running in
+            production.
+          </p>
+        </header>
+        <div className="proof-rail__records">
+          <article className="proof-rail__item">
+            <header className="proof-rail__item-bar">
+              <h3 className="proof-rail__label">Fulfilled order value</h3>
+            </header>
+            <div className="proof-rail__item-body">
+              <strong className="proof-rail__metric">$5M+</strong>
+              <p className="proof-rail__description">
+                More than $5 million in orders fulfilled through a live commerce
+                integration.
+              </p>
+            </div>
+          </article>
+          <article className="proof-rail__item">
+            <header className="proof-rail__item-bar">
+              <h3 className="proof-rail__label">Automation executions</h3>
+            </header>
+            <div className="proof-rail__item-body">
+              <strong className="proof-rail__metric">5M+</strong>
+              <p className="proof-rail__description">
+                Recurring business processes handled through connected
+                applications and integrations.
+              </p>
+            </div>
+          </article>
+          <article className="proof-rail__item">
+            <header className="proof-rail__item-bar">
+              <h3 className="proof-rail__label">Synced live orders</h3>
+            </header>
+            <div className="proof-rail__item-body">
+              <strong className="proof-rail__metric">40K+</strong>
+              <p className="proof-rail__description">
+                Live order data carried between commerce, inventory, and
+                fulfilment operations.
+              </p>
+            </div>
+          </article>
         </div>
       </section>
 
