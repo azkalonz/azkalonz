@@ -23,8 +23,129 @@ const HomeMotion = ({ children }: HomeMotionProps) => {
         const { gsap } = gsapModule;
         const { ScrollTrigger } = scrollTriggerModule;
         gsap.registerPlugin(ScrollTrigger);
+        const motionMedia = gsap.matchMedia(root);
 
         const context = gsap.context(() => {
+          const proof = root.querySelector<HTMLElement>(".proof-rail");
+          if (proof) {
+            const header = proof.querySelectorAll<HTMLElement>(
+              ".proof-rail__header > *",
+            );
+            const records = proof.querySelector<HTMLElement>(
+              ".proof-rail__records",
+            );
+            const cards = Array.from(
+              proof.querySelectorAll<HTMLElement>(".proof-rail__item"),
+            );
+
+            if (records && cards.length > 0) {
+              motionMedia.add(
+                {
+                  wide: "(min-width: 901px)",
+                  motionAllowed: "(prefers-reduced-motion: no-preference)",
+                },
+                (mediaContext) => {
+                  const conditions = mediaContext.conditions ?? {};
+                  if (!conditions.motionAllowed) {
+                    return;
+                  }
+
+                  const wide = conditions.wide;
+                  const isWaitingBelowViewport = (element: Element) =>
+                    element.getBoundingClientRect().top >
+                    window.innerHeight * 0.9;
+                  const startPose = {
+                    y: wide ? -14 : -10,
+                    scale: wide ? 1.025 : 1.015,
+                    rotationX: wide ? -1.5 : -0.8,
+                    transformPerspective: 1200,
+                    transformOrigin: "50% 72%",
+                    "--proof-card-shadow-depth": "0.15rem",
+                  };
+                  const endPose = {
+                    y: 0,
+                    scale: 1,
+                    rotationX: 0,
+                    "--proof-card-shadow-depth": "0.5rem",
+                    duration: wide ? 0.66 : 0.58,
+                    ease: "expo.out",
+                  };
+
+                  if (header.length > 0 && isWaitingBelowViewport(proof)) {
+                    gsap.fromTo(
+                      header,
+                      { y: 10 },
+                      {
+                        y: 0,
+                        duration: 0.44,
+                        ease: "expo.out",
+                        stagger: 0.06,
+                        clearProps: "transform",
+                        scrollTrigger: {
+                          trigger: proof,
+                          start: "top 62%",
+                          once: true,
+                          invalidateOnRefresh: true,
+                        },
+                      },
+                    );
+                  }
+
+                  if (wide) {
+                    if (!isWaitingBelowViewport(records)) {
+                      return;
+                    }
+
+                    const proofTimeline = gsap.timeline({
+                      scrollTrigger: {
+                        trigger: records,
+                        start: "top 50%",
+                        once: true,
+                        invalidateOnRefresh: true,
+                      },
+                    });
+
+                    cards.forEach((card, index) => {
+                      proofTimeline.fromTo(
+                        card,
+                        startPose,
+                        endPose,
+                        index * 0.11,
+                      );
+                    });
+
+                    proofTimeline.set(cards, {
+                      clearProps:
+                        "transform,transform-origin,--proof-card-shadow-depth",
+                    });
+                    return;
+                  }
+
+                  cards.forEach((card) => {
+                    if (!isWaitingBelowViewport(card)) {
+                      return;
+                    }
+
+                    gsap
+                      .timeline({
+                        scrollTrigger: {
+                          trigger: card,
+                          start: "top 50%",
+                          once: true,
+                          invalidateOnRefresh: true,
+                        },
+                      })
+                      .fromTo(card, startPose, endPose)
+                      .set(card, {
+                        clearProps:
+                          "transform,transform-origin,--proof-card-shadow-depth",
+                      });
+                  });
+                },
+              );
+            }
+          }
+
           const work = root.querySelector(".home-work");
           if (work) {
             const heading = work.querySelectorAll(".editorial-heading > *");
@@ -235,7 +356,10 @@ const HomeMotion = ({ children }: HomeMotionProps) => {
           }
         }, root);
 
-        revert = () => context.revert();
+        revert = () => {
+          motionMedia.revert();
+          context.revert();
+        };
       },
     );
 

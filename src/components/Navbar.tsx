@@ -19,12 +19,21 @@ const Navbar = () => {
   const headerRef = useRef<HTMLElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const pointerInteractionRef = useRef(false);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
+      if (
+        pointerInteractionRef.current &&
+        headerRef.current?.contains(document.activeElement)
+      ) {
+        (document.activeElement as HTMLElement).blur();
+      }
+      pointerInteractionRef.current = false;
       setOpen(false);
       setIsHidden(false);
     });
+
     return () => window.cancelAnimationFrame(frame);
   }, [location.key]);
 
@@ -50,12 +59,14 @@ const Navbar = () => {
           downwardTravel += delta;
           upwardTravel = 0;
 
-          const headerHasFocus = headerRef.current?.contains(
-            document.activeElement,
-          );
+          const activeElement = document.activeElement;
+          const headerHasKeyboardFocus =
+            activeElement instanceof HTMLElement &&
+            activeElement.matches(":focus-visible") &&
+            headerRef.current?.contains(activeElement);
           if (
             !open &&
-            !headerHasFocus &&
+            !headerHasKeyboardFocus &&
             y > 96 &&
             downwardTravel >= 12
           ) {
@@ -82,13 +93,14 @@ const Navbar = () => {
       frame = window.requestAnimationFrame(updateScrollState);
     };
 
-    updateScrollState();
     window.addEventListener("scroll", onScroll, { passive: true });
+    frame = window.requestAnimationFrame(updateScrollState);
+
     return () => {
       window.removeEventListener("scroll", onScroll);
       if (frame) window.cancelAnimationFrame(frame);
     };
-  }, [open]);
+  }, [location.key, open]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -123,6 +135,12 @@ const Navbar = () => {
         isHidden ? " site-header--hidden" : ""
       }`}
       onFocusCapture={() => setIsHidden(false)}
+      onPointerDownCapture={() => {
+        pointerInteractionRef.current = true;
+      }}
+      onKeyDownCapture={() => {
+        pointerInteractionRef.current = false;
+      }}
     >
       <div className="site-header__inner">
         <Link

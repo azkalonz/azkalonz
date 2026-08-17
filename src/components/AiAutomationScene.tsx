@@ -49,7 +49,7 @@ const AiAutomationScene = () => (
   <div
     className="ai-automation-scene"
     data-ai-scene
-    data-ai-logical-width="1680"
+    data-ai-logical-width="1920"
     data-ai-logical-height="960"
   >
     <div className="ai-automation-scene__stage" data-ai-stage>

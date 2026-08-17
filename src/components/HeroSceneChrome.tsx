@@ -56,7 +56,7 @@ export const HeroSceneGrid = ({
           height="32"
           patternUnits="userSpaceOnUse"
         >
-          <path d="M32 0H0V32" />
+          <path d="M16 0V32M0 16H32" />
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill={`url(#${patternId})`} />

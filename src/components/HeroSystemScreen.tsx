@@ -6,8 +6,6 @@ import {
   useSyncExternalStore,
 } from "react";
 import {
-  Background,
-  BackgroundVariant,
   BaseEdge,
   getBezierPath,
   getViewportForBounds,
@@ -15,6 +13,7 @@ import {
   MarkerType,
   Position,
   ReactFlow,
+  ViewportPortal,
   type Edge,
   type EdgeProps,
   type Node,
@@ -24,7 +23,11 @@ import {
   type Viewport,
 } from "@xyflow/react";
 import AiAutomationScene from "./AiAutomationScene";
-import { HeroSceneBar, type HeroSceneId } from "./HeroSceneChrome";
+import {
+  HeroSceneBar,
+  HeroSceneGrid,
+  type HeroSceneId,
+} from "./HeroSceneChrome";
 import ResponsiveAppScene from "./ResponsiveAppScene";
 import {
   getHeroScreenLayout,
@@ -114,8 +117,6 @@ type AiCameraState = {
   x: number;
   y: number;
   scale: number;
-  rotation: number;
-  skewX: number;
 };
 
 type AiCameraPlan = {
@@ -781,11 +782,7 @@ const getAiCameraPlan = (
   const padding = layout === "compact" ? 0.04 : 0.07;
   const maxZoom = layout === "desktop" ? 0.94 : 0.98;
 
-  const frame = (
-    rect: AiSceneRect,
-    rotation: number,
-    skewX: number,
-  ): AiCameraState => {
+  const frame = (rect: AiSceneRect): AiCameraState => {
     const scale = Math.min(
       maxZoom,
       width / (rect.width * (1 + padding * 2)),
@@ -796,39 +793,29 @@ const getAiCameraPlan = (
       x: width / 2 - (rect.x + rect.width / 2) * scale,
       y: height / 2 - (rect.y + rect.height / 2) * scale,
       scale,
-      rotation,
-      skewX,
     };
   };
 
   return {
-    prompt: frame(geometry.prompt, -0.3, -0.42),
+    prompt: frame(geometry.prompt),
     evidence:
       layout === "compact"
-        ? frame(
-            {
-              x: geometry.evidence.x + 100,
-              y: geometry.evidence.y,
-              width: geometry.evidence.width - 200,
-              height: 450,
-            },
-            0.32,
-            0.44,
-          )
-        : frame(geometry.evidence, 0.32, 0.44),
+        ? frame({
+            x: geometry.evidence.x + 100,
+            y: geometry.evidence.y,
+            width: geometry.evidence.width - 200,
+            height: 450,
+          })
+        : frame(geometry.evidence),
     actions:
       layout === "compact"
-        ? frame(
-            {
-              x: geometry.evidence.x + 100,
-              y: geometry.evidence.y + 440,
-              width: geometry.evidence.width - 200,
-              height: 320,
-            },
-            0.2,
-            0.24,
-          )
-        : frame(geometry.evidence, 0.32, 0.44),
+        ? frame({
+            x: geometry.evidence.x + 100,
+            y: geometry.evidence.y + 440,
+            width: geometry.evidence.width - 200,
+            height: 320,
+          })
+        : frame(geometry.evidence),
   };
 };
 
@@ -853,6 +840,7 @@ const HeroSystemScreen = () => {
     getReducedMotionSnapshot,
     () => false,
   );
+  const shouldReduceHeroMotion = prefersReducedMotion && layout !== "desktop";
   const [flowReady, setFlowReady] = useState(false);
   const [flowSize, setFlowSize] = useState({ width: 0, height: 0 });
   const [motionState, setMotionState] =
@@ -861,6 +849,7 @@ const HeroSystemScreen = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [isDeckTransitioning, setIsDeckTransitioning] = useState(false);
   const [statusAnnouncement, setStatusAnnouncement] = useState("");
+  const [reelCycleRevision, setReelCycleRevision] = useState(0);
   const initialResponsiveViewport =
     flowSize.width > 0 && flowSize.height > 0
       ? getResponsiveAppCameraPlan(flowSize.width, flowSize.height, layout)
@@ -973,10 +962,10 @@ const HeroSystemScreen = () => {
     };
 
     applyViewport(
-      prefersReducedMotion ? cameraPlan.static : cameraPlan.overview,
+      shouldReduceHeroMotion ? cameraPlan.static : cameraPlan.overview,
     );
 
-    if (prefersReducedMotion) {
+    if (shouldReduceHeroMotion) {
       playbackControllerRef.current = null;
       updateActiveScene("workflow");
       setMotionState("stable");
@@ -1206,14 +1195,20 @@ const HeroSystemScreen = () => {
               x: aiViewport.x,
               y: aiViewport.y,
               scale: aiViewport.scale,
-              rotation: aiViewport.rotation,
-              skewX: aiViewport.skewX,
               transformOrigin: "0 0",
             });
           };
 
           const setAiLayout = () => {
             const geometry = AI_SCENE_LAYOUTS[layout];
+            const planePerspective = {
+              transformPerspective: 1400,
+              rotationX: 1.15,
+              rotationY: -4.25,
+              rotationZ: -0.55,
+              transformOrigin: "50% 50%",
+              force3D: true,
+            };
 
             aiScene.dataset.aiLayout = layout;
             gsap.set(aiPromptPlane, {
@@ -1221,18 +1216,14 @@ const HeroSystemScreen = () => {
               y: geometry.prompt.y,
               width: geometry.prompt.width,
               height: geometry.prompt.height,
-              rotation: -0.7,
-              skewX: -0.8,
-              transformOrigin: "50% 50%",
+              ...planePerspective,
             });
             gsap.set(aiEvidencePlane, {
               x: geometry.evidence.x,
               y: geometry.evidence.y,
               width: geometry.evidence.width,
               height: geometry.evidence.height,
-              rotation: 0.45,
-              skewX: 0.55,
-              transformOrigin: "50% 50%",
+              ...planePerspective,
             });
           };
 
@@ -1241,8 +1232,6 @@ const HeroSystemScreen = () => {
             Object.assign(aiViewport, aiCameraPlan.prompt);
             setAiViewport();
             gsap.set(aiStage, {
-              rotationY: -1.6,
-              skewX: -0.35,
               scale: 0.985,
               transformOrigin: "50% 50%",
             });
@@ -2063,8 +2052,6 @@ const HeroSystemScreen = () => {
           timeline.to(
             aiStage,
             {
-              rotationY: 0,
-              skewX: 0,
               scale: 1,
               duration: 0.7,
               ease: "power3.out",
@@ -2212,14 +2199,15 @@ const HeroSystemScreen = () => {
           };
 
           timeline.eventCallback("onComplete", () => {
-            // A GSAP repeat rewinds every later zero-duration deck setter while
-            // seeking back to zero, which can briefly restore the outgoing AI
-            // sheet. Normalize the complete reel synchronously after the seek
-            // so the browser only paints the canonical application start.
-            timeline.pause(0, true);
+            // A rendered master keeps CSSPlugin start values from manual seeks
+            // and later deck transitions. Rewinding that instance can briefly
+            // promote the reset AI card. Leave it at the end, restore the app
+            // synchronously, then let the layout effect build a fresh master.
+            timeline.pause();
             resetAnimatedStart();
+            forceDeckResting("app");
             setDeckTransitioningState(false);
-            syncPlayback();
+            setReelCycleRevision((current) => current + 1);
           });
 
           const sceneAnchors: Record<HeroSceneId, number> = {
@@ -2258,6 +2246,7 @@ const HeroSystemScreen = () => {
               if (manualDeckTransition !== transition) return;
 
               timeline.pause();
+              timeline.invalidate();
               timeline.totalTime(sceneAnchors[scene], true);
               resetSceneContent(current);
               forceDeckResting(scene);
@@ -2330,7 +2319,8 @@ const HeroSystemScreen = () => {
     flowSize.width,
     flowReady,
     layout,
-    prefersReducedMotion,
+    reelCycleRevision,
+    shouldReduceHeroMotion,
     updateActiveScene,
   ]);
 
@@ -2390,14 +2380,11 @@ const HeroSystemScreen = () => {
                 proOptions={{ hideAttribution: true }}
                 onInit={handleInit}
               >
-                <Background
-                  id="hero-workflow-grid"
-                  className="hero-system-screen__flow-grid"
-                  color="var(--hero-grid-line)"
-                  gap={32}
-                  lineWidth={0.5}
-                  variant={BackgroundVariant.Lines}
-                />
+                <ViewportPortal>
+                  <div className="hero-system-screen__workflow-grid-world">
+                    <HeroSceneGrid />
+                  </div>
+                </ViewportPortal>
               </ReactFlow>
             </div>
           </div>

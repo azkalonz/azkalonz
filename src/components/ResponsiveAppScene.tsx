@@ -47,7 +47,9 @@ const ResponsiveAppScene = ({
             : undefined
         }
       >
-        <HeroSceneGrid />
+        <div className="responsive-app-scene__grid-world">
+          <HeroSceneGrid />
+        </div>
         <div
           className="responsive-app-scene__shell"
           data-responsive-app-shell
