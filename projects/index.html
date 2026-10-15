@@ -1,99 +1,15 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        document.documentElement.classList.add("has-brand-motion");
-      }
-    </script>
-    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
-    <link rel="apple-touch-icon" href="../favicon.svg" />
-    <link rel="manifest" href="../manifest.json" />
-    <meta name="author" content="Mark Judaya" />
-    <meta
-      id="theme-color-light"
-      name="theme-color"
-      content="#eeeee8"
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      id="theme-color-dark"
-      name="theme-color"
-      content="#131917"
-      media="(prefers-color-scheme: dark)"
-    />
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-      gtag("config", "G-GE3XEC3BD0");
-
-      (function () {
-        var loaded = false;
-        var events = ["pointerdown", "keydown", "scroll"];
-        var loadAnalytics = function () {
-          if (loaded) return;
-          loaded = true;
-          events.forEach(function (eventName) {
-            window.removeEventListener(eventName, loadAnalytics);
-          });
-
-          var script = document.createElement("script");
-          script.async = true;
-          script.src =
-            "https://www.googletagmanager.com/gtag/js?id=G-GE3XEC3BD0";
-          document.head.appendChild(script);
-        };
-
-        events.forEach(function (eventName) {
-          window.addEventListener(eventName, loadAnalytics, {
-            once: true,
-            passive: true,
-          });
-        });
-        window.addEventListener("load", function () {
-          window.setTimeout(loadAnalytics, 4000);
-        });
-      })();
-    </script>
-    <script>
-      (function () {
-        try {
-          var lightCanvas = document
-            .getElementById("theme-color-light")
-            .getAttribute("content");
-          var darkCanvas = document
-            .getElementById("theme-color-dark")
-            .getAttribute("content");
-          var storedTheme = localStorage.getItem("theme");
-          var dark =
-            storedTheme === "dark" ||
-            (!storedTheme &&
-              window.matchMedia("(prefers-color-scheme: dark)").matches);
-          if (dark) document.documentElement.classList.add("dark");
-          document.documentElement.style.colorScheme = dark ? "dark" : "light";
-          document.documentElement.style.backgroundColor = dark
-            ? darkCanvas
-            : lightCanvas;
-        } catch (error) {
-          document.documentElement.style.backgroundColor =
-            "#eeeee8";
-        }
-      })();
-    </script>
-    
-    <script type="module" crossorigin src="../index.js"></script>
-    <link rel="stylesheet" crossorigin href="../style.css">
-        <title data-rh="true">Custom Software &amp; Integration Case Studies | BuiltByMark.dev</title>
-    <meta data-rh="true" name="description" content="See how Mark Judaya built a product information platform, migrated a CRM, and connected marketplace and ERP order flows."/><meta data-rh="true" name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/><meta data-rh="true" property="og:title" content="Custom Software &amp; Integration Case Studies | BuiltByMark.dev"/><meta data-rh="true" property="og:description" content="See how Mark Judaya built a product information platform, migrated a CRM, and connected marketplace and ERP order flows."/><meta data-rh="true" property="og:type" content="website"/><meta data-rh="true" property="og:locale" content="en_PH"/><meta data-rh="true" property="og:site_name" content="BuiltByMark.dev"/><meta data-rh="true" property="og:url" content="https://builtbymark.dev/projects"/><meta data-rh="true" property="og:image" content="https://builtbymark.dev/social-card.png"/><meta data-rh="true" property="og:image:width" content="1200"/><meta data-rh="true" property="og:image:height" content="630"/><meta data-rh="true" property="og:image:alt" content="BuiltByMark.dev — custom software, automation, and integrations"/><meta data-rh="true" name="twitter:card" content="summary_large_image"/><meta data-rh="true" name="twitter:title" content="Custom Software &amp; Integration Case Studies | BuiltByMark.dev"/><meta data-rh="true" name="twitter:description" content="See how Mark Judaya built a product information platform, migrated a CRM, and connected marketplace and ERP order flows."/><meta data-rh="true" name="twitter:image" content="https://builtbymark.dev/social-card.png"/><meta data-rh="true" name="theme-color" content="#eeeee8" media="(prefers-color-scheme: light)"/><meta data-rh="true" name="theme-color" content="#131917" media="(prefers-color-scheme: dark)"/>
-    <link data-rh="true" rel="canonical" href="https://builtbymark.dev/projects"/>
-    <script data-rh="true" type="application/ld+json">[{"@context":"https://schema.org","@type":"CollectionPage","name":"Custom Software and Integration Case Studies","description":"Four case studies covering product data, CRM migration, marketplace orders, and ERP integration.","url":"https://builtbymark.dev/projects","mainEntity":{"@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"name":"Urban Road Product Information Management Platform","url":"https://builtbymark.dev/projects/urban-road-pim"},{"@type":"ListItem","position":2,"name":"Salesforce to Zoho CRM Migration","url":"https://builtbymark.dev/projects/salesforce-to-zoho-crm-migration"},{"@type":"ListItem","position":3,"name":"Mirakl Marketplace Integration","url":"https://builtbymark.dev/projects/mirakl-zoho-inventory-integration"},{"@type":"ListItem","position":4,"name":"Zoho Inventory ERP Integration","url":"https://builtbymark.dev/projects/zoho-inventory-erp-integration"}]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://builtbymark.dev/"},{"@type":"ListItem","position":2,"name":"Case studies","item":"https://builtbymark.dev/projects"}]}]</script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href="https://builtbymark.dev/studio/projects" />
+    <meta http-equiv="refresh" content="0;url=/studio/projects" />
+    <title>Page moved | Mark Judaya</title>
+    <script>window.location.replace("/studio/projects" + window.location.search + window.location.hash);</script>
   </head>
   <body>
-    <div id="root"><div class="site-shell"><a class="skip-link" href="#main-content">Skip to main content</a><header class="site-header"><div class="site-header__inner"><a class="brand" aria-label="BuiltByMark.dev, home" href="/"><span class="brand__wordmark brand__wordmark--animated"><span data-brand-copy="true" class="brand__copy">BuiltByMark.dev</span><span data-brand-animation="true" aria-hidden="true" class="brand__animation"><span class="brand__letters"><span data-brand-letter="true">B</span><span data-brand-letter="true">u</span><span data-brand-letter="true">i</span><span data-brand-letter="true">l</span><span data-brand-letter="true">t</span><span data-brand-letter="true">B</span><span data-brand-letter="true">y</span><span data-brand-letter="true">M</span><span data-brand-letter="true">a</span><span data-brand-letter="true">r</span><span data-brand-letter="true">k</span></span><span data-brand-period="true">.</span><span class="brand__dev-window"><span data-brand-dev="true">dev</span></span><span data-brand-dot="true"></span></span></span></a><nav class="desktop-nav" aria-label="Primary navigation"><a aria-current="page" class="nav-link nav-link--active" href="/projects">Work</a><a class="nav-link " href="/services">Services</a><a class="nav-link " href="/about">About</a></nav><div class="site-header__actions"><button type="button" aria-label="Switch to dark theme" aria-pressed="false" class="theme-toggle" title="Switch to dark theme"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"></path></svg></button><a class="button button--primary button--small desktop-contact" href="/contact">Tell me about your project</a><button type="button" class="menu-button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation menu"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></button></div></div><div id="mobile-menu" aria-hidden="true" inert="" class="mobile-menu "><nav class="mobile-menu__nav section-shell" aria-label="Mobile navigation"><a class="" href="/"><strong>Home</strong><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a><a aria-current="page" class="active" href="/projects"><strong>Work</strong><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a><a class="" href="/services"><strong>Services</strong><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a><a class="" href="/about"><strong>About</strong><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a><a class="mobile-menu__action" href="/contact"><strong>Tell me about your project</strong><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></nav></div></header><main id="main-content"><header class="page-hero page-hero--work section-shell"><div class="page-hero__grid"><h1>Four systems built around real business processes.</h1><p>Product data, CRM migration, marketplace orders, and ERP integration—with the key decisions and safeguards behind each build.</p></div></header><hr class="page-hero-rule section-shell" aria-hidden="true"/><section class="work-index section-shell" aria-label="Case study index"><div class="project-index"><a class="project-index__item" aria-label="Read the Urban Road Product Information Management Platform case study" href="/projects/urban-road-pim"><div class="project-index__summary"><h2>Urban Road Product Information Management Platform</h2><p>An internal PIM that imports supplier spreadsheets, validates product data, and creates files for Shopify, Zoho, and marketplace partners.</p></div><span class="project-index__action">Read case study <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span></a><a class="project-index__item" aria-label="Read the Salesforce to Zoho CRM Migration case study" href="/projects/salesforce-to-zoho-crm-migration"><div class="project-index__summary"><h2>Salesforce to Zoho CRM Migration</h2><p>Migrated more than 2 million records from Salesforce to Zoho CRM while Salesforce stayed live for day-to-day work.</p></div><span class="project-index__action">Read case study <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span></a><a class="project-index__item" aria-label="Read the Mirakl Marketplace Integration case study" href="/projects/mirakl-zoho-inventory-integration"><div class="project-index__summary"><h2>Mirakl Marketplace Integration</h2><p>Pulled Mirakl orders into Zoho Inventory, returned shipment updates, and logged failed syncs in Zoho Desk.</p></div><span class="project-index__action">Read case study <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span></a><a class="project-index__item" aria-label="Read the Zoho Inventory ERP Integration case study" href="/projects/zoho-inventory-erp-integration"><div class="project-index__summary"><h2>Zoho Inventory ERP Integration</h2><p>Sent eligible Zoho Inventory orders to a third-party ERP with shipping details, production flags, add-ons, and invoice PDFs.</p></div><span class="project-index__action">Read case study <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span></a></div></section><div class="section-shell page-section page-section--cta"><section class="cta-field" aria-labelledby="contact-cta-title"><div><h2 id="contact-cta-title">Working on something similar?</h2></div><div><p>Tell me how the work happens today, which tools are involved, and what needs to change.</p><a class="button button--primary" href="/contact">Tell me about your project <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a></div></section></div></main><footer class="site-footer"><div class="section-shell site-footer__top"><div class="site-footer__brand"><a class="brand brand--footer" aria-label="BuiltByMark.dev, home" href="/"><strong class="brand__wordmark">BuiltByMark.dev</strong></a><p>Custom software, integrations, and support for the tools your business depends on.</p></div><div><h2>Explore</h2><nav class="footer-links" aria-label="Footer navigation"><a href="/projects">Work</a><a href="/services">Services</a><a href="/about">About</a><a href="/contact">Contact</a></nav></div><div><h2>Connect</h2><nav class="footer-links" aria-label="Professional links"><a href="mailto:markjosephjudaya@gmail.com">Email</a><a href="https://www.linkedin.com/in/markjudaya/" target="_blank" rel="noreferrer">LinkedIn</a><a href="https://github.com/azkalonz" target="_blank" rel="noreferrer">GitHub</a><a href="https://www.fiverr.com/markjudaya" target="_blank" rel="noreferrer">Fiverr</a></nav></div></div><div class="section-shell site-footer__base"><p>© 2026 BuiltByMark.dev · Cebu, Philippines</p></div></footer></div></div>
+    <p>This page has moved. <a href="/studio/projects">Continue to the page</a>.</p>
   </body>
 </html>
