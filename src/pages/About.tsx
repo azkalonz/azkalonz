@@ -24,13 +24,13 @@ const About = () => (
   <>
     <Seo
       title="Full-Stack Developer & Systems Specialist"
-      description="Mark Judaya is a Cebu-based full-stack developer who builds custom software, integrations, automation, and internal business tools."
+      description="Mark Joseph Judaya is a Cebu-based full-stack developer who builds custom software, integrations, automation, and internal business tools."
       canonical={studioPath("/about")}
       structuredData={[
         {
           "@context": "https://schema.org",
           "@type": "AboutPage",
-          name: "About Mark Judaya",
+          name: "About Mark Joseph Judaya",
           url: `${site.url}${studioPath("/about")}`,
           mainEntity: {
             "@type": "Person",
@@ -86,7 +86,7 @@ const About = () => (
       <figure className="about-portrait">
         <img
           src="/profile/mark-judaya-about.jpg"
-          alt="Mark Judaya"
+          alt="Mark Joseph Judaya"
           width="800"
           height="800"
           fetchPriority="high"

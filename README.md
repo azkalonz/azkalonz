@@ -1,4 +1,4 @@
-# Mark Judaya
+# Mark Joseph Judaya
 
 I’m a full-stack developer and IT solutions specialist based in Cebu, Philippines. I build dependable applications, integrations, and automation around the way a business actually works.
 

@@ -182,7 +182,7 @@ const Home = () => (
   <>
     <Seo
       title="Custom Software, Integrations & Support"
-      description="Mark Judaya builds custom business software, integrations, and automation for teams managing orders, inventory, CRM, and product data."
+      description="Mark Joseph Judaya builds custom business software, integrations, and automation for teams managing orders, inventory, CRM, and product data."
       canonical={STUDIO_PATH}
       structuredData={[
         {
@@ -392,7 +392,7 @@ const Home = () => (
           </div>
           <div>
             <p>
-              I’m Mark Judaya, a full-stack developer and IT solutions
+              I’m Mark Joseph Judaya, a full-stack developer and IT solutions
               specialist in Cebu, Philippines. I work with business owners,
               operations teams, and developers to understand the problem, build
               the software, and support it after launch.

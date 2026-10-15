@@ -9,20 +9,20 @@ const Contact = () => {
   const selectedService = new URLSearchParams(search).get("service");
   const emailSubject = selectedService
     ? `Project inquiry: ${selectedService}`
-    : "Project inquiry for Mark Judaya";
+    : "Project inquiry for Mark Joseph Judaya";
   const emailHref = `mailto:${site.email}?subject=${encodeURIComponent(emailSubject)}`;
 
   return (
     <>
       <Seo
         title="Contact a Custom Software Developer"
-        description="Contact Mark Judaya about a custom web application, Zoho or API integration, automation project, or existing software that needs support."
+        description="Contact Mark Joseph Judaya about a custom web application, Zoho or API integration, automation project, or existing software that needs support."
         canonical={studioPath("/contact")}
         structuredData={[
           {
             "@context": "https://schema.org",
             "@type": "ContactPage",
-            name: "Contact Mark Judaya",
+            name: "Contact Mark Joseph Judaya",
             url: `${site.url}${studioPath("/contact")}`,
             mainEntity: {
               "@type": "Person",

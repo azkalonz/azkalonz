@@ -8,7 +8,7 @@ web
 
 ## Users
 
-Business owners, operations leaders, founders, and technical decision-makers evaluating whether Mark Judaya can understand and deliver custom software, automation, integration, consulting, or support work.
+Business owners, operations leaders, founders, and technical decision-makers evaluating whether Mark Joseph Judaya can understand and deliver custom software, automation, integration, consulting, or support work.
 
 ## Product Purpose
 
@@ -32,7 +32,7 @@ The work centers on internal applications, product and customer data, order work
 
 ## Brand Commitments
 
-- Lead the public homepage with Mark Judaya's personal identity, updated portrait, full-stack developer role, and Cebu/Philippines location. Present the full portfolio under the BuiltByMark.dev name at `/studio`.
+- Lead the public homepage with Mark Joseph Judaya's personal identity, updated portrait, full-stack developer role, and Cebu/Philippines location. Present the full portfolio under the BuiltByMark.dev name at `/studio`.
 - Keep the personal homepage mobile-first, brief, and free of a generic site header, project content, screenshots, skill badges, and Fiverr. Link labels stand alone without usernames or email addresses beneath them.
 - Extend the homepage's monochrome palette, Manrope typography, quiet borders, and subtle raised surfaces through every studio page. Use the same updated portrait on the homepage and About page.
 - Present Mark as an experienced technical partner for operational systems rather than a generic freelancer or a visual-experience developer.

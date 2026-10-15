@@ -1,6 +1,6 @@
 export const site = {
   name: "BuiltByMark.dev",
-  personName: "Mark Judaya",
+  personName: "Mark Joseph Judaya",
   title: "Custom Software Developer",
   url: "https://builtbymark.dev",
   email: "markjosephjudaya@gmail.com",

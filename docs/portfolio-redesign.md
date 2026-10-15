@@ -10,7 +10,7 @@ The personal homepage contains the updated portrait, name, role, location, one s
 
 **Core proposition:** Turning complex operational workflows into dependable systems.
 
-BuiltByMark.dev is the portfolio name. Mark Judaya remains the person behind the work: a full-stack developer and IT solutions specialist in Cebu, Philippines. The site positions him as a direct technical partner for production systems—not a generic freelancer and not an AI-only developer.
+BuiltByMark.dev is the portfolio name. Mark Joseph Judaya remains the person behind the work: a full-stack developer and IT solutions specialist in Cebu, Philippines. The site positions him as a direct technical partner for production systems—not a generic freelancer and not an AI-only developer.
 
 ## Audience and decision path
 

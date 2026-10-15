@@ -10,7 +10,7 @@ const Projects = () => {
     <>
       <Seo
         title="Custom Software & Integration Case Studies"
-        description="See how Mark Judaya built a product information platform, migrated a CRM, and connected marketplace and ERP order flows."
+        description="See how Mark Joseph Judaya built a product information platform, migrated a CRM, and connected marketplace and ERP order flows."
         canonical={studioPath("/projects")}
         structuredData={[
           {

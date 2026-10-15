@@ -10,7 +10,7 @@ const Services = () => (
   <>
     <Seo
       title="Custom Software, Integrations & Support"
-      description="Custom web applications, Zoho and API integrations, technical planning, and software support from Mark Judaya."
+      description="Custom web applications, Zoho and API integrations, technical planning, and software support from Mark Joseph Judaya."
       canonical={studioPath("/services")}
       structuredData={[
         {

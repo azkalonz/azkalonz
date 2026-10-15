@@ -31,13 +31,13 @@ const ProfileArrow = () => (
 const ProfileHome = () => (
   <>
     <Seo
-      title="Mark Judaya — Full-stack developer"
+      title="Mark Joseph Judaya — Full-stack developer"
       exactTitle
       description="I build web apps, connect systems, and automate repetitive work. Full-stack developer based in Cebu, Philippines."
       canonical="/"
       themeColor="#171b20"
       socialImage="/profile/mark-judaya.jpg"
-      socialImageAlt="Mark Judaya"
+      socialImageAlt="Mark Joseph Judaya"
       socialImageWidth={320}
       socialImageHeight={320}
       structuredData={{
@@ -62,13 +62,13 @@ const ProfileHome = () => (
           <img
             className="profile-home__portrait"
             src="/profile/mark-judaya.jpg"
-            alt="Mark Judaya"
+            alt="Mark Joseph Judaya"
             width="72"
             height="78"
             fetchPriority="high"
           />
           <div>
-            <h1 className="profile-home__name">Mark Judaya</h1>
+            <h1 className="profile-home__name">Mark Joseph Judaya</h1>
             <p className="profile-home__role">Full-stack developer</p>
             <p className="profile-home__place">Cebu, Philippines</p>
           </div>

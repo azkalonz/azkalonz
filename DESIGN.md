@@ -1,5 +1,5 @@
 ---
-name: Mark Judaya — Link Index
+name: Mark Joseph Judaya — Link Index
 description: A compact personal profile and a monochrome studio sharing one visual language.
 colors:
   profile-canvas: "#171b20"

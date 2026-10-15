@@ -48,9 +48,9 @@ const staticPages: PageEntry[] = [
     routePattern: "/",
     filename: "index.html",
     component: ProfileHome,
-    title: "Mark Judaya | Full-Stack Developer",
+    title: "Mark Joseph Judaya | Full-Stack Developer",
     description:
-      "I'm Mark Judaya, a full-stack developer in Cebu, Philippines. I build web apps, connect systems, and automate repetitive work.",
+      "I'm Mark Joseph Judaya, a full-stack developer in Cebu, Philippines. I build web apps, connect systems, and automate repetitive work.",
   },
   {
     routePath: STUDIO_PATH,
@@ -58,7 +58,7 @@ const staticPages: PageEntry[] = [
     filename: "studio/index.html",
     component: Home,
     studioLayout: true,
-    title: "Custom Software, Automation & Integrations | Mark Judaya",
+    title: "Custom Software, Automation & Integrations | Mark Joseph Judaya",
     description:
       "Philippines-based full-stack developer building custom web applications, business automation, Zoho integrations, and reliable internal systems.",
   },
@@ -68,7 +68,8 @@ const staticPages: PageEntry[] = [
     filename: "studio/services/index.html",
     component: Services,
     studioLayout: true,
-    title: "Custom Software Development & Automation Services | Mark Judaya",
+    title:
+      "Custom Software Development & Automation Services | Mark Joseph Judaya",
     description:
       "Custom web applications, business automation, Zoho and API integrations, technical consulting, and ongoing software support for growing teams.",
   },
@@ -78,7 +79,7 @@ const staticPages: PageEntry[] = [
     filename: "studio/projects/index.html",
     component: Projects,
     studioLayout: true,
-    title: "Custom Software & Integration Case Studies | Mark Judaya",
+    title: "Custom Software & Integration Case Studies | Mark Joseph Judaya",
     description:
       "Custom software case studies covering product information management, Salesforce-to-Zoho migration, API integration, and business automation.",
   },
@@ -88,9 +89,9 @@ const staticPages: PageEntry[] = [
     filename: "studio/about/index.html",
     component: About,
     studioLayout: true,
-    title: "Full-Stack Developer & Systems Specialist | Mark Judaya",
+    title: "Full-Stack Developer & Systems Specialist | Mark Joseph Judaya",
     description:
-      "Meet Mark Judaya, a Philippines-based full-stack developer specializing in custom software, business automation, systems integration, and Zoho.",
+      "Meet Mark Joseph Judaya, a Philippines-based full-stack developer specializing in custom software, business automation, systems integration, and Zoho.",
   },
   {
     routePath: studioPath("/contact"),
@@ -98,9 +99,9 @@ const staticPages: PageEntry[] = [
     filename: "studio/contact/index.html",
     component: Contact,
     studioLayout: true,
-    title: "Contact a Custom Software Developer | Mark Judaya",
+    title: "Contact a Custom Software Developer | Mark Joseph Judaya",
     description:
-      "Contact Mark Judaya to discuss a custom web application, Zoho or API integration, business automation, technical plan, or software support need.",
+      "Contact Mark Joseph Judaya to discuss a custom web application, Zoho or API integration, business automation, technical plan, or software support need.",
   },
 ];
 
@@ -110,7 +111,7 @@ const projectPages: PageEntry[] = projects.map((project) => ({
   filename: `studio/projects/${project.id}/index.html`,
   component: ProjectDetails,
   studioLayout: true,
-  title: `${project.title} | Mark Judaya`,
+  title: `${project.title} | Mark Joseph Judaya`,
   description: project.description,
   projectId: project.id,
 }));
@@ -180,7 +181,7 @@ const writeCompatibilityRedirects = () => {
     <meta name="robots" content="noindex, follow" />
     <link rel="canonical" href="${siteUrl}${destination}" />
     <meta http-equiv="refresh" content="0;url=${destination}" />
-    <title>Page moved | Mark Judaya</title>
+    <title>Page moved | Mark Joseph Judaya</title>
     <script>window.location.replace(${JSON.stringify(redirect.to)} + window.location.search + window.location.hash);</script>
   </head>
   <body>
