@@ -1,14 +1,14 @@
+import { STUDIO_PATH, studioPath } from "../lib/routes";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { site } from "../data/site";
-import BrandWordmark from "./BrandWordmark";
 import Icon from "./Icon";
 import ThemeToggle from "./ThemeToggle";
 
 const links = [
-  { href: "/projects", label: "Work" },
-  { href: "/services", label: "Services" },
-  { href: "/about", label: "About" },
+  { href: studioPath("/projects"), label: "Work" },
+  { href: studioPath("/services"), label: "Services" },
+  { href: studioPath("/about"), label: "About" },
 ] as const;
 
 const Navbar = () => {
@@ -144,12 +144,12 @@ const Navbar = () => {
     >
       <div className="site-header__inner">
         <Link
-          to="/"
+          to={STUDIO_PATH}
           onClick={() => setOpen(false)}
           className="brand"
           aria-label={`${site.name}, home`}
         >
-          <BrandWordmark />
+          <span className="brand__wordmark">{site.name}</span>
         </Link>
 
         <nav className="desktop-nav" aria-label="Primary navigation">
@@ -170,10 +170,10 @@ const Navbar = () => {
         <div className="site-header__actions">
           <ThemeToggle />
           <Link
-            to="/contact"
+            to={studioPath("/contact")}
             className="button button--primary button--small desktop-contact"
           >
-            Tell me about your project
+            Contact
           </Link>
           <button
             ref={buttonRef}
@@ -206,7 +206,7 @@ const Navbar = () => {
           className="mobile-menu__nav section-shell"
           aria-label="Mobile navigation"
         >
-          <NavLink to="/" onClick={() => setOpen(false)}>
+          <NavLink to={STUDIO_PATH} end onClick={() => setOpen(false)}>
             <strong>Home</strong>
             <Icon name="arrow-right" />
           </NavLink>
@@ -221,11 +221,11 @@ const Navbar = () => {
             </NavLink>
           ))}
           <Link
-            to="/contact"
+            to={studioPath("/contact")}
             onClick={() => setOpen(false)}
             className="mobile-menu__action"
           >
-            <strong>Tell me about your project</strong>
+            <strong>Contact</strong>
             <Icon name="arrow-up-right" />
           </Link>
         </nav>

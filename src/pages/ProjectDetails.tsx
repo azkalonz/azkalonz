@@ -1,3 +1,4 @@
+import { STUDIO_PATH, studioPath } from "../lib/routes";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
@@ -13,13 +14,15 @@ type PreloadedProjectDetails = typeof globalThis & {
   __PROJECT_DETAILS__?: Record<string, string>;
 };
 
-const ProjectDetails = () => {
+const ProjectDetails = ({ initialDetails }: { initialDetails?: string }) => {
   const { id } = useParams<{ id: string }>();
   const project = useMemo(() => projects.find((item) => item.id === id), [id]);
   const [details, setDetails] = useState(() => {
     if (!id) return "";
     return (
-      (globalThis as PreloadedProjectDetails).__PROJECT_DETAILS__?.[id] ?? ""
+      initialDetails ??
+      (globalThis as PreloadedProjectDetails).__PROJECT_DETAILS__?.[id] ??
+      ""
     );
   });
 
@@ -46,7 +49,7 @@ const ProjectDetails = () => {
         <section className="not-found section-shell">
           <h1>That case study is not here.</h1>
           <p>The link may be outdated, or the project may have moved.</p>
-          <Link to="/projects" className="button button--primary">
+          <Link to={studioPath("/projects")} className="button button--primary">
             View my work
           </Link>
         </section>
@@ -68,7 +71,7 @@ const ProjectDetails = () => {
         socialImageAlt={project.featuredPhotoAlt}
         socialImageWidth={project.featuredPhoto ? 1280 : undefined}
         socialImageHeight={project.featuredPhoto ? 720 : undefined}
-        canonical={`/projects/${project.id}`}
+        canonical={studioPath(`/projects/${project.id}`)}
         structuredData={[
           {
             "@context": "https://schema.org",
@@ -81,7 +84,7 @@ const ProjectDetails = () => {
               name: site.personName,
               url: site.url,
             },
-            url: `${site.url}/projects/${project.id}`,
+            url: `${site.url}${studioPath(`/projects/${project.id}`)}`,
             ...(project.featuredPhoto
               ? { image: new URL(project.featuredPhoto, site.url).toString() }
               : {}),
@@ -94,19 +97,19 @@ const ProjectDetails = () => {
                 "@type": "ListItem",
                 position: 1,
                 name: "Home",
-                item: `${site.url}/`,
+                item: `${site.url}${STUDIO_PATH}`,
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Case studies",
-                item: `${site.url}/projects`,
+                item: `${site.url}${studioPath("/projects")}`,
               },
               {
                 "@type": "ListItem",
                 position: 3,
                 name: project.title,
-                item: `${site.url}/projects/${project.id}`,
+                item: `${site.url}${studioPath(`/projects/${project.id}`)}`,
               },
             ],
           },
@@ -115,7 +118,7 @@ const ProjectDetails = () => {
 
       <article className="case-study">
         <header className="case-hero section-shell">
-          <Link to="/projects" className="back-link">
+          <Link to={studioPath("/projects")} className="back-link">
             <Icon name="arrow-right" /> Work
           </Link>
 
@@ -182,10 +185,7 @@ const ProjectDetails = () => {
               <h2 id="workflow-title">How the data moves—and what can fail.</h2>
               <p className="case-operating-model__intro">{project.context}</p>
             </div>
-            <WorkflowDiagram
-              steps={project.workflow}
-              title="Project flow"
-            />
+            <WorkflowDiagram steps={project.workflow} title="Project flow" />
             <div className="reliability-record">
               <h3>How failures are handled</h3>
               <ul>
@@ -235,7 +235,7 @@ const ProjectDetails = () => {
             {relatedService && (
               <div>
                 <span>Related service</span>
-                <Link to={`/services#${relatedService.id}`}>
+                <Link to={studioPath(`/services#${relatedService.id}`)}>
                   {relatedService.title}
                   <Icon name="arrow-right" />
                 </Link>

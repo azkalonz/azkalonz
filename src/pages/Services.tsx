@@ -1,3 +1,4 @@
+import { STUDIO_PATH, studioPath } from "../lib/routes";
 import { Link } from "react-router-dom";
 import ContactCta from "../components/ContactCta";
 import Icon from "../components/Icon";
@@ -10,7 +11,7 @@ const Services = () => (
     <Seo
       title="Custom Software, Integrations & Support"
       description="Custom web applications, Zoho and API integrations, technical planning, and software support from Mark Judaya."
-      canonical="/services"
+      canonical={studioPath("/services")}
       structuredData={[
         {
           "@context": "https://schema.org",
@@ -23,7 +24,7 @@ const Services = () => (
               "@type": "Service",
               name: service.title,
               description: service.summary,
-              url: `${site.url}/services#${service.id}`,
+              url: `${site.url}${studioPath(`/services#${service.id}`)}`,
               provider: {
                 "@type": "Person",
                 "@id": `${site.url}/#mark-judaya`,
@@ -42,13 +43,13 @@ const Services = () => (
               "@type": "ListItem",
               position: 1,
               name: "Home",
-              item: `${site.url}/`,
+              item: `${site.url}${STUDIO_PATH}`,
             },
             {
               "@type": "ListItem",
               position: 2,
               name: "Services",
-              item: `${site.url}/services`,
+              item: `${site.url}${studioPath("/services")}`,
             },
           ],
         },
@@ -63,10 +64,10 @@ const Services = () => (
           fragile software with tools built around the way they actually work.
         </p>
         <div className="hero-actions">
-          <Link to="/contact" className="button button--primary">
+          <Link to={studioPath("/contact")} className="button button--primary">
             Tell me about your project <Icon name="arrow-right" />
           </Link>
-          <Link to="/projects" className="button button--quiet">
+          <Link to={studioPath("/projects")} className="button button--quiet">
             View my work
           </Link>
         </div>
@@ -106,7 +107,9 @@ const Services = () => (
               <h2 id={`${service.id}-title`}>{service.title}</h2>
               <p className="service-record__summary">{service.summary}</p>
               <Link
-                to={`/contact?service=${encodeURIComponent(service.title)}`}
+                to={studioPath(
+                  `/contact?service=${encodeURIComponent(service.title)}`,
+                )}
                 className="button button--quiet"
               >
                 Ask about this service <Icon name="arrow-right" />
@@ -139,7 +142,10 @@ const Services = () => (
                 <div className="related-work">
                   <h3>Related case studies</h3>
                   {relatedProjects.map((project) => (
-                    <Link key={project.id} to={`/projects/${project.id}`}>
+                    <Link
+                      key={project.id}
+                      to={studioPath(`/projects/${project.id}`)}
+                    >
                       <span>{project.title}</span>
                       <Icon name="arrow-up-right" />
                     </Link>

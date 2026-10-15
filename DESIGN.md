@@ -1,117 +1,111 @@
 ---
-name: BuiltByMark.dev — Operational Index
-description: A calm, evidence-led portfolio for dependable applications, integrations, and automation.
+name: Mark Judaya — Link Index
+description: A compact personal profile and a monochrome studio sharing one visual language.
 colors:
-  canvas-light: "#eeeee8"
-  paper-light: "#f8f7f1"
-  ink-light: "#17211f"
-  muted-light: "#596460"
-  line-light: "#c7cbc4"
-  canvas-dark: "#131917"
-  paper-dark: "#1a211e"
-  ink-dark: "#eeece4"
-  muted-dark: "#a7b0ab"
-  line-dark: "#39423d"
-  action-light: "#b84421"
-  action-dark: "#ff7a45"
-  proof-light: "#4b6a94"
-  proof-dark: "#8eadd5"
+  profile-canvas: "#171b20"
+  profile-surface: "#242a32"
+  profile-ink: "#f0f2f5"
+  profile-muted: "#bcc4ce"
+  profile-body: "#d2d8e0"
+  profile-line: "#3a414a"
+  profile-action: "#cbd7e8"
+  canvas-light: "#f2f3f5"
+  paper-light: "#ffffff"
+  ink-light: "#171b20"
+  muted-light: "#555f6b"
+  line-light: "#d4d9df"
+  canvas-dark: "#171b20"
+  paper-dark: "#242a32"
+  ink-dark: "#f0f2f5"
+  muted-dark: "#bcc4ce"
+  line-dark: "#3a414a"
+  action-light: "#242a32"
+  action-dark: "#f0f2f5"
+  proof-light: "#3a414a"
+  proof-dark: "#d2d8e0"
   mac-close: "#ff5f57"
   mac-minimize: "#febc2e"
   mac-zoom: "#28c840"
 typography:
   display:
-    fontFamily: "Source Sans 3 Variable, Segoe UI, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Profile Manrope, Manrope, Segoe UI, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(2.6rem, 4vw, 4rem)"
-    fontWeight: 650
-    lineHeight: 0.98
+    fontWeight: 600
+    lineHeight: 1.12
     letterSpacing: "-0.025em"
+    textTransform: none
   headline:
-    fontFamily: "Source Sans 3 Variable, Segoe UI, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Profile Manrope, Manrope, Segoe UI, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(1.85rem, 2.6vw, 2.75rem)"
-    fontWeight: 650
-    lineHeight: 1.04
+    fontWeight: 600
+    lineHeight: 1.2
     letterSpacing: "-0.025em"
+    textTransform: none
   title:
-    fontFamily: "Source Sans 3 Variable, Segoe UI, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Profile Manrope, Manrope, Segoe UI, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(1.2rem, 1.5vw, 1.8rem)"
-    fontWeight: 650
-    lineHeight: 1.15
+    fontWeight: 600
+    lineHeight: 1.35
+    letterSpacing: "-0.025em"
+    textTransform: none
   body:
-    fontFamily: "Source Sans 3 Variable, Segoe UI, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Profile Manrope, Manrope, Segoe UI, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(0.98rem, 0.96rem + 0.1vw, 1.04rem)"
     fontWeight: 400
-    lineHeight: 1.62
+    lineHeight: 1.7
+    letterSpacing: "0"
   small:
-    fontFamily: "Source Sans 3 Variable, Segoe UI, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Profile Manrope, Manrope, Segoe UI, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(0.76rem, 0.74rem + 0.08vw, 0.85rem)"
-    fontWeight: 650
+    fontWeight: 500
     lineHeight: 1.4
+    letterSpacing: "0"
+    textTransform: none
 rounded:
-  control: "0.2rem"
-  media: "0.45rem"
+  control: "0.625rem"
+  media: "0.875rem"
 spacing:
   unit: "0.5rem"
   group: "clamp(1.25rem, 2vw, 2rem)"
   section: "clamp(4.5rem, 7vw, 7.5rem)"
 ---
 
-# Design System: Operational Index
+# Link Index
 
-## Creative North Star
+## Visual direction
 
-BuiltByMark.dev is a clear index of operational work, not a developer stage. It moves from proposition to evidence with as little interface noise as possible. Real projects, plain explanations, and dependable outcomes carry the identity.
+The approved Figma direction 21 is the visual authority. The personal homepage and the studio share charcoal planes, locally hosted Manrope, pale text, quiet separators, rounded controls, and small offset soft shadows. Hierarchy comes from spacing and reading order. No orange, teal, or blue accent system remains in the studio. Real project screenshots retain their natural colors; error feedback may use a restrained semantic red.
 
-## Brand Attributes
+`themes/current-theme.json` owns the applied palette and typography. The Link Index entry in the development theme catalog preserves this system for intentional reuse. Do not let a development preview change the production default.
 
-Precise, calm, direct, experienced, operational, accountable, and human. The design is confident through editing and composition, never through theatrical technical decoration.
+## Personal homepage — `/`
 
-## Color
+One compact profile: a 72 × 78 portrait beside Mark's name, role and location; one short sentence; one raised link list. No generic site header, footer, project content, work imagery, badges, or repeated sections.
 
-Light mode is a daylight working surface with mineral canvas, soft paper, blue-green ink, restrained oxide action, and documentary blue proof. Dark mode uses green-charcoal planes, bone text, and separately tuned accents. Neither mode uses pure black, pure white, automatic inversion, gradients, or glows.
+The list uses a 14px radius, quiet internal separators, and four full-width rows at least 64px high: GitHub, LinkedIn, Email me, and BuiltByMark.dev. No usernames, addresses, or subtitles beneath the labels. BuiltByMark.dev opens `/studio`.
 
-Project screenshots retain natural color in both themes. Accent color is functional: oxide marks direct action, blue identifies evidence and links, and teal is reserved for dependable system states.
+Start at phone size with 24px side padding and a 342px content maximum. Desktop keeps the narrow centered composition at 360px. Allow natural scrolling on short screens and safe-area padding. Name: 25px, weight 600, line-height 1.2, tracking −0.6px. Body: 16px, weight 400, line-height 1.65. Role and location: 13px. The portrait uses Mark's updated supplied image.
 
-The deployed palette is sourced from `themes/current-theme.json`. Alternative palettes live in the development-only Design lab and may be previewed across routes and reloads without changing that production source. `npm run theme:list` lists the catalog; `npm run theme:apply -- <theme-id>` deliberately promotes one system to the deployed theme and synchronizes static fallback surfaces.
+## Studio — `/studio/*`
 
-## Typography
+The existing portfolio, services, case studies, About, and contact pages live under `/studio`, including the previous homepage at `/studio`. Preserve their factual content, route relationships, contact tools, SEO, and project evidence. Old root-level links redirect to the matching studio routes with their query strings and anchors.
 
-Mineral uses Source Sans 3 as its production baseline. The Design Lab contains 31 complete systems organized into established, quiet operational, editorial, industrial, and restrained expressive directions. Its Google-font alternatives use at most two coordinated families and load only for the selected preview or applied production theme. Promoting a theme updates the typography recorded in this frontmatter. Body copy stays between 60 and 75 characters in every direction.
+Extend the personal homepage's component language to the denser portfolio content: Manrope 400 for body, 500 for controls and metadata, 600 for headings. Body line-height is 1.7. Headings stay sentence case and readable rather than oversized. Bound long prose to a comfortable measure and give content groups generous separation. Small screens use a single clear reading order; navigation and forms remain comfortably operable.
 
-Type is left-aligned and content-led. The homepage thesis is the largest text on the site but remains at or below 4rem. Heading weight, tracking, case, and supporting-label treatment come from the applied theme rather than one universal typographic voice.
+Use `#171b20` canvas, `#242a32` raised surfaces, `#2b323b` fields, `#f0f2f5` primary text, `#bcc4ce` secondary text, and `#3a414a` separators. Primary buttons use pale fill with dark text. Secondary actions and links use quiet text or bounded surfaces. Cards use soft elevation instead of hard offset planes. Ordinary prose does not need a card.
 
-## Grid and Composition
+Navigation is a compact route index with restrained BuiltByMark.dev text branding, a route-aware active state, a manual theme control, and a clear contact action. The footer provides useful navigation and profiles without promotional clutter. About uses the updated portrait, exported at a larger resolution than the compact homepage image.
 
-The primary container is 92rem with a flexible 12-column grid. Sections use alignment, whitespace, and restrained surface changes instead of repeated dividers. The Home and Work surfaces use one consistent project index with generous row spacing, comparable evidence, and one clear action per project.
+## Default theme
 
-Section rhythm varies without relying on oversized headings. Content is not wrapped in a card unless it is an actual media object, control, or bounded artifact. Wide homepage layouts pair the proposition with the workflow. Narrow layouts lead with the proposition and actions, then place the same workflow directly below; a closer camera follows the transaction instead of shrinking the whole topology into an unreadable thumbnail.
+The homepage is always dark. Every fresh studio page load starts dark regardless of operating-system preference or a previously saved choice. The manual theme control may switch to the coordinated light monochrome palette for the current visit. Do not subscribe to system color-scheme changes. The HTML, initial browser canvas, prerendered markup, and default browser theme color must agree before React loads.
 
-## Shape, Border, and Depth
+## Project evidence and motion
 
-Controls use a 0.2rem radius; media may use 0.45rem. Ordinary content has no radius. The responsive-app reel is the one hardware-specific exception: its browser frame uses restrained screen corners and the three familiar macOS window-control colors, and its phone state uses a literal device silhouette, while the application regions inside keep the ordinary control tokens. One-pixel rules are reserved for functional boundaries such as the sticky header, accordion rows, and image-viewer chrome—not ordinary content separation. Circular status marks, dot badges, ornamental nodes, numbered section markers, and rounded logo devices are not part of the identity. A surface uses either a boundary or a shadow at rest, never both.
+Keep real project rows, case-study diagrams, captions, useful alt text, responsive images, and full details. Interface illustrations use the same neutral tokens. Existing functional service-reel scenes remain available with pause and scene controls; illustrative values remain clearly identified. Project and proof content is immediately visible and does not require scroll-controlled stacking or dissolving surfaces.
 
-## Navigation
+Interactions use small, purposeful changes in color or position. Keyboard focus stays visible, controls retain meaningful labels and states, and reduced-motion behavior keeps all content complete. Avoid decorative animation on ordinary content.
 
-The sticky header uses the BuiltByMark.dev text wordmark, short route labels, a plain theme control, and one project action. There is no monogram, subtitle, status mark, or decorative badge. At the top of the page it has no lower rule. Once the page moves, its generously inset rounded rail gains a one-pixel edge, a translucent canvas surface, and a bounded backdrop blur as it floats slightly below the viewport edge; downward travel hides the rail and upward travel reveals it without changing document layout. Active state is a precise baseline. The mobile menu is a full-width sheet with large targets and an explicit close state, and opening it always restores the header.
+## Guardrails
 
-## Workflow Explanation
-
-A case-study workflow may show a source, decisions or transformations, and an outcome. Reading order, titles, and proximity explain the sequence without numbered badges. The homepage is the deliberate exception: one bounded artifact first reflows a single order-operations interface from desktop to tablet to phone, then uses routed nodes to explain the Shopify transaction behind it, and finally shows an illustrative AI-assisted review grounded only in that workflow's visible events. The application keeps one persistent set of navigation, order, and detail components while its containing surface changes from restrained desktop/tablet browser chrome to a compact phone frame; the workflow keeps one canonical topology at every viewport size; the AI review distinguishes its example data from portfolio proof and leaves the incident log as a human review action. All three sheets carry one quiet square grid in the same camera space as their foreground content so the grid pans and zooms with the operating canvas rather than reading as a fixed decorative backdrop.
-
-## Motion
-
-Page content is visible by default. On wide screens, the homepage opens as a normal-height proposition beside one bounded three-act service reel. Tablet and phone layouts put the proposition and actions first, followed immediately by the same artifact with closer camera framing. The complete desktop application frame is prerendered from the same HTML and responsive camera model used by the enhanced reel; the heavier workflow renderer is requested only after page load and an idle interval, then takes over without a placeholder flash, layout shift, or arrival animation. The first act uses one application shell whose navigation, order list, and selected-order detail remain visible while they reorganize from desktop to tablet to phone. The second act traces a Shopify order through validation, inventory, fulfilment, carrier handoff, and tracking recovery. The third act types one operational question, pans across the same bounded world, and reveals an illustrative source-grounded answer with a categorical donut, event rails, and an evidence table. Each act is a complete bordered sheet in one shallow three-level deck: the active sheet is fully visible and both chronological successors leave aligned right-and-bottom keylines behind it. Automatic and Next handoffs push the top sheet toward the viewer until it disappears; only then is that hidden sheet recycled to the rear while the two visible successors advance. Previous moves the current top back one level, stages the prior sheet ahead while hidden, and settles it toward the stack as the new top. Recycling is never shown as a card visibly traveling from the front to the back, and every settled state restores the same three-sheet cyclic deck. The deck never dissolves into an empty frame, fans its cards, adds decorative shadow, or moves the surrounding page layout. All three acts share one labeled deterministic GSAP timeline, and the reel pauses offscreen, while the document is hidden, or when the visitor uses its play/pause control. Previous and next controls move between the same scene anchors, explicitly start the selected scene, remain keyboard operable, reveal with focus as well as hover, and stay discoverable on touch devices. At the desktop breakpoint the reel remains motion-enabled even when the operating system requests reduced motion, with its explicit pause control available throughout; tablet and phone still resolve immediately to the readable workflow cluster and hide reel controls under that preference. The three proof records then seat once into their hard offset rear planes as they enter the viewport and remain static resolved evidence, without a sticky chapter, scrubbed tile sequence, or transition presets. Selected work begins as a short stack of solid paper records, hiding every buried record until they clear; each record reaches its final position before its paper surface and shadow dissolve with scroll. The sole character animation is the header wordmark: its dot begins beneath its final period position and stays locked to that horizontal axis while it launches vertically and returns through diminishing floor rebounds plus one small settling hop. Once the dot is still in its punctuation position, `.dev` slides left-to-right through a fixed clipping boundary so it appears to emerge from behind `BuiltByMark`. A pre-render motion class prevents the complete wordmark from flashing before initialization, and the animated layer remains the visible final mark over a transparent selectable text layer so there is no closing handoff. GSAP is lazy-loaded and motion is limited to inexpensive transforms, opacity, color, clipping, isolated layout geometry, shadows, and SVG strokes. No cursor effects, parallax, marquees, duplicated application scenes, autonomous-action theater, or independent animation loops. Outside the desktop reel, reduced motion keeps every section complete and visible.
-
-## Component Principles
-
-- Buttons are rectangular actions with explicit text, not pills.
-- Project lists are consistent, clearly separated rows with title, description, evidence, and one action.
-- The three homepage proof records are the reel's resolved output: pale semantic surfaces, hard offset rear planes, and a stepped wide-screen rhythm become generous offset sheets on narrow screens. Each record seats into its rear plane once on entry, then remains static evidence rather than becoming a reusable card grid or another animation chapter.
-- Screenshots are evidence and receive captions, useful alt text, fixed aspect ratios, and responsive sources.
-- Diagrams remain semantic in HTML and use composition rather than decorative notation.
-- Forms and controls expose labels, states, recovery language, and keyboard focus.
-- Technology is secondary metadata; never lead with a logo wall.
-
-## Patterns That Must Not Be Introduced
-
-Do not add monograms, decorative status labels, colored dots, circle badges, section numbers, ornamental list indices, repeated full-width separators, terminal chrome, code prompts, decorative monospace outside a selected theme, oversized headings, cyberpunk styling, glass panels, blobs, gradients, generic bento grids, floating cards, logo walls, random pills, glow effects, fake metrics, vague capability copy, or an animation on every element.
+No invented claims, metrics, testimonials, clients, or capabilities. No gradients, glows, terminal decoration, logo walls, decorative status marks, repeated ornamental indices, or generic bento scaffolds. Keep human copy specific and brief. Use visible labels, useful recovery messages, accessible contrast, and layouts without horizontal overflow.

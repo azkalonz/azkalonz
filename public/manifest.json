@@ -1,11 +1,11 @@
 {
-  "name": "BuiltByMark.dev — Custom Software Developer",
+  "name": "BuiltByMark.dev \u2014 Custom Software Developer",
   "short_name": "BuiltByMark.dev",
   "description": "Custom business software, Zoho and API integrations, automation, and support from Mark Judaya.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#eeeee8",
-  "theme_color": "#17211f",
+  "background_color": "#171b20",
+  "theme_color": "#171b20",
   "orientation": "portrait-or-landscape",
   "icons": [
     {

@@ -1,3 +1,4 @@
+import { studioPath } from "../lib/routes";
 import type { ElementType } from "react";
 import { Link } from "react-router-dom";
 import type { Project } from "../data/projects";
@@ -16,7 +17,7 @@ const ProjectIndex = ({ projects, headingLevel = 3 }: ProjectIndexProps) => {
       {projects.map((project) => (
         <Link
           key={project.id}
-          to={`/projects/${project.id}`}
+          to={studioPath(`/projects/${project.id}`)}
           className="project-index__item"
           aria-label={`Read the ${project.title} case study`}
         >

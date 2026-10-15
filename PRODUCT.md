@@ -12,7 +12,7 @@ Business owners, operations leaders, founders, and technical decision-makers eva
 
 ## Product Purpose
 
-The portfolio helps a potential client understand Mark's value quickly, see substantial evidence of his work, and start a direct project conversation.
+The public homepage introduces Mark personally and gives visitors direct links to GitHub, LinkedIn, email, and the BuiltByMark.dev studio. The studio preserves the full portfolio, services, case studies, and contact paths under `/studio`.
 
 ## Positioning
 
@@ -24,17 +24,19 @@ The work centers on internal applications, product and customer data, order work
 
 ## Capabilities and Constraints
 
-- Preserve the routes, case-study URLs, contact and booking paths, analytics, prerendering, SEO semantics, and responsive web behavior.
+- Keep the personal Link Index at `/`; keep the previous homepage and all existing content under `/studio`, including `/studio/about`, `/studio/projects`, `/studio/services`, and `/studio/contact`. Preserve old URLs through redirects, including case studies, query strings, and section anchors.
 - The primary conversion is starting a project conversation; booking a call is a secondary route.
 - AI integration is one capability, not the defining service.
-- Both light and dark themes are required, must be independently art-directed, and must respect system preference by default without a flash.
+- The studio opens in dark mode on every page load, regardless of system preference or an older saved theme. Its theme control can switch modes during the current visit. The personal homepage always uses the approved dark Link Index design.
 - Do not invent clients, testimonials, outcomes, metrics, technologies, certifications, employment history, or awards.
 
 ## Brand Commitments
 
-- Present the portfolio under the BuiltByMark.dev name while keeping Mark Judaya's personal identity, Cebu/Philippines location, direct professional links, and factual project content available where relevant.
+- Lead the public homepage with Mark Judaya's personal identity, updated portrait, full-stack developer role, and Cebu/Philippines location. Present the full portfolio under the BuiltByMark.dev name at `/studio`.
+- Keep the personal homepage mobile-first, brief, and free of a generic site header, project content, screenshots, skill badges, and Fiverr. Link labels stand alone without usernames or email addresses beneath them.
+- Extend the homepage's monochrome palette, Manrope typography, quiet borders, and subtle raised surfaces through every studio page. Use the same updated portrait on the homepage and About page.
 - Present Mark as an experienced technical partner for operational systems rather than a generic freelancer or a visual-experience developer.
-- Lead with business problems and proof. Technology remains useful supporting evidence.
+- In the studio, lead with business problems and proof. Technology remains useful supporting evidence.
 - The experience should feel calm, precise, authored, technically credible, and human.
 
 ## Evidence on Hand

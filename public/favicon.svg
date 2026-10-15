@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
   <title id="title">BuiltByMark.dev</title>
-  <desc id="desc">A light B with an orange dot on a dark background</desc>
-  <rect width="128" height="128" rx="22" fill="#131917"/>
+  <desc id="desc">A light B and dot on a charcoal background</desc>
+  <rect width="128" height="128" rx="22" fill="#171b20"/>
   <path
-    fill="#eeece4"
+    fill="#f0f2f5"
     fill-rule="evenodd"
     d="M22 18h39c22 0 34 10 34 25 0 10-5 18-15 22 12 4 19 12 19 24 0 18-13 29-37 29H22V18Zm22 17v23h16c9 0 14-4 14-12s-5-11-14-11H44Zm0 40v27h18c11 0 16-4 16-14 0-9-5-13-16-13H44Z"
   />
-  <circle cx="108" cy="106" r="10" fill="#ff7a45"/>
+  <circle cx="108" cy="106" r="10" fill="#bcc4ce"/>
 </svg>

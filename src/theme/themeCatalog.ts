@@ -1783,8 +1783,100 @@ const themeSeeds: readonly ThemeFamilySeed[] = [
   },
 ];
 
-export const themeCatalog: readonly AppliedTheme[] = themeSeeds.map(
-  (theme) => ({
+const linkIndexTheme: AppliedTheme = {
+  id: "link-index",
+  label: "Link Index",
+  description:
+    "Charcoal monochrome surfaces, quiet elevation, and locally hosted Manrope, matching Mark’s personal homepage.",
+  typography: {
+    bodyWeight: "400",
+    bodyLineHeight: "1.7",
+    bodyTracking: "0",
+    displayWeight: "600",
+    displayTracking: "-0.025em",
+    displayTransform: "none",
+    displayStyle: "normal",
+    dataWeight: "500",
+    dataTracking: "0",
+    dataTransform: "none",
+    controlWeight: "500",
+    controlTracking: "0",
+    metricWeight: "600",
+    metricTracking: "-0.025em",
+    h1LineHeight: "1.12",
+    h2LineHeight: "1.2",
+    h3LineHeight: "1.35",
+    label: "Manrope throughout",
+    fontBody:
+      '"Profile Manrope", "Manrope", "Segoe UI", ui-sans-serif, system-ui, sans-serif',
+    fontDisplay:
+      '"Profile Manrope", "Manrope", "Segoe UI", ui-sans-serif, system-ui, sans-serif',
+    fontData:
+      '"Profile Manrope", "Manrope", "Segoe UI", ui-sans-serif, system-ui, sans-serif',
+  },
+  light: {
+    canvas: "#f2f3f5",
+    paper: "#ffffff",
+    field: "#e8ebef",
+    ink: "#171b20",
+    muted: "#555f6b",
+    line: "#d4d9df",
+    lineStrong: "#77828e",
+    relay: "#242a32",
+    relayHover: "#3a414a",
+    relayInk: "#f0f2f5",
+    system: "#555f6b",
+    systemSoft: "#e8ebef",
+    proof: "#3a414a",
+    proofSoft: "#e8ebef",
+    proofOn: "#ffffff",
+    systemOn: "#ffffff",
+    relayOn: "#f0f2f5",
+    focus: "#3a414a",
+    error: "#a6362d",
+    success: "#555f6b",
+    overlay: "rgba(15, 18, 22, 0.88)",
+    shadowMedia: "0 12px 32px rgba(23, 27, 32, 0.09)",
+    shadowMenu: "0 9px 22px rgba(23, 27, 32, 0.1)",
+    customer: "#555f6b",
+    customerSoft: "#e8ebef",
+    product: "#3a414a",
+    productSoft: "#e8ebef",
+  },
+  dark: {
+    canvas: "#171b20",
+    paper: "#242a32",
+    field: "#2b323b",
+    ink: "#f0f2f5",
+    muted: "#bcc4ce",
+    line: "#3a414a",
+    lineStrong: "#77828e",
+    relay: "#f0f2f5",
+    relayHover: "#d2d8e0",
+    relayInk: "#171b20",
+    system: "#bcc4ce",
+    systemSoft: "#242a32",
+    proof: "#d2d8e0",
+    proofSoft: "#242a32",
+    proofOn: "#171b20",
+    systemOn: "#171b20",
+    relayOn: "#171b20",
+    focus: "#cbd7e8",
+    error: "#ff9a8f",
+    success: "#bcc4ce",
+    overlay: "rgba(9, 12, 16, 0.94)",
+    shadowMedia: "0 12px 32px rgba(9, 12, 16, 0.25)",
+    shadowMenu: "0 9px 22px rgba(9, 12, 16, 0.25)",
+    customer: "#bcc4ce",
+    customerSoft: "#242a32",
+    product: "#d2d8e0",
+    productSoft: "#242a32",
+  },
+};
+
+export const themeCatalog: readonly AppliedTheme[] = [
+  linkIndexTheme,
+  ...themeSeeds.map((theme) => ({
     id: theme.id,
     label: theme.label,
     description: theme.description,
@@ -1792,8 +1884,8 @@ export const themeCatalog: readonly AppliedTheme[] = themeSeeds.map(
     typography: theme.typography,
     light: makeMode(theme.light, false),
     dark: makeMode(theme.dark, true),
-  }),
-);
+  })),
+];
 
 export const getThemeById = (themeId: string) =>
   themeCatalog.find((theme) => theme.id === themeId);

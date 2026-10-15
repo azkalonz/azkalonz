@@ -16,6 +16,8 @@ interface SeoProps {
   socialImageHeight?: number;
   canonical?: string;
   noIndex?: boolean;
+  themeColor?: string;
+  exactTitle?: boolean;
   structuredData?: StructuredData | StructuredData[];
 }
 
@@ -31,9 +33,12 @@ const Seo = ({
   socialImageHeight = 630,
   canonical = "/",
   noIndex = false,
+  themeColor,
+  exactTitle = false,
   structuredData,
 }: SeoProps) => {
-  const fullTitle = title === site.name ? title : `${title} | ${site.name}`;
+  const fullTitle =
+    exactTitle || title === site.name ? title : `${title} | ${site.name}`;
   const canonicalUrl = canonical.startsWith("http")
     ? canonical
     : new URL(canonical, site.url).toString();
@@ -71,13 +76,7 @@ const Seo = ({
       <meta name="twitter:image" content={socialImageUrl} />
       <meta
         name="theme-color"
-        content={appliedTheme.light.canvas}
-        media="(prefers-color-scheme: light)"
-      />
-      <meta
-        name="theme-color"
-        content={appliedTheme.dark.canvas}
-        media="(prefers-color-scheme: dark)"
+        content={themeColor ?? appliedTheme.dark.canvas}
       />
 
       {structuredData && (

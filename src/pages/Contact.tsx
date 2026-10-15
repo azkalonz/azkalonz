@@ -1,3 +1,4 @@
+import { STUDIO_PATH, studioPath } from "../lib/routes";
 import { useLocation } from "react-router-dom";
 import Icon from "../components/Icon";
 import Seo from "../components/Seo";
@@ -16,13 +17,13 @@ const Contact = () => {
       <Seo
         title="Contact a Custom Software Developer"
         description="Contact Mark Judaya about a custom web application, Zoho or API integration, automation project, or existing software that needs support."
-        canonical="/contact"
+        canonical={studioPath("/contact")}
         structuredData={[
           {
             "@context": "https://schema.org",
             "@type": "ContactPage",
             name: "Contact Mark Judaya",
-            url: `${site.url}/contact`,
+            url: `${site.url}${studioPath("/contact")}`,
             mainEntity: {
               "@type": "Person",
               "@id": `${site.url}/#mark-judaya`,
@@ -38,13 +39,13 @@ const Contact = () => {
                 "@type": "ListItem",
                 position: 1,
                 name: "Home",
-                item: `${site.url}/`,
+                item: `${site.url}${STUDIO_PATH}`,
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Contact",
-                item: `${site.url}/contact`,
+                item: `${site.url}${studioPath("/contact")}`,
               },
             ],
           },
@@ -54,8 +55,8 @@ const Contact = () => {
       <header className="contact-hero section-shell">
         <h1>Tell me what the work needs to do.</h1>
         <p>
-          A short note about the current process, the tools involved, and
-          what needs to change is enough to begin. You do not need a finished
+          A short note about the current process, the tools involved, and what
+          needs to change is enough to begin. You do not need a finished
           specification.
         </p>
       </header>

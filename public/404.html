@@ -9,32 +9,44 @@
     <!-- applied-theme-font:start -->
     <!-- applied-theme-font:end -->
     <style>
+      @font-face {
+        font-family: "Profile Manrope";
+        src: url("/profile/fonts/manrope-400.ttf") format("truetype");
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Profile Manrope";
+        src: url("/profile/fonts/manrope-600.ttf") format("truetype");
+        font-weight: 500 700;
+        font-display: swap;
+      }
       :root {
-        color-scheme: light;
+        color-scheme: dark;
         /* applied-theme-light:start */
-        --canvas: #eeeee8;
-        --paper: #f8f7f1;
-        --ink: #17211f;
-        --muted: #596460;
-        --line: #c7cbc4;
-        --relay: #b84421;
-        --relay-ink: #fffaf3;
-        --focus: #1e67bf;
+        --canvas: #f2f3f5;
+        --paper: #ffffff;
+        --ink: #171b20;
+        --muted: #555f6b;
+        --line: #d4d9df;
+        --relay: #242a32;
+        --relay-ink: #f0f2f5;
+        --focus: #3a414a;
         --font-body:
-          "Source Sans 3 Variable", "Segoe UI", ui-sans-serif, system-ui,
+          "Profile Manrope", "Manrope", "Segoe UI", ui-sans-serif, system-ui,
           sans-serif;
         --font-display:
-          "Source Sans 3 Variable", "Segoe UI", ui-sans-serif, system-ui,
+          "Profile Manrope", "Manrope", "Segoe UI", ui-sans-serif, system-ui,
           sans-serif;
         --body-weight: 400;
-        --body-leading: 1.62;
+        --body-leading: 1.7;
         --body-tracking: 0;
-        --display-weight: 650;
+        --display-weight: 600;
         --display-tracking: -0.025em;
         --display-transform: none;
         --display-style: normal;
-        --h1-leading: 0.98;
-        --control-weight: 720;
+        --h1-leading: 1.12;
+        --control-weight: 500;
         --control-tracking: 0;
         /* applied-theme-light:end */
         font-family: var(--font-body);
@@ -84,7 +96,7 @@
         display: inline-block;
         min-height: 3.25rem;
         margin-top: 2rem;
-        border-radius: 0.2rem;
+        border-radius: 0.625rem;
         background: var(--relay);
         color: var(--relay-ink);
         padding: 0.85rem 1.15rem;
@@ -96,18 +108,18 @@
         outline: 3px solid var(--focus);
         outline-offset: 3px;
       }
-      @media (prefers-color-scheme: dark) {
+      @media all {
         :root {
           color-scheme: dark;
           /* applied-theme-dark:start */
-          --canvas: #131917;
-          --paper: #1a211e;
-          --ink: #eeece4;
-          --muted: #a7b0ab;
-          --line: #39423d;
-          --relay: #ff7a45;
-          --relay-ink: #171d1a;
-          --focus: #f4b45f;
+          --canvas: #171b20;
+          --paper: #242a32;
+          --ink: #f0f2f5;
+          --muted: #bcc4ce;
+          --line: #3a414a;
+          --relay: #f0f2f5;
+          --relay-ink: #171b20;
+          --focus: #cbd7e8;
           /* applied-theme-dark:end */
         }
       }
@@ -118,8 +130,8 @@
       <a class="brand" href="/">BuiltByMark.dev</a>
       <h1>This page isn’t available.</h1>
       <p>
-        The link may be outdated, or the page may have moved. Return home to see
-        services and work.
+        The link may be outdated, or the page may have moved. Return home to
+        find the right link.
       </p>
       <a class="action" href="/">Return home</a>
     </main>

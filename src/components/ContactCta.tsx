@@ -1,3 +1,4 @@
+import { studioPath } from "../lib/routes";
 import { Link } from "react-router-dom";
 import Icon from "./Icon";
 
@@ -16,7 +17,7 @@ const ContactCta = ({
     </div>
     <div>
       <p>{copy}</p>
-      <Link to="/contact" className="button button--primary">
+      <Link to={studioPath("/contact")} className="button button--primary">
         Tell me about your project <Icon name="arrow-right" />
       </Link>
     </div>

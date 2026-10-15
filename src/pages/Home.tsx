@@ -1,3 +1,4 @@
+import { STUDIO_PATH, studioPath } from "../lib/routes";
 /*
 THESIS: The page presents BuiltByMark.dev as a calm, direct practice for dependable operational software.
 OWN-WORLD: A themeable editorial system that can shift palette and typographic voice while one bounded service reel connects responsive application work, dependable integrations, and source-grounded AI assistance.
@@ -182,7 +183,7 @@ const Home = () => (
     <Seo
       title="Custom Software, Integrations & Support"
       description="Mark Judaya builds custom business software, integrations, and automation for teams managing orders, inventory, CRM, and product data."
-      canonical="/"
+      canonical={STUDIO_PATH}
       structuredData={[
         {
           "@context": "https://schema.org",
@@ -198,7 +199,7 @@ const Home = () => (
           "@id": `${site.url}/#mark-judaya`,
           name: site.personName,
           url: site.url,
-          image: `${site.url}/avatar.webp`,
+          image: `${site.url}/profile/mark-judaya-about.jpg`,
           jobTitle: "Full-Stack Developer and IT Solutions Specialist",
           address: {
             "@type": "PostalAddress",
@@ -223,7 +224,7 @@ const Home = () => (
           "@type": "ProfessionalService",
           "@id": `${site.url}/#professional-service`,
           name: site.name,
-          url: site.url,
+          url: `${site.url}${STUDIO_PATH}`,
           email: site.email,
           founder: { "@id": `${site.url}/#mark-judaya` },
           areaServed: "Worldwide",
@@ -248,7 +249,10 @@ const Home = () => (
                 business moving.
               </p>
               <div className="hero-actions">
-                <Link to="/contact" className="button button--primary">
+                <Link
+                  to={studioPath("/contact")}
+                  className="button button--primary"
+                >
                   Start a project <Icon name="arrow-right" />
                 </Link>
                 <a href="#selected-work" className="button button--quiet">
@@ -327,7 +331,7 @@ const Home = () => (
 
         <ProjectIndex projects={featuredProjects} />
 
-        <Link to="/projects" className="index-link">
+        <Link to={studioPath("/projects")} className="index-link">
           View all four case studies <Icon name="arrow-right" />
         </Link>
       </section>
@@ -336,7 +340,7 @@ const Home = () => (
         <div className="section-shell">
           <header className="editorial-heading editorial-heading--compact">
             <h2 id="capability-title">What I help teams solve</h2>
-            <Link to="/services" className="index-link">
+            <Link to={studioPath("/services")} className="index-link">
               Explore services <Icon name="arrow-right" />
             </Link>
           </header>
@@ -345,7 +349,7 @@ const Home = () => (
             {services.map((service) => (
               <Link
                 key={service.id}
-                to={`/services#${service.id}`}
+                to={studioPath(`/services#${service.id}`)}
                 className="service-ledger__row"
               >
                 <h3>{service.title}</h3>
@@ -393,7 +397,7 @@ const Home = () => (
               operations teams, and developers to understand the problem, build
               the software, and support it after launch.
             </p>
-            <Link to="/about" className="index-link">
+            <Link to={studioPath("/about")} className="index-link">
               More about how I work <Icon name="arrow-right" />
             </Link>
           </div>

@@ -1,3 +1,4 @@
+import { STUDIO_PATH, studioPath } from "../lib/routes";
 import ContactCta from "../components/ContactCta";
 import ProjectIndex from "../components/ProjectIndex";
 import Seo from "../components/Seo";
@@ -10,7 +11,7 @@ const Projects = () => {
       <Seo
         title="Custom Software & Integration Case Studies"
         description="See how Mark Judaya built a product information platform, migrated a CRM, and connected marketplace and ERP order flows."
-        canonical="/projects"
+        canonical={studioPath("/projects")}
         structuredData={[
           {
             "@context": "https://schema.org",
@@ -18,14 +19,14 @@ const Projects = () => {
             name: "Custom Software and Integration Case Studies",
             description:
               "Four case studies covering product data, CRM migration, marketplace orders, and ERP integration.",
-            url: `${site.url}/projects`,
+            url: `${site.url}${studioPath("/projects")}`,
             mainEntity: {
               "@type": "ItemList",
               itemListElement: projects.map((project, index) => ({
                 "@type": "ListItem",
                 position: index + 1,
                 name: project.title,
-                url: `${site.url}/projects/${project.id}`,
+                url: `${site.url}${studioPath(`/projects/${project.id}`)}`,
               })),
             },
           },
@@ -37,13 +38,13 @@ const Projects = () => {
                 "@type": "ListItem",
                 position: 1,
                 name: "Home",
-                item: `${site.url}/`,
+                item: `${site.url}${STUDIO_PATH}`,
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Case studies",
-                item: `${site.url}/projects`,
+                item: `${site.url}${studioPath("/projects")}`,
               },
             ],
           },
@@ -55,8 +56,7 @@ const Projects = () => {
           <h1>Four systems built around real business processes.</h1>
           <p>
             Product data, CRM migration, marketplace orders, and ERP
-            integration—with the key decisions and safeguards behind each
-            build.
+            integration—with the key decisions and safeguards behind each build.
           </p>
         </div>
       </header>

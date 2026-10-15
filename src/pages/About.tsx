@@ -1,3 +1,4 @@
+import { STUDIO_PATH, studioPath } from "../lib/routes";
 import { Link } from "react-router-dom";
 import ContactCta from "../components/ContactCta";
 import Icon from "../components/Icon";
@@ -24,13 +25,13 @@ const About = () => (
     <Seo
       title="Full-Stack Developer & Systems Specialist"
       description="Mark Judaya is a Cebu-based full-stack developer who builds custom software, integrations, automation, and internal business tools."
-      canonical="/about"
+      canonical={studioPath("/about")}
       structuredData={[
         {
           "@context": "https://schema.org",
           "@type": "AboutPage",
           name: "About Mark Judaya",
-          url: `${site.url}/about`,
+          url: `${site.url}${studioPath("/about")}`,
           mainEntity: {
             "@type": "Person",
             "@id": `${site.url}/#mark-judaya`,
@@ -56,13 +57,13 @@ const About = () => (
               "@type": "ListItem",
               position: 1,
               name: "Home",
-              item: `${site.url}/`,
+              item: `${site.url}${STUDIO_PATH}`,
             },
             {
               "@type": "ListItem",
               position: 2,
               name: "About",
-              item: `${site.url}/about`,
+              item: `${site.url}${studioPath("/about")}`,
             },
           ],
         },
@@ -84,7 +85,7 @@ const About = () => (
       </div>
       <figure className="about-portrait">
         <img
-          src="/avatar.webp"
+          src="/profile/mark-judaya-about.jpg"
           alt="Mark Judaya"
           width="800"
           height="800"
@@ -100,9 +101,7 @@ const About = () => (
     <section className="about-scope" aria-labelledby="about-scope-title">
       <div className="section-shell about-scope__grid">
         <div>
-          <h2 id="about-scope-title">
-            I work across the whole system.
-          </h2>
+          <h2 id="about-scope-title">I work across the whole system.</h2>
         </div>
         <div className="about-scope__copy">
           <p>
@@ -118,7 +117,7 @@ const About = () => (
             focus on the process and engineering decisions without exposing
             client data.
           </p>
-          <Link to="/projects" className="index-link">
+          <Link to={studioPath("/projects")} className="index-link">
             See selected work <Icon name="arrow-right" />
           </Link>
         </div>
@@ -130,9 +129,7 @@ const About = () => (
       aria-labelledby="thinking-title"
     >
       <header>
-        <h2 id="thinking-title">
-          Start with how the work happens today.
-        </h2>
+        <h2 id="thinking-title">Start with how the work happens today.</h2>
         <p>
           I look at the decisions, exceptions, data, and handoffs that keep the
           process moving. Then I choose technology that makes those parts easier
@@ -155,16 +152,14 @@ const About = () => (
     >
       <div className="section-shell collaboration-field__grid">
         <div>
-          <h2 id="collaboration-title">
-            I work directly with you.
-          </h2>
+          <h2 id="collaboration-title">I work directly with you.</h2>
           <p>
             I can explain technical choices plainly to a business owner or work
             through implementation details with product, operations, and
             development teams. We agree on documentation, communication, and
             handover before the work begins.
           </p>
-          <Link to="/contact" className="button button--primary">
+          <Link to={studioPath("/contact")} className="button button--primary">
             Tell me about your project <Icon name="arrow-right" />
           </Link>
         </div>

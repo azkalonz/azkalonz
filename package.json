@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && TSX_TSCONFIG_PATH=tsconfig.app.json node --import tsx scripts/prerender.ts && cp public/CNAME dist/CNAME",
+    "build": "tsc -b && vite build && TSX_TSCONFIG_PATH=tsconfig.app.json node --import tsx scripts/prerender.ts && cp public/CNAME dist/CNAME && npm run verify:static",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
+    "deploy": "gh-pages -d dist --dotfiles",
     "build:nopr": "tsc -b && vite build",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
@@ -26,6 +26,7 @@
     "theme:apply:desert-western": "node --import tsx scripts/apply-theme.ts desert-western",
     "theme:apply:ultraviolet-club": "node --import tsx scripts/apply-theme.ts ultraviolet-club",
     "typecheck": "tsc -b --pretty false",
+    "verify:static": "node --import tsx scripts/verify-static.ts",
     "preview": "vite preview"
   },
   "dependencies": {

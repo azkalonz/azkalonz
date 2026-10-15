@@ -12,8 +12,10 @@ import Contact from "../src/pages/Contact.tsx";
 import Home from "../src/pages/Home.tsx";
 import ProjectDetails from "../src/pages/ProjectDetails.tsx";
 import Projects from "../src/pages/Projects.tsx";
+import ProfileHome from "../src/pages/ProfileHome.tsx";
 import Services from "../src/pages/Services.tsx";
 import { projects } from "../src/data/projects.ts";
+import { STUDIO_PATH, studioPath } from "../src/lib/routes.ts";
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(currentDirectory, "..");
@@ -28,6 +30,7 @@ type PageEntry = {
   title: string;
   description: string;
   projectId?: string;
+  studioLayout?: boolean;
 };
 
 type HelmetServerState = {
@@ -44,43 +47,57 @@ const staticPages: PageEntry[] = [
     routePath: "/",
     routePattern: "/",
     filename: "index.html",
+    component: ProfileHome,
+    title: "Mark Judaya | Full-Stack Developer",
+    description:
+      "I'm Mark Judaya, a full-stack developer in Cebu, Philippines. I build web apps, connect systems, and automate repetitive work.",
+  },
+  {
+    routePath: STUDIO_PATH,
+    routePattern: STUDIO_PATH,
+    filename: "studio/index.html",
     component: Home,
+    studioLayout: true,
     title: "Custom Software, Automation & Integrations | Mark Judaya",
     description:
       "Philippines-based full-stack developer building custom web applications, business automation, Zoho integrations, and reliable internal systems.",
   },
   {
-    routePath: "/services",
-    routePattern: "/services",
-    filename: "services/index.html",
+    routePath: studioPath("/services"),
+    routePattern: studioPath("/services"),
+    filename: "studio/services/index.html",
     component: Services,
+    studioLayout: true,
     title: "Custom Software Development & Automation Services | Mark Judaya",
     description:
       "Custom web applications, business automation, Zoho and API integrations, technical consulting, and ongoing software support for growing teams.",
   },
   {
-    routePath: "/projects",
-    routePattern: "/projects",
-    filename: "projects/index.html",
+    routePath: studioPath("/projects"),
+    routePattern: studioPath("/projects"),
+    filename: "studio/projects/index.html",
     component: Projects,
+    studioLayout: true,
     title: "Custom Software & Integration Case Studies | Mark Judaya",
     description:
       "Custom software case studies covering product information management, Salesforce-to-Zoho migration, API integration, and business automation.",
   },
   {
-    routePath: "/about",
-    routePattern: "/about",
-    filename: "about/index.html",
+    routePath: studioPath("/about"),
+    routePattern: studioPath("/about"),
+    filename: "studio/about/index.html",
     component: About,
+    studioLayout: true,
     title: "Full-Stack Developer & Systems Specialist | Mark Judaya",
     description:
       "Meet Mark Judaya, a Philippines-based full-stack developer specializing in custom software, business automation, systems integration, and Zoho.",
   },
   {
-    routePath: "/contact",
-    routePattern: "/contact",
-    filename: "contact/index.html",
+    routePath: studioPath("/contact"),
+    routePattern: studioPath("/contact"),
+    filename: "studio/contact/index.html",
     component: Contact,
+    studioLayout: true,
     title: "Contact a Custom Software Developer | Mark Judaya",
     description:
       "Contact Mark Judaya to discuss a custom web application, Zoho or API integration, business automation, technical plan, or software support need.",
@@ -88,10 +105,11 @@ const staticPages: PageEntry[] = [
 ];
 
 const projectPages: PageEntry[] = projects.map((project) => ({
-  routePath: `/projects/${project.id}`,
-  routePattern: "/projects/:id",
-  filename: `projects/${project.id}/index.html`,
+  routePath: studioPath(`/projects/${project.id}`),
+  routePattern: studioPath("/projects/:id"),
+  filename: `studio/projects/${project.id}/index.html`,
   component: ProjectDetails,
+  studioLayout: true,
   title: `${project.title} | Mark Judaya`,
   description: project.description,
   projectId: project.id,
@@ -138,6 +156,49 @@ const setMeta = (
     : html.replace("</head>", `  ${tag}\n</head>`);
 };
 
+const writeCompatibilityRedirects = () => {
+  const redirects = [
+    ...["/services", "/projects", "/about", "/contact"].map((route) => ({
+      from: route,
+      to: studioPath(route),
+    })),
+    ...projects.map((project) => ({
+      from: `/projects/${project.id}`,
+      to: studioPath(`/projects/${project.id}`),
+    })),
+    { from: "/work", to: studioPath("/projects") },
+    { from: studioPath("/work"), to: studioPath("/projects") },
+  ];
+
+  for (const redirect of redirects) {
+    const destination = escapeAttribute(redirect.to);
+    const html = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href="${siteUrl}${destination}" />
+    <meta http-equiv="refresh" content="0;url=${destination}" />
+    <title>Page moved | Mark Judaya</title>
+    <script>window.location.replace(${JSON.stringify(redirect.to)} + window.location.search + window.location.hash);</script>
+  </head>
+  <body>
+    <p>This page has moved. <a href="${destination}">Continue to the page</a>.</p>
+  </body>
+</html>
+`;
+    const outputPath = path.resolve(
+      distDirectory,
+      redirect.from.slice(1),
+      "index.html",
+    );
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+    fs.writeFileSync(outputPath, html);
+    console.log(`✓ Redirected ${redirect.from} → ${redirect.to}`);
+  }
+};
+
 const prerender = () => {
   const templatePath = path.resolve(distDirectory, "index.html");
   const template = fs.readFileSync(templatePath, "utf8");
@@ -146,6 +207,21 @@ const prerender = () => {
   for (const entry of [...staticPages, ...projectPages]) {
     try {
       const helmetContext: HelmetServerState = {};
+      const initialDetails = entry.projectId
+        ? projectDetails[entry.projectId]
+        : undefined;
+      if (entry.projectId && !initialDetails) {
+        throw new Error(`Missing case-study content: ${entry.projectId}`);
+      }
+      const pageContent = entry.projectId
+        ? createElement(ProjectDetails, { initialDetails })
+        : createElement(entry.component);
+      const pageRoute = createElement(Route, {
+        path: entry.routePattern,
+        element: entry.studioLayout
+          ? createElement(MainLayout, null, pageContent)
+          : pageContent,
+      });
       const content = renderToStaticMarkup(
         createElement(
           HelmetProvider,
@@ -153,18 +229,7 @@ const prerender = () => {
           createElement(
             StaticRouter,
             { location: entry.routePath },
-            createElement(
-              MainLayout,
-              null,
-              createElement(
-                Routes,
-                null,
-                createElement(Route, {
-                  path: entry.routePattern,
-                  element: createElement(entry.component),
-                }),
-              ),
-            ),
+            createElement(Routes, null, pageRoute),
           ),
         ),
       );
@@ -194,7 +259,7 @@ const prerender = () => {
         html = html
           .replace(/<title[^>]*>.*?<\/title>/is, "")
           .replace(
-            /<meta\s+(?:name|property)="(?:description|robots|theme-color|twitter:[^"]+|og:[^"]+)"[^>]*\/?>\s*/gi,
+            /<meta\b(?=[^>]*\b(?:name|property)\s*=\s*["'](?:description|robots|theme-color|twitter:[^"']+|og:[^"']+)["'])[^>]*>\s*/gi,
             "",
           )
           .replace(/<link\s+rel="canonical"[^>]*\/?>\s*/gi, "");
@@ -234,6 +299,8 @@ const prerender = () => {
       process.exitCode = 1;
     }
   }
+
+  writeCompatibilityRedirects();
 };
 
 prerender();

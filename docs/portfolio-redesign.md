@@ -1,10 +1,10 @@
 # Portfolio Design Brief
 
-## Selected concept: Operational Index
+## Selected concept: Link Index
 
-BuiltByMark.dev presents complex technical work through a calm, consistent index. A bounded three-act service reel gives the homepage one authored focal moment: one responsive order-operations interface reorganizes across desktop, tablet, and phone; an order-fulfilment workflow resolves through integration and recovery; and a short AI-assisted review turns the visible workflow events into an explicitly illustrative answer and evidence report. The rest of the interface exposes verified evidence and gives each case study room to show the problem, system relationship, safeguards, and outcome.
+The personal homepage introduces Mark through the approved compact Link Index. BuiltByMark.dev presents the full portfolio under `/studio` in the same monochrome UI. A bounded three-act service reel gives the homepage one authored focal moment: one responsive order-operations interface reorganizes across desktop, tablet, and phone; an order-fulfilment workflow resolves through integration and recovery; and a short AI-assisted review turns the visible workflow events into an explicitly illustrative answer and evidence report. The rest of the interface exposes verified evidence and gives each case study room to show the problem, system relationship, safeguards, and outcome.
 
-This is a refinement of the earlier Relay Ledger direction. The useful operational focus remains; the monogram, status language, large display typography, circular nodes, and competing work layouts were removed because they distracted from the evidence.
+The personal homepage contains the updated portrait, name, role, location, one short description, and four links. It has no projects, generic header, work images, Fiverr, or link subtitles.
 
 ## Brand positioning
 
@@ -32,20 +32,20 @@ The experience answers, in order:
 - **About** — Mark's location, strengths, working approach, and professional links.
 - **Contact** — direct email, booking, LinkedIn, and Fiverr with concise guidance on useful project context.
 
-Existing routes remain stable: `/`, `/services`, `/projects`, `/projects/:id`, `/about`, and `/contact`; `/work` continues to redirect to `/projects`.
+The mobile-first personal link index lives at `/`. This existing portfolio now lives at `/studio`, `/studio/services`, `/studio/projects`, `/studio/projects/:id`, `/studio/about`, and `/studio/contact`. Previous page URLs redirect to the matching studio route; `/work` and `/studio/work` redirect to `/studio/projects`.
 
 ## Visual system
 
-The design uses a 12-column responsive grid, strong left alignment, moderate type, and generous but controlled whitespace. Source Sans 3 is the only font family. Content is separated through composition and spacing instead of repeated rules or boxes.
+The design uses a 12-column responsive grid, strong left alignment, moderate type, and generous but controlled whitespace. Locally hosted Manrope is the font family throughout. Content is separated through composition and spacing instead of repeated rules or boxes.
 
-Light mode uses mineral daylight surfaces, blue-green ink, oxide action, restrained teal, and documentary blue. Dark mode uses green-charcoal planes, bone text, and independently tuned accents. Neither theme uses pure black/white or automatic inversion.
+Dark mode uses charcoal canvas and raised gray surfaces, pale text, and quiet borders. Every page load starts dark regardless of system preference or older saved choices. The manual theme control provides a coordinated light monochrome palette for the current visit. Project screenshots retain their natural color.
 
 ## Rules
 
 - Base spacing unit: 0.5rem, with a fluid section scale from 4.5rem to 7.5rem.
 - Page display type remains at or below 4rem.
-- Controls use a 0.2rem radius; media may use 0.45rem; ordinary content has no radius.
-- One-pixel rules are reserved for functional boundaries. Shadows are restricted to lifted screenshots and overlays.
+- Controls use a 0.625rem radius; media and bounded surfaces use 0.875rem; ordinary prose remains unboxed.
+- One-pixel rules mark functional boundaries and quiet link-row separators. Raised surfaces use small offset soft shadows, without hard rear planes.
 - The BuiltByMark.dev wordmark is text only.
 - No monograms, decorative dots, circle badges, status labels, technical monospace, or uppercase label styling.
 - Project indexes use consistent rows; detail belongs inside the case study.
@@ -53,7 +53,7 @@ Light mode uses mineral daylight surfaces, blue-green ink, oxide action, restrai
 
 ## Motion and responsive behavior
 
-The homepage hero uses a normal-height two-column composition on wide screens: a concise proposition beside one bounded service reel. Tablet and phone layouts place the proposition and actions at the top, then show the same artifact below through closer camera framing. The first act keeps one application DOM mounted while its navigation, order list, and selected-order detail reflow from a restrained desktop/tablet browser frame into a native phone frame. The second illustrates order intake, validation, inventory, fulfilment, carrier handoff, failure, and recovery. The third types one workflow question, pans from prompt to evidence, and resolves a source-grounded answer with nonnumeric charts and an evidence table labeled as illustrative workflow data. All three scene sheets remain present as a precise aligned deck. Next pushes the top sheet toward the viewer until it disappears, then recycles it invisibly to the rear while the other sheets advance; Previous moves the current top back and settles the prior sheet inward from the foreground. One GSAP timeline controls all three acts, pauses offscreen, and restores the desktop application before repeating. Under `prefers-reduced-motion`, the workflow settles on a readable mid-flow cluster with the quieter rear sheet edges preserved. Three static proof records follow in normal document flow. Selected work begins as a solid paper stack whose buried records remain hidden until they clear; each record settles before its white surface and shadow dissolve with scroll. Capabilities use reversible scrubbed scaling, and method steps combine their directional slide with a complete opacity reveal. GSAP is lazy-loaded and limited to transform, opacity, color, clip-path, isolated geometry, shadow, and SVG-stroke changes.
+The homepage hero uses a normal-height two-column composition on wide screens: a concise proposition beside one bounded service reel. Tablet and phone layouts place the proposition and actions at the top, then show the same artifact below through closer camera framing. The first act keeps one application DOM mounted while its navigation, order list, and selected-order detail reflow from a restrained desktop/tablet browser frame into a native phone frame. The second illustrates order intake, validation, inventory, fulfilment, carrier handoff, failure, and recovery. The third types one workflow question, pans from prompt to evidence, and resolves a source-grounded answer with nonnumeric charts and an evidence table labeled as illustrative workflow data. All three scene sheets remain present as a precise aligned deck. Next pushes the top sheet toward the viewer until it disappears, then recycles it invisibly to the rear while the other sheets advance; Previous moves the current top back and settles the prior sheet inward from the foreground. One GSAP timeline controls all three acts, pauses offscreen, and restores the desktop application before repeating. Under `prefers-reduced-motion`, the workflow settles on a readable mid-flow cluster with the quieter rear sheet edges preserved. Three static proof records follow in normal document flow. Project, proof, capability, and method content stays immediately visible in normal document flow without scroll-controlled stacking or dissolving surfaces. GSAP is lazy-loaded and limited to transform, opacity, color, clip-path, isolated geometry, shadow, and SVG-stroke changes.
 
 At wide sizes, project rows expose title, explanation, proof, and action in one scan. At tablet widths, evidence remains beside the summary. At mobile widths, each row becomes a simple sequence of project, proof, and action without decorative numbering. Navigation remains obvious and controls keep accessible target sizes.
 

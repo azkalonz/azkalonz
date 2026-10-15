@@ -7,6 +7,8 @@ import "@fontsource-variable/source-sans-3";
 import "@xyflow/react/dist/base.css";
 import "virtual:applied-theme.css";
 import "./index.css";
+import "./Studio.css";
+import "./pages/ProfileHome.css";
 
 const renderApp = () => {
   createRoot(document.getElementById("root")!).render(

@@ -1,3 +1,4 @@
+import { STUDIO_PATH, studioPath } from "../lib/routes";
 import { Link } from "react-router-dom";
 import { site } from "../data/site";
 
@@ -6,7 +7,7 @@ const Footer = () => (
     <div className="section-shell site-footer__top">
       <div className="site-footer__brand">
         <Link
-          to="/"
+          to={STUDIO_PATH}
           className="brand brand--footer"
           aria-label={`${site.name}, home`}
         >
@@ -21,10 +22,11 @@ const Footer = () => (
       <div>
         <h2>Explore</h2>
         <nav className="footer-links" aria-label="Footer navigation">
-          <Link to="/projects">Work</Link>
-          <Link to="/services">Services</Link>
-          <Link to="/about">About</Link>
-          <Link to="/contact">Contact</Link>
+          <Link to="/">Personal profile</Link>
+          <Link to={studioPath("/projects")}>Work</Link>
+          <Link to={studioPath("/services")}>Services</Link>
+          <Link to={studioPath("/about")}>About</Link>
+          <Link to={studioPath("/contact")}>Contact</Link>
         </nav>
       </div>
 
@@ -37,9 +39,6 @@ const Footer = () => (
           </a>
           <a href={site.socials.github} target="_blank" rel="noreferrer">
             GitHub
-          </a>
-          <a href={site.socials.fiverr} target="_blank" rel="noreferrer">
-            Fiverr
           </a>
         </nav>
       </div>

@@ -382,8 +382,8 @@ const applyTheme = async (theme: AppliedTheme) => {
     readFile(designPath, "utf8"),
   ]);
   const manifest = JSON.parse(manifestSource) as Record<string, unknown>;
-  manifest.background_color = theme.light.canvas;
-  manifest.theme_color = theme.light.ink;
+  manifest.background_color = theme.dark.canvas;
+  manifest.theme_color = theme.dark.canvas;
 
   const nextTheme = `${JSON.stringify(theme, null, 2)}\n`;
   const temporaryThemePath = `${currentThemePath}.tmp`;

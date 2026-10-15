@@ -1,0 +1,184 @@
+/* THESIS: Approved Link Index 21 is a personal introduction with four direct links.
+   OWN-WORLD: charcoal canvas, one raised slate list, local Manrope, quiet arrows.
+   STORY: meet Mark, understand his work, choose a profile or enter the studio.
+   FIRST VIEWPORT: portrait and identity, one sentence, GitHub/LinkedIn/email/studio.
+   FORM: the approved mobile composition stays narrow and centered on desktop. */
+@font-face {
+  font-family: "Profile Manrope";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/profile/fonts/manrope-400.ttf") format("truetype");
+}
+
+/* Override the legacy theme's inline canvas only while the profile is mounted. */
+html:has(.profile-home),
+body:has(.profile-home) {
+  background: #171b20 !important;
+  color-scheme: dark;
+}
+
+@font-face {
+  font-family: "Profile Manrope";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/profile/fonts/manrope-500.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Profile Manrope";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/profile/fonts/manrope-600.ttf") format("truetype");
+}
+
+.profile-home {
+  display: grid;
+  min-height: 100vh;
+  min-height: 100svh;
+  place-items: center;
+  padding: max(32px, env(safe-area-inset-top))
+    max(24px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom))
+    max(24px, env(safe-area-inset-left));
+  background: #171b20;
+  color: #f0f2f5;
+  color-scheme: dark;
+  font-family: "Profile Manrope", sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: normal;
+  line-height: 1.65;
+}
+
+.profile-home::selection,
+.profile-home ::selection {
+  background: #cbd7e8;
+  color: #171b20;
+}
+
+.profile-home__content {
+  width: min(100%, 342px);
+}
+
+.profile-home__identity {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+}
+
+.profile-home__portrait {
+  width: 72px;
+  height: 78px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  object-fit: cover;
+}
+
+.profile-home__name {
+  margin: 0;
+  color: inherit;
+  font-family: inherit;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  line-height: 1.2;
+  text-transform: none;
+}
+
+.profile-home__role,
+.profile-home__place {
+  margin: 0;
+  color: #bcc4ce;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.profile-home__role {
+  margin-top: 7px;
+}
+
+.profile-home__bio {
+  max-width: 328px;
+  margin: 27px 0 0;
+  color: #d2d8e0;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.profile-home__links {
+  margin-top: 30px;
+  border-radius: 14px;
+  background: #242a32;
+  box-shadow: 0 9px 22px #090c1040;
+}
+
+.profile-home__link-list {
+  margin: 0;
+  padding: 0 18px;
+  list-style: none;
+}
+
+.profile-home__link-item + .profile-home__link-item {
+  border-top: 1px solid #3a414a;
+}
+
+.profile-home__link {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: color 160ms ease-out;
+}
+
+.profile-home__arrow {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: #cbd7e8;
+  transition: transform 160ms ease-out;
+}
+
+.profile-home__link:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid #cbd7e8;
+  outline-offset: 5px;
+}
+
+@media (hover: hover) {
+  .profile-home__link:hover {
+    color: #cbd7e8;
+  }
+
+  .profile-home__link:hover .profile-home__arrow {
+    transform: translate(2px, -2px);
+  }
+}
+
+@media (min-width: 768px) {
+  .profile-home__content {
+    width: 360px;
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-home__link,
+  .profile-home__arrow {
+    transition: none;
+  }
+
+  .profile-home__link:hover .profile-home__arrow {
+    transform: none;
+  }
+}

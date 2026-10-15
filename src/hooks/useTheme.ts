@@ -3,13 +3,12 @@ import { flushSync } from "react-dom";
 
 type Theme = "light" | "dark";
 
-const themeKey = "theme";
 const rippleDuration = 1500;
 const rippleStagger = 90;
 const maximumConcurrentSnapshots = 2;
 
 const getRenderedTheme = (): Theme => {
-  if (typeof document === "undefined") return "light";
+  if (typeof document === "undefined") return "dark";
   return document.documentElement.classList.contains("dark") ? "dark" : "light";
 };
 
@@ -17,19 +16,18 @@ const getThemeCanvas = (theme: Theme) => {
   const value = getComputedStyle(document.documentElement)
     .getPropertyValue(`--theme-${theme}-canvas`)
     .trim();
-  const metaValue = document
-    .getElementById(`theme-color-${theme}`)
-    ?.getAttribute("content")
-    ?.trim();
-
-  return value || metaValue || "transparent";
+  return value || "transparent";
 };
 
 const paintTheme = (theme: Theme) => {
   const root = document.documentElement;
+  const canvas = getThemeCanvas(theme);
   root.classList.toggle("dark", theme === "dark");
   root.style.colorScheme = theme;
-  root.style.backgroundColor = getThemeCanvas(theme);
+  root.style.backgroundColor = canvas;
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute("content", canvas);
 };
 
 const handoffTheme = (theme: Theme, sequence: number) => {
@@ -60,22 +58,6 @@ export default function useTheme() {
   const snapshotSequence = useRef(0);
   const latestSettledSequence = useRef(0);
 
-  useEffect(() => {
-    const stored = localStorage.getItem(themeKey);
-    if (stored === "light" || stored === "dark") return;
-
-    const preference = window.matchMedia("(prefers-color-scheme: dark)");
-    const applyPreference = (event: MediaQueryListEvent | MediaQueryList) => {
-      const nextTheme = event.matches ? "dark" : "light";
-      paintTheme(nextTheme);
-      requestedTheme.current = nextTheme;
-      setTheme(nextTheme);
-    };
-
-    preference.addEventListener("change", applyPreference);
-    return () => preference.removeEventListener("change", applyPreference);
-  }, []);
-
   useEffect(
     () => () => {
       activeSnapshots.current.forEach((snapshot) => snapshot.remove());
@@ -89,7 +71,6 @@ export default function useTheme() {
 
     const nextTheme = requestedTheme.current === "dark" ? "light" : "dark";
     requestedTheme.current = nextTheme;
-    localStorage.setItem(themeKey, nextTheme);
     flushSync(() => setTheme(nextTheme));
 
     if (!origin) {
