@@ -76,9 +76,10 @@ for (const route of routes) {
   for (const [, asset] of html.matchAll(
     /<(?:script|link)\b[^>]*\b(?:src|href)="([^"#]+\.(?:js|css))"/g,
   )) {
-    assert.ok(
-      asset.startsWith("/"),
-      `${route}: asset must use an absolute path: ${asset}`,
+    assert.match(
+      asset,
+      /^\/assets\/.+-[\w-]{8}\.(?:js|css)$/,
+      `${route}: bundled asset must use an absolute, versioned path: ${asset}`,
     );
   }
 }

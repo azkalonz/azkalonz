@@ -65,6 +65,6 @@ The production build generates the personal homepage and all `/studio` pages, in
 npm run deploy
 ```
 
-Deployment rebuilds and verifies the site before publishing `dist` to the `gh-pages` branch. The custom domain and `.nojekyll` marker are included.
+Deployment rebuilds and verifies the site before publishing `dist` to the `gh-pages` branch. The custom domain and `.nojekyll` marker are included. Bundled assets use content hashes so new releases do not reuse stale JavaScript or CSS.
 
 </details>
